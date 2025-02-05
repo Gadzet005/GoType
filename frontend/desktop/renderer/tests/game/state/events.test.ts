@@ -4,7 +4,7 @@ import { createDummySentence } from "../dummy/sentence";
 import {
     AddSentenceEvent,
     RemoveSentenceEvent,
-} from "@/core/store/game/state/event";
+} from "@/core/store/game/events/wordEvents";
 
 const eng = Language.byCode("eng")!;
 

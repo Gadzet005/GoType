@@ -119,7 +119,7 @@ export class Game {
     }
 
     input(letter: string): void {
-        const result = this.state.field.moveCursor(letter);
+        const result = this.state.field.cursor.move(letter);
         if (!result) {
             return;
         }

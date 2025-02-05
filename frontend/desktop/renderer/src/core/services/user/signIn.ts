@@ -1,8 +1,9 @@
 import { ApiRoutes } from "@/core/config/api.config";
-import { UserService } from "../base/userService";
+import { UserService } from "./userService";
 import { Result } from "@/core/services/utils/result";
 import { commonApiErrorResult, success } from "../utils/result";
 import { loadUserProfileService } from "./loadUserProfile";
+import { SignIn } from "@/core/types/api/user";
 
 interface SignInServiceArgs {
     name: string;
@@ -19,10 +20,12 @@ export class SignInService extends UserService {
             const response = await this.api.post(ApiRoutes.Auth.SIGN_IN, {
                 name: args.name,
                 password: args.password,
-            });
+            } as SignIn.Args);
 
-            const accessToken = response.data.access_token;
-            const refreshToken = response.data.refresh_token;
+            const data: SignIn.Result = response.data;
+            const accessToken = data.access_token;
+            const refreshToken = data.refresh_token;
+
             this.user.setTokens({ accessToken, refreshToken });
             await window.userAPI.storeTokens(accessToken, refreshToken);
 

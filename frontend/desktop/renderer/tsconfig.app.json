@@ -24,6 +24,7 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@tests/*": ["./tests/*"],
       "@common/*": ["../../common/*"],
       "@desktop-common/*": ["../common/*"],
     }

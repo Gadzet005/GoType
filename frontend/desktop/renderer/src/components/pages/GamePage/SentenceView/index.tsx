@@ -1,5 +1,5 @@
 import { TICK_TIME } from "@/core/store/game/consts";
-import { GameFieldSentence } from "@/core/store/game/state/sentence";
+import { GameFieldSentence } from "@/core/store/game/field/sentence";
 import { useSize } from "@/core/hooks";
 import { FadeAnimation } from "@desktop-common/sentence/style";
 import { Box } from "@mui/material";

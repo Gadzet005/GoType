@@ -1,9 +1,9 @@
-import { EventStorage } from "./eventStorage";
-import { GameField } from "./field";
-import { action, makeObservable, observable } from "mobx";
 import { Language } from "@desktop-common/language";
 import { Sentence } from "@desktop-common/sentence";
-import { AddSentenceEvent } from "./event";
+import { action, makeObservable, observable } from "mobx";
+import { EventStorage } from "./events/storage";
+import { AddSentenceEvent } from "./events/wordEvents";
+import { GameField } from "./field";
 
 export class GameState {
     readonly events = new EventStorage();

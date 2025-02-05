@@ -1,5 +1,5 @@
 import { tick } from "@desktop-common/types";
-import { GameEvent } from "./event";
+import { GameEvent } from "./interface";
 import { action, makeObservable, observable } from "mobx";
 
 export class EventStorage {

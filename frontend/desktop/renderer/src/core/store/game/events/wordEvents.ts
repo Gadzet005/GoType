@@ -1,9 +1,6 @@
 import { Sentence } from "@desktop-common/sentence";
-import { GameState } from ".";
-
-export interface GameEvent {
-    run(state: GameState): void;
-}
+import { GameState } from "../state";
+import { GameEvent } from "./interface";
 
 export class RemoveSentenceEvent implements GameEvent {
     run(state: GameState) {

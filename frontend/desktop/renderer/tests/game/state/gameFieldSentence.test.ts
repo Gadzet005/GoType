@@ -2,7 +2,7 @@ import {
     GameFieldSentence,
     LetterState,
     SentenceCursor,
-} from "@/core/store/game/state/sentence";
+} from "@/core/store/game/field/sentence";
 import { createDummySentence } from "../dummy/sentence";
 
 test("SentenceCursor.isInited", () => {

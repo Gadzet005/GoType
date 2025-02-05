@@ -1,5 +1,5 @@
 import { createDummySentence } from "../dummy/sentence";
-import { GameField } from "@/core/store/game/state/field";
+import { GameField } from "@/core/store/game/field";
 import { Language } from "@desktop-common/language";
 
 const eng = Language.byCode("eng")!;
@@ -82,28 +82,28 @@ test("GameField.moveCursor 1", () => {
     field.addSentence(sentence2);
     field.addSentence(emptySentence);
 
-    expect(field.moveCursor("f")).toEqual({
+    expect(field.cursor.move("f")).toEqual({
         isRight: true,
         isEndOfSentence: false,
     });
-    expect(field.moveCursor("f")).toEqual({
+    expect(field.cursor.move("f")).toEqual({
         isRight: false,
         isEndOfSentence: false,
     });
-    expect(field.moveCursor("o")).toEqual({
+    expect(field.cursor.move("o")).toEqual({
         isRight: true,
         isEndOfSentence: true,
     });
     expect(field.getCurrentSentence()?.content).equal(sentence2.content);
-    expect(field.moveCursor("p")).toEqual({
+    expect(field.cursor.move("p")).toEqual({
         isRight: false,
         isEndOfSentence: false,
     });
-    expect(field.moveCursor("a")).toEqual({
+    expect(field.cursor.move("a")).toEqual({
         isRight: true,
         isEndOfSentence: false,
     });
-    expect(field.moveCursor("r")).toEqual({
+    expect(field.cursor.move("r")).toEqual({
         isRight: true,
         isEndOfSentence: true,
     });
@@ -116,22 +116,22 @@ test("GameField.moveCursor 2", () => {
     const sentence1 = createDummySentence("!?!f!o.!.o!...!");
     field.addSentence(sentence1);
 
-    expect(field.moveCursor("!")).toEqual(null);
-    expect(field.moveCursor("f")).toEqual({
+    expect(field.cursor.move("!")).toEqual(null);
+    expect(field.cursor.move("f")).toEqual({
         isRight: true,
         isEndOfSentence: false,
     });
-    expect(field.moveCursor("!")).toEqual(null);
-    expect(field.moveCursor("p")).toEqual({
+    expect(field.cursor.move("!")).toEqual(null);
+    expect(field.cursor.move("p")).toEqual({
         isRight: false,
         isEndOfSentence: false,
     });
-    expect(field.moveCursor(".")).toEqual(null);
-    expect(field.moveCursor("!")).toEqual(null);
-    expect(field.moveCursor("o")).toEqual({
+    expect(field.cursor.move(".")).toEqual(null);
+    expect(field.cursor.move("!")).toEqual(null);
+    expect(field.cursor.move("o")).toEqual({
         isRight: true,
         isEndOfSentence: true,
     });
     expect(field.getCurrentSentence()).toBeNull();
-    expect(field.moveCursor("o")).toBeNull();
+    expect(field.cursor.move("o")).toBeNull();
 });

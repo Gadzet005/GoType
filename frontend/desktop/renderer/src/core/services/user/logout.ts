@@ -1,5 +1,5 @@
 import { ApiRoutes } from "@/core/config/api.config";
-import { UserService } from "../base/userService";
+import { UserService } from "./userService";
 import { Result } from "@/core/services/utils/result";
 import { commonApiErrorResult, success } from "../utils/result";
 
