@@ -30,10 +30,12 @@ const PauseMenu: React.FC<PauseMenuProps> = ({
     <Dialog
       open={open}
       onClose={onClose}
-      PaperProps={{
-        sx: {
-          borderRadius: 4,
-          bgcolor: "black",
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 4,
+            bgcolor: "black",
+          },
         },
       }}
     >

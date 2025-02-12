@@ -1,6 +1,4 @@
-import { UserProfile } from "@/core/store/user";
 import { GetUserInfo, Refresh, SignIn, SignUp } from "@/core/types/api/user";
-import { AuthTokens } from "@desktop-common/authTokens";
 import { AxiosError } from "axios";
 
 export namespace Dummy {
@@ -29,21 +27,6 @@ export namespace Dummy {
     export const refreshArgs: Refresh.Args = {
         access_token: "access_token",
         refresh_token: "refresh_token",
-    };
-
-    export const userProfile: UserProfile = {
-        id: 1,
-        name: "testUser",
-        accessLevel: 1,
-        banInfo: {
-            reason: "",
-            expiresAt: 0,
-        },
-    };
-
-    export const authTokens: AuthTokens = {
-        accessToken: "access_token",
-        refreshToken: "refresh_token",
     };
 
     export const UnauthorizedError = (config: any) => {

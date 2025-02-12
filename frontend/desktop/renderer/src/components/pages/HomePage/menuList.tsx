@@ -1,19 +1,10 @@
 import { RoutePath } from "@/core/config/routes/path";
-import { MenuItemProps } from "./MenuItem";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import PersonIcon from "@mui/icons-material/Person2";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
-
-export enum AccessType {
-  forAnonymous,
-  forAuth,
-  forAll,
-}
-
-type MenuItem = MenuItemProps & {
-  accessType: AccessType;
-};
+import { MenuItem, AccessType } from "./Menu/types";
+import { quitApp } from "@/core/services/electron/app/quitApp";
 
 export const menuList: MenuItem[] = [
   {
@@ -47,9 +38,9 @@ export const menuList: MenuItem[] = [
   {
     label: "Выход",
     accessType: AccessType.forAll,
-    onClick: (event) => {
+    onClick: async (event, ctx) => {
       event.preventDefault();
-      window.commonAPI.quitApp();
+      await ctx.runService(quitApp);
     },
     icon: <ExitToAppIcon />,
     color: "error",

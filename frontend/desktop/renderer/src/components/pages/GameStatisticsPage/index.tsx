@@ -1,9 +1,10 @@
-import { GameStatistics } from "@/core/store/game/statistics";
 import { RoutePath } from "@/core/config/routes/path";
-import { useKeyboard, useNavigate } from "@/core/hooks";
+import { useNavigate } from "@/core/hooks";
+import { GameStatistics } from "@/core/store/game/statistics";
 import { Level } from "@desktop-common/level";
 import { Box, Container, Typography } from "@mui/material";
 import React from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { Button } from "../../ui/Button";
 import { StatTable } from "./StatTable";
 
@@ -17,7 +18,7 @@ export const GameStatisticsPage: React.FC<GameStatisticsPageProps> = ({
   statistics,
 }) => {
   const navigate = useNavigate();
-  useKeyboard("Escape", () => navigate(RoutePath.levelList));
+  useHotkeys("esc", () => navigate(RoutePath.levelList));
 
   return (
     <Container

@@ -1,14 +1,17 @@
-import { Level } from "@desktop-common/level";
+export namespace ElectronAPIMock {
+    export const User = {
+        storeTokens: vi.fn(),
+        getTokens: vi.fn(),
+        clearTokens: vi.fn(),
+    };
 
-window.userAPI = {
-    storeTokens: vi.fn(async () => {}),
-    getTokens: vi.fn(async (): Promise<any> => {}),
-    clearTokens: vi.fn(async () => {}),
-};
+    export const Level = {
+        getLevels: vi.fn(),
+        getLevel: vi.fn(),
+        addLevel: vi.fn(),
+        removeLevel: vi.fn(),
+    };
+}
 
-window.levelAPI = {
-    getLevels: vi.fn(async (): Promise<Level[]> => []),
-    getLevel: vi.fn(async (): Promise<Level | null> => null),
-    addLevel: vi.fn(async (): Promise<void> => {}),
-    removeLevel: vi.fn(async (): Promise<void> => {}),
-};
+window.userAPI = ElectronAPIMock.User;
+window.levelAPI = ElectronAPIMock.Level;

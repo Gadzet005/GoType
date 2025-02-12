@@ -13,7 +13,13 @@
     "renderer"
   ],
   "devDependencies": {
-    "concurrently": "^9.1.2",
-    "yarn": "^1.22.22"
+    "concurrently": "^9.1.2"
+  },
+  "peerDependencies": {
+    "@mui/material": "*",
+    "react": "*",
+    "react-dom": "*",
+    "yarn": "*",
+    "typescript": "*"
   }
 }

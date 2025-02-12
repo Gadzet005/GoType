@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { RoutePath } from "@/core/config/routes/path";
-import { useNavigate, useService, useTitle, useUser } from "@/core/hooks";
-import { LogoutService } from "@/core/services/user/logout";
+import { useAppContext, useNavigate } from "@/core/hooks";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {
   Avatar,
@@ -14,19 +13,17 @@ import {
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { BackButton } from "../common/BackButton";
+import { logout } from "@/core/services/api/user/logout";
 
-export const ProfilePage = observer(() => {
-  useTitle("Профиль");
-
-  const user = useUser();
+export const ProfilePage: React.FC = observer(() => {
+  const ctx = useAppContext();
+  const user = ctx.user;
   const navigate = useNavigate();
-  const { call: logout } = useService(LogoutService);
 
-  const handleLogout = React.useCallback(() => {
-    logout().then(() => {
-      navigate(RoutePath.home);
-    });
-  }, [logout, navigate]);
+  const handleLogout = React.useCallback(async () => {
+    await ctx.runService(logout);
+    navigate(RoutePath.home);
+  }, [ctx, navigate]);
 
   if (!user.profile) {
     return <></>;

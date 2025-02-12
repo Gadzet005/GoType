@@ -1,18 +1,20 @@
 import { requestMock } from "@tests/base/apiMock";
 import "@tests/base/electronApiMock";
 
-import { User } from "@/core/store/user";
-import { LogoutService } from "@/core/services/user/logout";
-import { Dummy } from "./dummy";
+import { logout } from "@/core/services/api/user/logout";
+import { UserDummy } from "@tests/base/dummy";
+import { GlobalAppContext } from "@/core/store/appContext";
+import { AppContext } from "@/core/types/base/app";
+import { IUser } from "@/core/types/base/user";
 
 describe("logout test", () => {
-    let user: User;
+    let user: IUser;
+    let ctx: AppContext;
 
     beforeEach(() => {
         vi.restoreAllMocks();
-        user = new User();
-        user.setProfile(Dummy.userProfile);
-        user.setTokens(Dummy.authTokens);
+        user = UserDummy.create(true);
+        ctx = new GlobalAppContext(user);
     });
 
     it("positive", async () => {
@@ -20,8 +22,7 @@ describe("logout test", () => {
             data: {},
         });
 
-        const logoutService = new LogoutService(user);
-        const result = await logoutService.execute();
+        const result = await ctx.runService(logout);
 
         expect(result.ok).toBe(true);
         expect(user.isAuth).toBe(false);
@@ -32,8 +33,7 @@ describe("logout test", () => {
             throw new Error();
         });
 
-        const logoutService = new LogoutService(user);
-        const result = await logoutService.execute();
+        const result = await ctx.runService(logout);
 
         expect(result.ok).toBe(false);
         expect(user.isAuth).toBe(true);

@@ -1,4 +1,4 @@
-import { AppNavigation } from "@/core/navigation/AppNavigation";
+import { AppNavigation } from "@/components/navigation/AppNavigation";
 import { render } from "@testing-library/react";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link";

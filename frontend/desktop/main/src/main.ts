@@ -19,6 +19,7 @@ function createWindow(): BrowserWindow {
             preload: path.join(__dirname, "preload.js"),
         },
         autoHideMenuBar: true,
+        frame: false,
     });
 
     const startUrl = isDev

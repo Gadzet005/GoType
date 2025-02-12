@@ -1,6 +1,7 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Button, ButtonProps } from "@/components/ui/Button";
-import { useNavigate, useKeyboard } from "@/core/hooks";
+import { useNavigate } from "@/core/hooks";
+import { useHotkeys } from "react-hotkeys-hook";
 
 interface BackButtonProps extends ButtonProps {
   href: string;
@@ -15,7 +16,7 @@ export const BackButton: React.FC<BackButtonProps> = ({
   ...other
 }) => {
   const navigate = useNavigate();
-  useKeyboard("Escape", () => navigate(other.href, other.params));
+  useHotkeys("esc", () => navigate(other.href, other.params));
 
   return (
     <Button

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { RoutePath } from "@/core/config/routes/path";
-import { useKeyboard, useNavigate, useTitle } from "@/core/hooks";
+import { useNavigate } from "@/core/hooks";
 import { Game } from "@/core/store/game";
 import { Level } from "@desktop-common/level";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -8,6 +8,8 @@ import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 import { when } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { ComboCounter } from "./ComboCounter";
 import { GameField } from "./GameField";
 import PauseMenu from "./PauseMenu";
 
@@ -18,8 +20,6 @@ interface GamePageProps {
 }
 
 export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
-  useTitle("Игра");
-
   const navigate = useNavigate();
   const [game] = React.useState<Game>(new Game(level));
 
@@ -50,8 +50,10 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
     }
   };
 
-  useKeyboard("Escape", handleTogglePause);
-  useKeyboard(null, handleKeyDown);
+  useHotkeys("esc", handleTogglePause);
+  useHotkeys(game.level.language.alphabet.split(""), handleKeyDown, [
+    game.level.language.alphabet,
+  ]);
 
   React.useEffect(() => {
     game.init();
@@ -96,7 +98,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
               pb: 2,
             }}
           >
-            <Box sx={{ width: "20%" }}>
+            <Box sx={{ width: "25%" }}>
               <Button
                 sx={{
                   bgcolor: "background.paper",
@@ -108,7 +110,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
                 <MenuIcon />
               </Button>
             </Box>
-            <Box sx={{ width: "60%" }}>
+            <Box sx={{ width: "50%", px: 2 }}>
               <LinearProgress
                 sx={{
                   height: 15,
@@ -122,11 +124,13 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
             </Box>
             <Box
               sx={{
-                width: "20%",
+                width: "25%",
                 display: "flex",
                 justifyContent: "end",
+                gap: 1,
               }}
             >
+              <ComboCounter combo={game.statistics.comboCounter} />
               <Box sx={{ bgcolor: "background.paper", p: 2, borderRadius: 4 }}>
                 <Typography color="text.secondary" variant="h3">
                   {String(game.statistics.score).padStart(7, "0")}

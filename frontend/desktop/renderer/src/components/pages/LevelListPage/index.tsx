@@ -1,21 +1,28 @@
-import { Box, Typography } from "@mui/material";
-import { BackButton } from "../../common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { useTitle } from "@/core/hooks";
-import React from "react";
+import { useAppContext } from "@/core/hooks";
+import { getLevels } from "@/core/services/electron/level/getLevels";
 import { Level } from "@desktop-common/level";
+import { Box, Typography } from "@mui/material";
+import React from "react";
+import { BackButton } from "../../common/BackButton";
 import { LevelList } from "./LevelList";
 
 export const LevelListPage = () => {
-  useTitle("Уровни");
-
+  const ctx = useAppContext();
   const [levels, setLevels] = React.useState<Level[]>([]);
 
+  const loadLevels = React.useCallback(async () => {
+    const result = await ctx.runService(getLevels);
+    if (result.ok) {
+      setLevels(result.payload!);
+    } else {
+      console.error("Failed to load levels");
+    }
+  }, [ctx]);
+
   React.useEffect(() => {
-    window.levelAPI.getLevels().then((levels) => {
-      setLevels(levels);
-    });
-  }, []);
+    loadLevels();
+  }, [loadLevels]);
 
   return (
     <Box sx={{ p: 2 }}>

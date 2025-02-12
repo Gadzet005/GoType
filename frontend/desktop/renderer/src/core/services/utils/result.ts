@@ -9,11 +9,11 @@ export interface Result<T, E> {
 
 export type PromiseResult<T, E> = Promise<Result<T, E>>;
 
-export function success<T>(): Result<T, any> {
-    return { ok: true };
+export function success<T>(payload?: T): Result<T, any> {
+    return { ok: true, payload };
 }
 
-export function failure<T, E>(error: E): Result<T, E> {
+export function failure<T, E>(error?: E): Result<T, E> {
     return { ok: false, error };
 }
 

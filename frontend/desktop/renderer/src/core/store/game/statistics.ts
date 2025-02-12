@@ -3,16 +3,22 @@ import { GameScore } from "./consts";
 import { Language } from "@desktop-common/language";
 
 export class GameStatistics {
+    private readonly language: Language;
     private _score: number = 0;
     private _alphabetTotal: number[];
     private _alphabetRight: number[];
-    private readonly language: Language;
+    private _comboCounter = 1;
+    private _maxCombo = 1;
 
     constructor(language: Language) {
         makeObservable(this, {
             // @ts-expect-error: private observable
             _score: observable,
+            _comboCounter: observable,
+
             score: computed,
+            comboCounter: computed,
+
             reset: action,
             addInputResult: action,
         });
@@ -26,6 +32,8 @@ export class GameStatistics {
         this._score = 0;
         this._alphabetTotal = Array(this.language.alphabet.length).fill(0);
         this._alphabetRight = Array(this.language.alphabet.length).fill(0);
+        this._comboCounter = 1;
+        this._maxCombo = 1;
     }
 
     private addLetterToStatistics(letter: string, isRight: boolean): void {
@@ -76,6 +84,14 @@ export class GameStatistics {
         return (this.rightLetters / this.totalLetters) * 100;
     }
 
+    get comboCounter(): number {
+        return this._comboCounter;
+    }
+
+    get maxCombo(): number {
+        return this._maxCombo;
+    }
+
     // Add to statistics that letter was typed
     addInputResult(letter: string, isRight: boolean) {
         if (!this.language.includes(letter)) {
@@ -83,7 +99,11 @@ export class GameStatistics {
         }
         this.addLetterToStatistics(letter, isRight);
         if (isRight) {
-            this._score += GameScore.letter;
+            this._comboCounter++;
+            this._maxCombo = Math.max(this._comboCounter, this._maxCombo);
+            this._score += this.comboCounter * GameScore.letter;
+        } else {
+            this._comboCounter = 1;
         }
     }
 }

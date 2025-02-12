@@ -2,9 +2,10 @@ import { Box, Typography } from "@mui/material";
 import { Button } from "@/components/ui/Button";
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { useTitle } from "@/core/hooks";
 import { observer } from "mobx-react";
 import { Level } from "@desktop-common/level";
+import { useAppContext } from "@/core/hooks";
+import { addLevel } from "@/core/services/electron/level/addLevel";
 
 // TODO remove this!!!
 const level: Level = {
@@ -163,11 +164,10 @@ const level: Level = {
 };
 
 export const LevelEditorPage = observer(() => {
-  useTitle("Редактор уровня");
+  const ctx = useAppContext();
 
-  // TODO remove this!!!
-  const handleCreateLevel = () => {
-    window.levelAPI.addLevel(level);
+  const handleCreateLevel = async () => {
+    await ctx.runService(addLevel, level);
   };
 
   return (

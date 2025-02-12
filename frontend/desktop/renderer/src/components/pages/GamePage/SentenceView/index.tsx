@@ -1,12 +1,13 @@
 import { TICK_TIME } from "@/core/store/game/consts";
 import { GameFieldSentence } from "@/core/store/game/field/sentence";
-import { useSize } from "@/core/hooks";
 import { FadeAnimation } from "@desktop-common/sentence/style";
 import { Box } from "@mui/material";
 import { observer } from "mobx-react";
 import React from "react";
+import ResizeObserver from "resize-observer-polyfill";
 import { useIsPaused } from "../pause";
 import { LetterView } from "./LetterView";
+import useMeasure from "react-use-measure";
 
 import "./fade.css";
 
@@ -30,10 +31,9 @@ function getAbsoluteCoord(
 
 export const SentenceView: React.FC<SentenceViewProps> = observer(
   ({ sentence, fieldHeight, fieldWidth }) => {
-    const ref = React.useRef(null);
-    const { width, height } = useSize(ref);
-    const x = getAbsoluteCoord(sentence.coord.x, fieldWidth, width);
-    const y = getAbsoluteCoord(sentence.coord.y, fieldHeight, height);
+    const [ref, bounds] = useMeasure({ polyfill: ResizeObserver });
+    const x = getAbsoluteCoord(sentence.coord.x, fieldWidth, bounds.width);
+    const y = getAbsoluteCoord(sentence.coord.y, fieldHeight, bounds.height);
 
     const isPaused = useIsPaused();
     const [activeLetters, setActiveLetters] = React.useState(0);

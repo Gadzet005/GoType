@@ -2,21 +2,23 @@ import { requestMock } from "@tests/base/apiMock";
 import "@tests/base/electronApiMock";
 
 import { User } from "@/core/store/user";
-import { UserService } from "@/core/services/user/userService";
 import { Dummy } from "../dummy";
+import { AppContext, Service } from "@/core/types/base/app";
+import { IUser } from "@/core/types/base/user";
+import { GlobalAppContext } from "@/core/store/appContext";
 
 export const BaseAuthTests = (
-    ServiceClass: new (user: User) => UserService,
+    service: Service,
     serviceArgs: any,
     serviceResult: any
 ) => {
-    let user: User;
-    let service: UserService;
+    let user: IUser;
+    let ctx: AppContext;
 
     beforeEach(() => {
         vi.resetAllMocks();
         user = new User();
-        service = new ServiceClass(user);
+        ctx = new GlobalAppContext(user);
 
         requestMock.post.mockResolvedValue({
             data: serviceResult,
@@ -27,7 +29,7 @@ export const BaseAuthTests = (
     });
 
     it("positive", async () => {
-        const result = await service.execute(serviceArgs);
+        const result = await ctx.runService(service, serviceArgs);
 
         expect(result.ok).toBe(true);
         expect(user.isAuth).toBe(true);
@@ -44,13 +46,13 @@ export const BaseAuthTests = (
         requestMock.post.mockImplementationOnce(() => {
             throw new Error();
         });
-        const result1 = await service.execute(serviceArgs);
+        const result1 = await ctx.runService(service, serviceArgs);
         expect(result1.ok).toBe(false);
 
         requestMock.get.mockImplementationOnce(() => {
             throw new Error();
         });
-        const result2 = await service.execute(serviceArgs);
+        const result2 = await ctx.runService(service, serviceArgs);
         expect(result2.ok).toBe(false);
     });
 };

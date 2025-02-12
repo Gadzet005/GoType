@@ -1,10 +1,11 @@
 import { Game } from "@/core/store/game";
-import { useSize } from "@/core/hooks";
 import { Box } from "@mui/material";
 import { observer } from "mobx-react";
 import React from "react";
 import { SentenceView } from "./SentenceView";
 import { PauseContext } from "./pause";
+import useMeasure from "react-use-measure";
+import ResizeObserver from "resize-observer-polyfill";
 
 interface GameFieldProps {
   width: number | string;
@@ -14,17 +15,15 @@ interface GameFieldProps {
 
 export const GameField: React.FC<GameFieldProps> = observer(
   ({ width: _width, height: _height, game }) => {
-    const ref = React.useRef(null);
-    // width and height in pixels
-    const { width, height } = useSize(ref);
+    const [ref, bounds] = useMeasure({ polyfill: ResizeObserver });
 
     const SentenceViews = game.state.field.getAllSentences().map((sentence) => {
       return (
         <SentenceView
           key={sentence.id}
           sentence={sentence}
-          fieldHeight={height}
-          fieldWidth={width}
+          fieldHeight={bounds.height}
+          fieldWidth={bounds.width}
         />
       );
     });
