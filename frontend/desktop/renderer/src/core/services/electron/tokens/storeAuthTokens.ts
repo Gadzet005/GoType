@@ -13,7 +13,6 @@ export async function storeAuthTokens(
         );
         return success();
     } catch {
-        console.error("Failed to store auth tokens");
         return failure();
     }
 }

@@ -1,5 +1,5 @@
 import { Game } from "@/core/store/game";
-import { createDummyLevel } from "./dummy/level";
+import { createDummyLevel } from "../../../../../tests/dummy/level";
 
 describe("Game tests", () => {
     it("init", () => {

@@ -2,7 +2,7 @@ import { requestMock } from "@tests/base/apiMock";
 import "@tests/base/electronApiMock";
 
 import { logout } from "@/core/services/api/user/logout";
-import { UserDummy } from "@tests/base/dummy";
+import { UserDummy } from "@tests/dummy/user";
 import { GlobalAppContext } from "@/core/store/appContext";
 import { AppContext } from "@/core/types/base/app";
 import { IUser } from "@/core/types/base/user";

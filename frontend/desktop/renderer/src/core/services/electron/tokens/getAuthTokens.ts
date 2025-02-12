@@ -5,7 +5,7 @@ export async function getAuthTokens(): PromiseResult<AuthTokens, void> {
     try {
         const result = await window.userAPI.getTokens();
         if (!result) {
-            throw new Error("Failed to get auth tokens");
+            return failure();
         }
 
         return success(result as AuthTokens);

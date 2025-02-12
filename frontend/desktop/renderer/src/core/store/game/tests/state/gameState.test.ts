@@ -1,6 +1,6 @@
 import { GameState } from "@/core/store/game/state";
 import { Language } from "@desktop-common/language";
-import { createDummySentence } from "../dummy/sentence";
+import { createDummySentence } from "../../../../../../tests/dummy/sentence";
 
 describe("GameState", () => {
     const eng = Language.byCode("eng")!;

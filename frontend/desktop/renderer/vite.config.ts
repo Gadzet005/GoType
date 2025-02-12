@@ -17,7 +17,7 @@ export default defineConfig({
                 ...configDefaults.exclude,
                 "src/core/theme",
                 "src/core/config",
-                "tests/*",
+                "**/tests/*",
             ],
         },
         environment: "jsdom",

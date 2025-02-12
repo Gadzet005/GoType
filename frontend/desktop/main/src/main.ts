@@ -62,15 +62,9 @@ function createStore(): { mainStore: AppStore; levelStore: LevelStore } {
 
         const levels: Level[] = [];
         for (const awaitedLevel of awaitedLevels) {
-            try {
-                const level = await awaitedLevel;
-                if (level) {
-                    levels.push(level);
-                } else {
-                    console.error("Level not found");
-                }
-            } catch (err) {
-                console.error("Error fetching level:", err);
+            const level = await awaitedLevel;
+            if (level) {
+                levels.push(level);
             }
         }
 

@@ -5,7 +5,6 @@ export async function clearAuthTokens(): PromiseResult<void, void> {
         await window.userAPI.clearTokens();
         return success();
     } catch {
-        console.error("Failed to clear auth tokens");
         return failure();
     }
 }

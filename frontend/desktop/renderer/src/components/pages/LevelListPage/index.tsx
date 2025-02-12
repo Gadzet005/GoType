@@ -15,8 +15,6 @@ export const LevelListPage = () => {
     const result = await ctx.runService(getLevels);
     if (result.ok) {
       setLevels(result.payload!);
-    } else {
-      console.error("Failed to load levels");
     }
   }, [ctx]);
 

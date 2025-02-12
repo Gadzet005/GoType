@@ -6,7 +6,6 @@ export async function getLevels(): PromiseResult<Level[], void> {
         const result = await window.levelAPI.getLevels();
         return success(result);
     } catch {
-        console.error("Failed to get levels");
         return failure();
     }
 }

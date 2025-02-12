@@ -1,7 +1,7 @@
 import { failure, PromiseResult, success } from "@/core/services/utils/result";
 import { AppContext } from "@/core/types/base/app";
 
-export async function addLevel(
+export async function removeLevel(
     _: AppContext,
     levelId: number
 ): PromiseResult<void, void> {
@@ -9,7 +9,6 @@ export async function addLevel(
         await window.levelAPI.removeLevel(levelId);
         return success();
     } catch {
-        console.error("Failed to remove levels");
         return failure();
     }
 }

@@ -39,7 +39,6 @@ export const SignUpPage = observer(() => {
           } else if (ApiError.invalidInput) {
             setFormError("Неверный формат имени или пароля");
           } else {
-            console.error("Unknown error:", error);
             setFormError("Неизвестная ошибка.");
           }
         }

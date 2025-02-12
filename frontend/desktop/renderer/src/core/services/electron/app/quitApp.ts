@@ -5,7 +5,6 @@ export async function quitApp(): PromiseResult<void, void> {
         await window.commonAPI.quitApp();
         return success();
     } catch {
-        console.error("Failed to quit app");
         return failure();
     }
 }

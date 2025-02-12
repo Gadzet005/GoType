@@ -2,7 +2,7 @@ import { requestMock } from "@tests/base/apiMock";
 import "@tests/base/electronApiMock";
 
 import { User } from "@/core/store/user";
-import { Dummy } from "../dummy";
+import { Dummy } from "./dummy";
 import { AppContext, Service } from "@/core/types/base/app";
 import { IUser } from "@/core/types/base/user";
 import { GlobalAppContext } from "@/core/store/appContext";

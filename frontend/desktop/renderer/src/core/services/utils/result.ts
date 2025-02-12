@@ -1,5 +1,4 @@
 import { ApiError } from "@/core/config/api.config";
-import { AxiosError } from "axios";
 
 export interface Result<T, E> {
     ok: boolean;
@@ -18,7 +17,7 @@ export function failure<T, E>(error?: E): Result<T, E> {
 }
 
 export function commonApiErrorResult(error: any): Result<any, string> {
-    if (error instanceof AxiosError && error.response?.data.message) {
+    if (error.response?.data.message) {
         return {
             ok: false,
             error: error.response?.data.message,

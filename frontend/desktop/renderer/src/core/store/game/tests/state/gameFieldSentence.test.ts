@@ -3,7 +3,7 @@ import {
     LetterState,
     SentenceCursor,
 } from "@/core/store/game/field/sentence";
-import { createDummySentence } from "../dummy/sentence";
+import { createDummySentence } from "../../../../../../tests/dummy/sentence";
 
 describe("Sentence tests", () => {
     const sentence = createDummySentence("hello");

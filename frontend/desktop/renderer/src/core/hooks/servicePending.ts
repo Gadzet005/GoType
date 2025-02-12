@@ -8,15 +8,21 @@ export function useServicePending<TService extends Service>(service: TService) {
     const [pending, setPending] = React.useState(false);
 
     const runService = React.useCallback(
-        (
+        async (
             ...args: RemoveFirst<Parameters<TService>>
         ): Promise<Awaited<ReturnType<TService>>> => {
             setPending(true);
-            return ctx
-                .runService(service, ...args)
-                .finally(() => setPending(false));
+
+            let result: Awaited<ReturnType<TService>>;
+            try {
+                result = await ctx.runService(service, ...args);
+            } finally {
+                setPending(false);
+            }
+
+            return result;
         },
-        [ctx, setPending, service]
+        [ctx, service]
     );
 
     const isPending = React.useCallback(() => {

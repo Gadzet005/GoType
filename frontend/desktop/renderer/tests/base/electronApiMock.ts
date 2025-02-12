@@ -11,7 +11,12 @@ export namespace ElectronAPIMock {
         addLevel: vi.fn(),
         removeLevel: vi.fn(),
     };
+
+    export const App = {
+        quitApp: vi.fn(),
+    };
 }
 
 window.userAPI = ElectronAPIMock.User;
 window.levelAPI = ElectronAPIMock.Level;
+window.commonAPI = ElectronAPIMock.App;

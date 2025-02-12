@@ -2,7 +2,7 @@ import { HomePage } from "@/components/pages/HomePage";
 import { cleanup, render } from "@testing-library/react";
 import { Menu } from "@/components/pages/HomePage/Menu";
 import { AccessType } from "@/components/pages/HomePage/Menu/types";
-import { UserDummy } from "@tests/base/dummy";
+import { UserDummy } from "@tests/dummy/user";
 import { renderWithUser } from "@tests/base/utils";
 
 describe("Home page", () => {

@@ -1,6 +1,6 @@
-import { BaseAuthTests } from "./base";
+import { BaseAuthTests } from "./baseAuthTests";
 import { signUp } from "@/core/services/api/user/signUp";
-import { Dummy } from "../dummy";
+import { Dummy } from "./dummy";
 
 describe("Sign up tests", () =>
     BaseAuthTests(signUp, Dummy.signUpArgs, Dummy.signUpResult));

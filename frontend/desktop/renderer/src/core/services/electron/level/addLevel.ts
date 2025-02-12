@@ -10,7 +10,6 @@ export async function addLevel(
         await window.levelAPI.addLevel(level);
         return success();
     } catch {
-        console.error("Failed to add levels");
         return failure();
     }
 }

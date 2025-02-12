@@ -9,12 +9,11 @@ export async function getLevel(
     try {
         const result = await window.levelAPI.getLevel(levelId);
         if (!result) {
-            throw new Error("Failed to get level");
+            return failure();
         }
 
         return success(result);
     } catch {
-        console.error("Failed to get level");
         return failure();
     }
 }
