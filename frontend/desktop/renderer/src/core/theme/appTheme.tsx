@@ -57,13 +57,26 @@ export const appTheme = createTheme({
   },
   components: {
     MuiButton: {
+      styleOverrides: {
+        root: ({ ownerState }) => {
+          const result = { borderRadius: 8 };
+          if (
+            ownerState.color !== undefined &&
+            ownerState.color !== "inherit"
+          ) {
+            return {
+              ...result,
+              "&:hover": {
+                backgroundColor: appTheme.palette[ownerState.color].dark,
+                transition: "0.2s",
+              },
+            };
+          }
+          return result;
+        },
+      },
       defaultProps: {
         draggable: false,
-      },
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-        },
       },
     },
     MuiLink: {

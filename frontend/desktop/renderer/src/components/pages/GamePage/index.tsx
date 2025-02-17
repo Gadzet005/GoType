@@ -14,6 +14,7 @@ import { GameField } from "./GameField";
 import PauseMenu from "./PauseMenu";
 
 import "./index.css";
+import { useAudioPlayer } from "react-use-audio-player";
 
 interface GamePageProps {
   level: Level;
@@ -22,6 +23,7 @@ interface GamePageProps {
 export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   const navigate = useNavigate();
   const [game] = React.useState<Game>(new Game(level));
+  const audioPlayer = useAudioPlayer();
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (game.isRunning) {
@@ -29,17 +31,21 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
     }
   };
 
-  const handleResume = () => {
+  const handleResume = React.useCallback(() => {
     game.start();
-  };
+    audioPlayer.play();
+  }, [game, audioPlayer]);
 
   const handlePause = () => {
     game.pause();
+    audioPlayer.pause();
   };
 
   const handleRestart = () => {
     game.init();
     game.start();
+    audioPlayer.stop();
+    audioPlayer.play();
   };
 
   const handleTogglePause = () => {
@@ -54,6 +60,16 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   useHotkeys(game.level.language.alphabet.split(""), handleKeyDown, [
     game.level.language.alphabet,
   ]);
+
+  React.useEffect(() => {
+    audioPlayer.load(level.game.audio.url, {
+      autoplay: true,
+      loop: false,
+      format: level.game.audio.type,
+    });
+    return () => audioPlayer.cleanup();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level.game.audio.url]);
 
   React.useEffect(() => {
     game.init();
@@ -103,6 +119,8 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
                 sx={{
                   bgcolor: "background.paper",
                   color: "text.primary",
+                  height: "50px",
+                  width: "50px",
                 }}
                 variant="contained"
                 onClick={handlePause}
@@ -110,7 +128,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
                 <MenuIcon />
               </Button>
             </Box>
-            <Box sx={{ width: "50%", px: 2 }}>
+            <Box sx={{ width: "50%", px: 3 }}>
               <LinearProgress
                 sx={{
                   height: 15,
@@ -131,8 +149,16 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
               }}
             >
               <ComboCounter combo={game.statistics.comboCounter} />
-              <Box sx={{ bgcolor: "background.paper", p: 2, borderRadius: 4 }}>
-                <Typography color="text.secondary" variant="h3">
+              <Box
+                sx={{
+                  bgcolor: "background.paper",
+                  p: 2,
+                  borderRadius: 4,
+                  minWidth: "200px",
+                  textAlign: "center",
+                }}
+              >
+                <Typography color="text.secondary" variant="h4">
                   {String(game.statistics.score).padStart(7, "0")}
                 </Typography>
               </Box>

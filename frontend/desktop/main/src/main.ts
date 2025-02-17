@@ -11,11 +11,19 @@ import {
 
 const isDev = process.env.ELECTRON_IS_DEV || false;
 
+protocol.registerSchemesAsPrivileged([
+    {
+        scheme: "level-asset",
+        privileges: {
+            stream: true,
+            bypassCSP: true,
+        },
+    },
+]);
+
 function createWindow(): BrowserWindow {
     let mainWindow = new BrowserWindow({
         webPreferences: {
-            contextIsolation: true,
-            nodeIntegration: false,
             preload: path.join(__dirname, "preload.js"),
         },
         autoHideMenuBar: true,
@@ -92,21 +100,18 @@ app.setPath("userData", path.join(app.getPath("appData"), "gotype"));
 
 app.whenReady().then(() => {
     if (isDev) {
-        installExtension(REACT_DEVELOPER_TOOLS)
-            .then((ext) => console.log(`Added Extension:  ${ext.name}`))
-            .catch((err) => console.log("An error occurred: ", err));
+        installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
+            console.log("An error occurred: ", err)
+        );
     }
 
     const { levelStore } = createStore();
     createWindow();
 
-    protocol.handle("level-file", (request) => {
-        const filePath = request.url.slice("level-file://".length);
-        return net.fetch(
-            url
-                .pathToFileURL(path.join(levelStore.getPath(), filePath))
-                .toString()
-        );
+    protocol.handle("level-asset", (request) => {
+        const relPath = request.url.slice("level-asset://".length);
+        const filePath = path.join(levelStore.getPath(), relPath);
+        return net.fetch(url.pathToFileURL(filePath).toString());
     });
 
     ipcMain.handle("quit-app", async () => {

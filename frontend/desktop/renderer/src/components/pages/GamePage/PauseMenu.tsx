@@ -62,7 +62,6 @@ const PauseMenu: React.FC<PauseMenuProps> = ({
               startIcon={<Play />}
               onClick={onContinue}
               sx={{
-                "&:hover": { bgcolor: "success.dark" },
                 fontSize: "1.25rem",
                 fontWeight: "bold",
                 py: 1.5,
@@ -77,7 +76,6 @@ const PauseMenu: React.FC<PauseMenuProps> = ({
               startIcon={<RotateCcw />}
               onClick={onRestart}
               sx={{
-                "&:hover": { bgcolor: "info.dark" },
                 fontSize: "1.25rem",
                 fontWeight: "bold",
                 py: 1.5,
@@ -92,7 +90,6 @@ const PauseMenu: React.FC<PauseMenuProps> = ({
               startIcon={<LogOut />}
               onClick={onExit}
               sx={{
-                "&:hover": { bgcolor: "error.dark" },
                 fontSize: "1.25rem",
                 fontWeight: "bold",
                 py: 1.5,

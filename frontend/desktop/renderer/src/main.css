@@ -4,6 +4,13 @@ html {
 
 body {
   height: 100%;
+  user-select: none;
+  overflow: hidden;
+  cursor: url("/cursor/default.png"), default;
+}
+
+button:hover {
+  cursor: url("/cursor/pointer.png"), pointer;
 }
 
 div#root {

@@ -30,7 +30,7 @@ export class LevelStore {
         return url
             .format({
                 pathname: path.join(String(levelId), fileName),
-                protocol: "level-file:",
+                protocol: "level-asset:",
                 slashes: true,
             })
             .toString();

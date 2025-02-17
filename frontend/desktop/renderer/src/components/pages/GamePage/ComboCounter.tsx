@@ -15,10 +15,11 @@ export function ComboCounter({ combo }: ComboCounterProps) {
         px: 4,
         py: 2,
         borderRadius: 4,
+        minWidth: "100px",
       }}
     >
       <Typography
-        variant="h4"
+        variant="h5"
         color="primary"
         sx={{
           fontWeight: "bold",
