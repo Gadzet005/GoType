@@ -270,3 +270,27 @@ func (lp *LevelPostgres) GetTagsByLevelID(levelID int) ([]entities.Tag, error) {
 
 	return tags, nil
 }
+
+func (lp *LevelPostgres) GetLevelStats(levelId int) (entities.LevelStats, error) {
+	var stats entities.LevelStats
+
+	query := fmt.Sprintf("SELECT COALESCE(count(*), 0) as num_played, COALESCE(AVG(accuracy), 0) as average_acc, COALESCE(MAX(max_combo), 0) as max_combo, COALESCE(MAX(points), 0) as max_points, COALESCE(AVG(points),0) as average_points, COALESCE(AVG(average_velocity),0) as average_average_velocity, COALESCE(MAX(average_velocity),0) as max_average_velocity FROM %s WHERE level_id = $1", levelCompleteTable)
+	if err := lp.db.Get(&stats, query, levelId); err != nil {
+		logrus.Printf("Error fetching levels: get level stats top %s", err.Error())
+		return entities.LevelStats{}, errors.New(gotype.ErrInternal)
+	}
+
+	return stats, nil
+}
+
+func (lp *LevelPostgres) GetLevelUserTop(levelId int) ([]entities.UserLevelCompletionInfo, error) {
+	var ret []entities.UserLevelCompletionInfo
+
+	query := fmt.Sprintf(fmt.Sprintf("SELECT s.level_id,s.player_id,u.name as player_name,s.time,s.accuracy,s.average_velocity,s.max_combo,s.placement,s.points FROM (SELECT * FROM %s WHERE level_id = $1 ORDER BY points, time LIMIT 10) AS s JOIN %s AS u on s.player_id = u.id", levelCompleteTable, usersTable))
+	if err := lp.db.Select(&ret, query, levelId); err != nil {
+		logrus.Printf("Error fetching levels: get level user top %s", err.Error())
+		return []entities.UserLevelCompletionInfo{}, errors.New(gotype.ErrInternal)
+	}
+
+	return ret, nil
+}

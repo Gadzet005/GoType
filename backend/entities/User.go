@@ -32,6 +32,10 @@ type Users struct {
 	UserInfo []User `json:"users"`
 }
 
+type UserID struct {
+	Id int `json:"id" binding:"required"`
+}
+
 type UserSearchParams struct {
 	Name     string `json:"name" binding:"required"`
 	IsBanned *bool  `json:"is_banned" binding:"required"`

@@ -23,6 +23,8 @@ type UserActions interface {
 }
 
 type Stats interface {
+	GetUserStats(id int) (entities.PlayerStats, error)
+	GetUsersTop(params entities.StatSortFilterParams) ([]entities.PlayerStats, error)
 }
 
 type Admin interface {
@@ -41,7 +43,8 @@ type Admin interface {
 type MultiplayerGame interface {
 }
 
-type SinglePlayerGame interface {
+type SinglePlayer interface {
+	SendResults(senderID int, lc entities.LevelComplete) error
 }
 
 type Level interface {
@@ -51,20 +54,26 @@ type Level interface {
 	GetLevelById(levelId int) (entities.Level, error)
 	GetLevelList(fetchStruct entities.FetchLevelStruct) ([]entities.Level, error)
 	CheckLevelExists(levInfo entities.GetLevelInfoStruct) (string, error)
+	GetLevelStats(levelId int) (entities.LevelStats, error)
+	GetLevelUserTop(levelId int) ([]entities.UserLevelCompletionInfo, error)
 }
 
 type Service struct {
-	Authorization Authorization
-	UserActions   UserActions
-	Admin         Admin
-	Level         Level
+	Authorization    Authorization
+	UserActions      UserActions
+	Admin            Admin
+	Level            Level
+	Stats            Stats
+	SinglePlayerGame SinglePlayer
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
-		Authorization: NewAuthService(repos.Authorization),
-		UserActions:   NewUserActionsService(repos.UserActions),
-		Admin:         NewAdminService(repos.AdminActions),
-		Level:         NewLevelService(repos.Level),
+		Authorization:    NewAuthService(repos.Authorization),
+		UserActions:      NewUserActionsService(repos.UserActions),
+		Admin:            NewAdminService(repos.AdminActions),
+		Level:            NewLevelService(repos.Level),
+		Stats:            NewStatsService(repos.Stats),
+		SinglePlayerGame: NewSinglePlayerGame(repos.SinglePlayerGame),
 	}
 }

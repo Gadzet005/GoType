@@ -1046,6 +1046,180 @@ const docTemplate = `{
                 }
             }
         },
+        "/single-game/send-results": {
+            "post": {
+                "description": "Send results of single player game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "single-game"
+                ],
+                "summary": "Send results of single player game",
+                "operationId": "send-results",
+                "parameters": [
+                    {
+                        "description": "Results of the game",
+                        "name": "complaint_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.LevelComplete"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/get-user-stats": {
+            "get": {
+                "description": "Get User Statistics by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Get User Statistics",
+                "operationId": "get-user-stats",
+                "parameters": [
+                    {
+                        "description": "Id of user",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.UserID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.GetUserStatsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/get-users-top": {
+            "get": {
+                "description": "Get Users Top with given params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Get Users Top",
+                "operationId": "get-users-top",
+                "parameters": [
+                    {
+                        "description": "Search params",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.StatSortFilterParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.GetUsersTop"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/user-actions/get-user-info": {
             "get": {
                 "description": "Get username by id",
@@ -1253,6 +1427,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entities.CategoryParams": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "integer"
+                },
+                "pattern": {
+                    "type": "string"
+                }
+            }
+        },
         "entities.ChangeUserAccess": {
             "type": "object",
             "required": [
@@ -1313,6 +1498,25 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "integer"
+                }
+            }
+        },
+        "entities.GetUserStatsRes": {
+            "type": "object",
+            "properties": {
+                "user_stats": {
+                    "$ref": "#/definitions/entities.PlayerStats"
+                }
+            }
+        },
+        "entities.GetUsersTop": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.PlayerStats"
+                    }
                 }
             }
         },
@@ -1417,6 +1621,48 @@ const docTemplate = `{
                 }
             }
         },
+        "entities.LevelComplete": {
+            "type": "object",
+            "required": [
+                "average_velocity",
+                "level_id",
+                "max_combo",
+                "num_press_err_by_char",
+                "placement",
+                "player_id",
+                "points"
+            ],
+            "properties": {
+                "average_velocity": {
+                    "type": "number"
+                },
+                "level_id": {
+                    "type": "integer"
+                },
+                "max_combo": {
+                    "type": "integer"
+                },
+                "num_press_err_by_char": {
+                    "description": "NumPressErrByChar map[rune][2]int ` + "`" + `json:\"num_press_err_by_char\" binding:\"required\" db:\"-\"` + "`" + `",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "placement": {
+                    "type": "integer"
+                },
+                "player_id": {
+                    "type": "integer"
+                },
+                "points": {
+                    "type": "integer"
+                }
+            }
+        },
         "entities.LevelFilterParams": {
             "type": "object",
             "properties": {
@@ -1473,6 +1719,86 @@ const docTemplate = `{
                 },
                 "page_size": {
                     "type": "integer"
+                }
+            }
+        },
+        "entities.PlayerStats": {
+            "type": "object",
+            "required": [
+                "num_press_err_by_char_by_lang"
+            ],
+            "properties": {
+                "average_accuracy_classic": {
+                    "type": "number"
+                },
+                "average_accuracy_relax": {
+                    "type": "number"
+                },
+                "average_delay": {
+                    "type": "number"
+                },
+                "num_chars_classic": {
+                    "type": "integer"
+                },
+                "num_chars_relax": {
+                    "type": "integer"
+                },
+                "num_classes_classic": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "num_games_mult": {
+                    "type": "integer"
+                },
+                "num_level_classic": {
+                    "type": "integer"
+                },
+                "num_level_relax": {
+                    "type": "integer"
+                },
+                "num_press_err_by_char_by_lang": {
+                    "description": "NumPressErrByCharByLang map[string]interface{} ` + "`" + `json:\"num_press_err_by_char_by_lang\" db:\"num_press_err_by_char_by_lang\" binding:\"required\"` + "`" + `",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "sum_points": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                },
+                "win_percentage": {
+                    "type": "number"
+                }
+            }
+        },
+        "entities.StatSortFilterParams": {
+            "type": "object",
+            "required": [
+                "page_info"
+            ],
+            "properties": {
+                "category_params": {
+                    "$ref": "#/definitions/entities.CategoryParams"
+                },
+                "page_info": {
+                    "$ref": "#/definitions/entities.PageInfo"
+                },
+                "points": {
+                    "type": "string"
                 }
             }
         },
@@ -1542,6 +1868,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/entities.UserComplaint"
                     }
+                }
+            }
+        },
+        "entities.UserID": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1649,8 +1986,6 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "API Server for GoType game and website",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-	LeftDelim:        "{{",
-	RightDelim:       "}}",
 }
 
 func init() {

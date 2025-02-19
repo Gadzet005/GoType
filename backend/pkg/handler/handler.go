@@ -47,10 +47,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userActions.POST("/write-level-complaint", h.WriteLevelComplaint)
 	}
 
-	//stats := router.Group("/stats", h.UserIdentity)
-	//{
-	//
-	//}
+	stats := router.Group("/stats", h.UserIdentity)
+	{
+		stats.GET("/get-user-stats", h.GetUserStats)
+		stats.GET("/get-users-top", h.GetUsersTop)
+	}
 
 	admin := router.Group("/admin", h.UserIdentity)
 	{
@@ -81,10 +82,10 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	//
 	//}
 
-	//singleGame := router.Group("/single-game")
-	//{
-	//
-	//}
+	singleGame := router.Group("/single-game", h.UserIdentity)
+	{
+		singleGame.POST("/send-results", h.SendResults)
+	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	//router.Run(":8080")

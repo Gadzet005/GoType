@@ -23,6 +23,8 @@ type UserActions interface {
 }
 
 type Stats interface {
+	GetUserStats(id int) (entities.PlayerStats, error)
+	GetUsersTop(params map[string]interface{}) ([]entities.PlayerStats, error)
 }
 
 type Admin interface {
@@ -43,6 +45,7 @@ type MultiplayerGame interface {
 }
 
 type SinglePlayerGame interface {
+	SendResults(lc entities.LevelComplete, totalPush int, totalErr int) error
 }
 
 type Level interface {
@@ -52,21 +55,27 @@ type Level interface {
 	GetLevelById(levelId int) (entities.Level, error)
 	FetchLevels(map[string]interface{}) ([]entities.Level, error)
 	GetPathsById(levelId int) (int, string, string, error)
+	GetLevelStats(levelId int) (entities.LevelStats, error)
+	GetLevelUserTop(levelId int) ([]entities.UserLevelCompletionInfo, error)
 }
 
 type Repository struct {
-	Authorization Authorization
-	UserActions   UserActions
-	AdminActions  Admin
-	Level         Level
+	Authorization    Authorization
+	UserActions      UserActions
+	AdminActions     Admin
+	Level            Level
+	Stats            Stats
+	SinglePlayerGame SinglePlayerGame
 }
 
 func NewRepository(db *sqlx.DB, client *redis.Client) *Repository {
 	repo := Repository{
-		Authorization: NewAuthPostgres(db, client),
-		UserActions:   NewUserActionsPostgres(db, client),
-		AdminActions:  NewAdminPostgres(db, client),
-		Level:         NewLevelPostgres(db),
+		Authorization:    NewAuthPostgres(db, client),
+		UserActions:      NewUserActionsPostgres(db, client),
+		AdminActions:     NewAdminPostgres(db, client),
+		Level:            NewLevelPostgres(db),
+		Stats:            NewStatsPostgres(db),
+		SinglePlayerGame: NewSinglePlayerGamePostgres(db),
 	}
 
 	return &repo
