@@ -26,31 +26,31 @@ import (
 func (h *Handler) CreateLevel(c *gin.Context) {
 	levelFile, err := c.FormFile("level")
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrInvalidInput)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
 	infoFile, err := c.FormFile("info")
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrInvalidInput)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
 	previewFile, err := c.FormFile("preview")
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrInvalidInput)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
 	userId, ok := c.Get(userIdCtx)
 	if !ok {
-		c.String(http.StatusBadRequest, gotype.ErrAccessToken)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrAccessToken)
 	}
 
 	levelId, err := h.services.Level.CreateLevel(userId.(int), levelFile, infoFile, previewFile)
 
 	if err != nil {
-		c.String(gotype.CodeErrors[err.Error()], err.Error())
+		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
 	}
 
@@ -78,14 +78,14 @@ func (h *Handler) GetLevel(c *gin.Context) {
 	err := c.BindJSON(&levInfo)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrInvalidInput)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
 	filePath, err := h.services.Level.CheckLevelExists(levInfo)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrEntityNotFound)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrEntityNotFound)
 	}
 
 	parts := strings.Split(filePath, "/")
@@ -111,19 +111,35 @@ func (h *Handler) GetLevelInfoById(c *gin.Context) {
 	err := c.BindJSON(&levId)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrInvalidInput)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
 	levelInfo, err := h.services.Level.GetLevelById(levId.Id)
 
 	if err != nil {
-		c.String(gotype.CodeErrors[err.Error()], err.Error())
+		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
+		return
+	}
+
+	levelStats, err := h.services.Level.GetLevelStats(levId.Id)
+
+	if err != nil {
+		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
+		return
+	}
+
+	levelUserTop, err := h.services.Level.GetLevelUserTop(levId.Id)
+
+	if err != nil {
+		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"levelInfo": levelInfo,
+		"levelInfo":    levelInfo,
+		"levelUserTop": levelUserTop,
+		"levelStats":   levelStats,
 	})
 }
 
@@ -145,31 +161,31 @@ func (h *Handler) GetLevelInfoById(c *gin.Context) {
 func (h *Handler) UpdateLevel(c *gin.Context) {
 	levelFile, err := c.FormFile("level")
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrInvalidInput)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
 	infoFile, err := c.FormFile("info")
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrInvalidInput)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
 	previewFile, err := c.FormFile("preview")
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrInvalidInput)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
 	userId, ok := c.Get(userIdCtx)
 	if !ok {
-		c.String(http.StatusBadRequest, gotype.ErrAccessToken)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrAccessToken)
 	}
 
 	levelId, err := h.services.Level.UpdateLevel(userId.(int), levelFile, infoFile, previewFile)
 
 	if err != nil {
-		c.String(gotype.CodeErrors[err.Error()], err.Error())
+		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
 	}
 
@@ -196,14 +212,14 @@ func (h *Handler) GetLevelList(c *gin.Context) {
 	err := c.BindJSON(&fetchParams)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, gotype.ErrInvalidInput)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
 	levelList, err := h.services.Level.GetLevelList(fetchParams)
 
 	if err != nil {
-		c.String(gotype.CodeErrors[err.Error()], err.Error())
+		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
 	}
 

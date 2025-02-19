@@ -23,7 +23,7 @@ func NewAuthPostgres(db *sqlx.DB, client *redis.Client) *AuthPostgres {
 
 func (s *AuthPostgres) CreateSeniorAdmin(name string, password string) error {
 	var id int
-
+	//TODO: Transaction! Required
 	query := fmt.Sprintf("INSERT INTO %s (name, password_hash, refresh_token, expires_at, access) VALUES ($1, $2, $3, $4, $5) RETURNING id", usersTable)
 
 	row := s.db.QueryRow(query, name, password, "token", time.Now().UTC(), entities.SeniorAdmin)
@@ -36,6 +36,12 @@ func (s *AuthPostgres) CreateSeniorAdmin(name string, password string) error {
 		return errors.New(gotype.ErrInternal)
 	}
 
+	err := s.CreateStats(id)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -43,7 +49,7 @@ func (s *AuthPostgres) CreateUser(user entities.User) (int, int, string, error) 
 	var id int
 	var access int
 	var rToken string
-
+	//TODO: Transaction! Required
 	query := fmt.Sprintf("INSERT INTO %s (name, password_hash, refresh_token, expires_at) VALUES ($1, $2, $3, $4) RETURNING id, access, refresh_token", usersTable)
 
 	row := s.db.QueryRow(query, user.Name, user.Password, user.RefreshToken, user.ExpiresAt)
@@ -54,6 +60,12 @@ func (s *AuthPostgres) CreateUser(user entities.User) (int, int, string, error) 
 		}
 
 		return -1, -1, "", errors.New(gotype.ErrInternal)
+	}
+
+	err := s.CreateStats(id)
+
+	if err != nil {
+		return -1, -1, "", err
 	}
 
 	return id, access, rToken, nil
@@ -110,4 +122,18 @@ func (s *AuthPostgres) SetUserRefreshToken(id int, refreshToken string, expiresA
 	}
 
 	return retId, access, rToken, nil
+}
+
+func (s *AuthPostgres) CreateStats(userId int) error {
+	var id int
+
+	query := fmt.Sprintf("INSERT INTO %s (user_id) VALUES ($1) RETURNING user_id", statsTable)
+
+	row := s.db.QueryRow(query, userId)
+
+	if err := row.Scan(&id); err != nil {
+		return errors.New(gotype.ErrInternal)
+	}
+
+	return nil
 }

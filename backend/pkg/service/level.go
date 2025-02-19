@@ -42,6 +42,14 @@ func (s *LevelService) CreateLevel(userId int, levelFile, infoFile, previewFile 
 		return -1, errors.New(gotype.ErrPermissionDenied)
 	}
 
+	if slices.Index(entities.AvailableLanguages, levelInfo.Language) == -1 {
+		return -1, errors.New(gotype.ErrInvalidInput)
+	}
+
+	if slices.Index(entities.AvailableTypes, levelInfo.Type) == -1 {
+		return -1, errors.New(gotype.ErrInvalidInput)
+	}
+
 	previewName, archiveName, id, err := s.repo.CreateLevel(levelInfo)
 
 	levelFile.Filename = archiveName
@@ -152,8 +160,14 @@ func (s *LevelService) GetLevelById(levelId int) (entities.Level, error) {
 }
 
 // TODO: Do
-func (s *LevelService) GetLevelUserTop() ([]entities.Level, error) {
-	return nil, nil
+func (s *LevelService) GetLevelUserTop(levelId int) ([]entities.UserLevelCompletionInfo, error) {
+	levelCompInfo, err := s.repo.GetLevelUserTop(levelId)
+
+	if err != nil {
+		return []entities.UserLevelCompletionInfo{}, err
+	}
+
+	return levelCompInfo, nil
 }
 
 func (s *LevelService) GetLevelList(fetchStruct entities.FetchLevelStruct) ([]entities.Level, error) {
@@ -190,8 +204,14 @@ func (s *LevelService) GetLevelList(fetchStruct entities.FetchLevelStruct) ([]en
 }
 
 // TODO: Do
-func (s *LevelService) GetLevelStats() ([]entities.Level, error) {
-	return nil, nil
+func (s *LevelService) GetLevelStats(levelId int) (entities.LevelStats, error) {
+	levelStats, err := s.repo.GetLevelStats(levelId)
+
+	if err != nil {
+		return entities.LevelStats{}, err
+	}
+
+	return levelStats, nil
 }
 
 func (s *LevelService) CheckLevelExists(levInfo entities.GetLevelInfoStruct) (string, error) {

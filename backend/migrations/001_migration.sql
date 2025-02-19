@@ -16,9 +16,9 @@ CREATE TABLE LevelComplete (
     level_id int NOT NULL,
     player_id int NOT NULL,
     time timestamp NOT NULL,
-    num_press_by_char int[26] NOT NULL,
-    num_err_by_char int[26] NOT NULL,
+    num_press_err_by_char JSONB NOT NULL,
     average_velocity numeric NOT NULL,
+    accuracy numeric NOT NULL,
     max_combo int NOT NULL,
     placement int NOT NULL,
     points int NOT NULL
@@ -26,8 +26,7 @@ CREATE TABLE LevelComplete (
 
 CREATE TABLE UserStatistic (
     user_id int PRIMARY KEY not null,
-    num_press_by_char int[26] default '{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}',
-    num_err_by_char int[26] default '{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}',
+    num_press_err_by_char_by_lang JSONB DEFAULT '{}',
     num_level_relax int DEFAULT 0,
     num_level_classic int DEFAULT 0,
     num_games_mult int DEFAULT 0,
@@ -36,8 +35,8 @@ CREATE TABLE UserStatistic (
     average_accuracy_classic numeric DEFAULT 0,
     average_accuracy_relax numeric DEFAULT 0,
     win_percentage numeric DEFAULT 0,
-    average_delay numeric DEFAULT 10,
-    num_classes_classic int[5] default '{0, 0, 0, 0, 0}',
+    average_delay numeric DEFAULT 1000,
+    num_classes_classic integer[] default '{0, 0, 0, 0, 0}',
     sum_points int default 0
 );
 

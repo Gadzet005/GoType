@@ -24,3 +24,16 @@ type LevelComplaint struct {
 	Reason       string    `json:"reason" binding:"required" db:"reason"`
 	Message      string    `json:"message" binding:"required" db:"message"`
 }
+
+type UserComplaints struct {
+	UserComplaints []UserComplaint `json:"user_complaints"`
+}
+
+type LevelComplaints struct {
+	LevelComplaints []LevelComplaint `json:"level_complaints"`
+}
+
+// swagger:model
+type ComplaintID struct {
+	Id int `json:"id" binding:"required"`
+}
