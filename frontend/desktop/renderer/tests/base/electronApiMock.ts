@@ -1,15 +1,23 @@
 export namespace ElectronAPIMock {
     export const User = {
-        storeTokens: vi.fn(),
-        getTokens: vi.fn(),
-        clearTokens: vi.fn(),
+        getUserInfo: vi.fn(),
+        saveUserInfo: vi.fn(),
+        clearUserInfo: vi.fn(),
     };
 
     export const Level = {
-        getLevels: vi.fn(),
+        getAllLevels: vi.fn(),
         getLevel: vi.fn(),
-        addLevel: vi.fn(),
+        saveLevel: vi.fn(),
         removeLevel: vi.fn(),
+    };
+
+    export const LevelDraft = {
+        getDraft: vi.fn(),
+        createDraft: vi.fn(),
+        updateDraft: vi.fn(),
+        removeDraft: vi.fn(),
+        getAllDrafts: vi.fn(),
     };
 
     export const App = {
@@ -19,4 +27,5 @@ export namespace ElectronAPIMock {
 
 window.userAPI = ElectronAPIMock.User;
 window.levelAPI = ElectronAPIMock.Level;
-window.commonAPI = ElectronAPIMock.App;
+window.appAPI = ElectronAPIMock.App;
+window.levelDraftAPI = ElectronAPIMock.LevelDraft;

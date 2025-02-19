@@ -1,6 +1,6 @@
 import { TICK_TIME } from "@/core/store/game/consts";
 import { GameFieldSentence } from "@/core/store/game/field/sentence";
-import { FadeAnimation } from "@desktop-common/sentence/style";
+import { FadeAnimation } from "@desktop-common/level/style";
 import { Box } from "@mui/material";
 import { observer } from "mobx-react";
 import React from "react";

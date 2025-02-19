@@ -1,5 +1,5 @@
 import { GameState } from "@/core/store/game/state";
-import { Language } from "@desktop-common/language";
+import { Language } from "@/core/utils/language";
 import { createDummySentence } from "../../../../../../tests/dummy/sentence";
 
 describe("GameState", () => {

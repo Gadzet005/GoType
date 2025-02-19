@@ -68,9 +68,9 @@ describe("Sentence tests", () => {
 
         for (let i = 0; i < steps.length; i++) {
             for (let j = 0; j < 3; j++) {
-                expect(gameFieldSentence.getLetterStyle(j)).toEqual({
-                    color: steps[i][j],
-                });
+                expect(gameFieldSentence.getLetterStyle(j).color).toEqual(
+                    steps[i][j]
+                );
                 expect(gameFieldSentence.getLetterState(j)).toEqual(states[j]);
             }
             gameFieldSentence.cursor.move();

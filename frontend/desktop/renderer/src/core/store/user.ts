@@ -1,6 +1,6 @@
 import { makeObservable, computed, observable, action } from "mobx";
-import { AuthTokens } from "@desktop-common/authTokens";
-import { IUser, UserProfile } from "@/core/types/base/user";
+import { AuthTokens, UserInfo, UserProfile } from "@desktop-common/user";
+import { IUser } from "@/core/types/base/user";
 
 export class User implements IUser {
     private _profile: IUser["profile"] = null;
@@ -18,6 +18,7 @@ export class User implements IUser {
             isBanned: computed,
 
             unauthorize: action,
+            authorize: action,
             setTokens: action,
             setProfile: action,
         });
@@ -37,6 +38,11 @@ export class User implements IUser {
 
     setProfile(profile: UserProfile) {
         this._profile = profile;
+    }
+
+    authorize(userInfo: UserInfo): void {
+        this._profile = userInfo.profile;
+        this._tokens = userInfo.tokens;
     }
 
     unauthorize() {

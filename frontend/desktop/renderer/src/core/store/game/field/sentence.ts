@@ -1,4 +1,4 @@
-import { Sentence } from "@desktop-common/sentence";
+import { Sentence } from "@desktop-common/level/sentence";
 import { action, computed, makeObservable, observable } from "mobx";
 
 export enum LetterState {

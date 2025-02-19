@@ -1,25 +1,41 @@
-import { app, BrowserWindow, ipcMain, net, protocol } from "electron";
+import { app, BrowserWindow, protocol } from "electron";
 import path from "path";
 import url from "url";
-import { AppStore } from "./store";
-import { LevelStore } from "./levelStore";
-import { Level } from "../../common/level";
 import {
     installExtension,
     REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
+import { ProtocolNames } from "./consts";
+import { logError } from "./utils/common";
+import { MainStorage } from "./storages/main";
+import { LevelStorage } from "./storages/level";
+import { LevelDraftStorage } from "./storages/levelDraft";
+import { initAppAPIHandlers } from "./handlers/appAPIHandlers";
+import { initUserAPIHandlers } from "./handlers/userAPIHandlers";
+import { initLevelAPIHandlers } from "./handlers/levelAPIHandlers";
+import { initLevelDraftAPIHandlers } from "./handlers/levelDraftAPIHandlers";
+import { getDirProtocolHandler } from "./utils/protocols";
 
 const isDev = process.env.ELECTRON_IS_DEV || false;
 
 protocol.registerSchemesAsPrivileged([
     {
-        scheme: "level-asset",
+        scheme: ProtocolNames.LEVEL_ASSET,
+        privileges: {
+            stream: true,
+            bypassCSP: true,
+        },
+    },
+    {
+        scheme: ProtocolNames.LEVEL_DRAFT_ASSET,
         privileges: {
             stream: true,
             bypassCSP: true,
         },
     },
 ]);
+
+app.setPath("userData", path.join(app.getPath("appData"), "gotype"));
 
 function createWindow(): BrowserWindow {
     let mainWindow = new BrowserWindow({
@@ -41,88 +57,47 @@ function createWindow(): BrowserWindow {
     return mainWindow;
 }
 
-function createStore(): { mainStore: AppStore; levelStore: LevelStore } {
-    let mainStore = new AppStore();
-    let levelStore = new LevelStore(
-        path.join(app.getPath("userData"), "levels")
-    );
-
-    ipcMain.handle("get-tokens", async () => {
-        return mainStore.getTokens();
-    });
-    ipcMain.handle(
-        "store-tokens",
-        async (_, accessToken: any, refreshToken: any) => {
-            mainStore.storeTokens(accessToken, refreshToken);
-        }
-    );
-    ipcMain.handle("clear-tokens", async () => {
-        mainStore.clearTokens();
-    });
-
-    ipcMain.handle("get-levels", async () => {
-        const levelIds = mainStore.getSavedLevels();
-
-        const awaitedLevels: Promise<Level | null>[] = [];
-        for (const levelId of levelIds) {
-            awaitedLevels.push(levelStore.getLevel(levelId));
-        }
-
-        const levels: Level[] = [];
-        for (const awaitedLevel of awaitedLevels) {
-            const level = await awaitedLevel;
-            if (level) {
-                levels.push(level);
-            }
-        }
-
-        return levels;
-    });
-
-    ipcMain.handle("get-level", async (_, levelId: any) => {
-        return await levelStore.getLevel(levelId);
-    });
-
-    ipcMain.handle("add-level", async (_, level: any) => {
-        mainStore.addLevel(level.id);
-        await levelStore.createLevel(level);
-    });
-
-    ipcMain.handle("remove-level", async (_, levelId: any) => {
-        mainStore.removeLevel(levelId);
-        levelStore.removeLevel(levelId);
-    });
-
-    return { mainStore, levelStore };
-}
-
-app.setPath("userData", path.join(app.getPath("appData"), "gotype"));
-
 app.whenReady().then(() => {
     if (isDev) {
-        installExtension(REACT_DEVELOPER_TOOLS).catch((err) =>
-            console.log("An error occurred: ", err)
+        installExtension(REACT_DEVELOPER_TOOLS).catch(
+            logError("Can't install REACT_DEVELOPER_TOOLS")
         );
     }
 
-    const { levelStore } = createStore();
+    const mainStorage = new MainStorage();
+    const levelStorage = new LevelStorage(
+        mainStorage,
+        path.join(app.getPath("userData"), "levels")
+    );
+    const levelDraftStorage = new LevelDraftStorage(
+        mainStorage,
+        path.join(app.getPath("userData"), "level-drafts")
+    );
+
+    initAppAPIHandlers();
+    initUserAPIHandlers(mainStorage);
+    initLevelAPIHandlers(levelStorage);
+    initLevelDraftAPIHandlers(levelDraftStorage);
+
+    protocol.handle(
+        ProtocolNames.LEVEL_ASSET,
+        getDirProtocolHandler(ProtocolNames.LEVEL_ASSET, levelStorage.dir)
+    );
+    protocol.handle(
+        ProtocolNames.LEVEL_DRAFT_ASSET,
+        getDirProtocolHandler(
+            ProtocolNames.LEVEL_DRAFT_ASSET,
+            levelDraftStorage.dir
+        )
+    );
+
     createWindow();
+});
 
-    protocol.handle("level-asset", (request) => {
-        const relPath = request.url.slice("level-asset://".length);
-        const filePath = path.join(levelStore.getPath(), relPath);
-        return net.fetch(url.pathToFileURL(filePath).toString());
-    });
-
-    ipcMain.handle("quit-app", async () => {
-        app.quit();
-    });
-
-    app.on("activate", () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
-        }
-    });
+app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
 });
 
 app.on("window-all-closed", () => {

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { RoutePath } from "@/core/config/routes/path";
 import { useNavigate } from "@/core/hooks";
 import { Game } from "@/core/store/game";
-import { Level } from "@desktop-common/level";
+import { LevelInfo } from "@desktop-common/level";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 import { when } from "mobx";
@@ -13,11 +13,11 @@ import { ComboCounter } from "./ComboCounter";
 import { GameField } from "./GameField";
 import PauseMenu from "./PauseMenu";
 
-import "./index.css";
 import { useAudioPlayer } from "react-use-audio-player";
+import "./index.css";
 
 interface GamePageProps {
-  level: Level;
+  level: LevelInfo;
 }
 
 export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
@@ -95,7 +95,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
     <Box
       sx={{
         height: "100%",
-        backgroundImage: `url(${level.game.background.url})`,
+        backgroundImage: `url(${level.game.background?.url})`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
       }}

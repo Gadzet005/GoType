@@ -1,4 +1,4 @@
-import { Level } from "@desktop-common/level";
+import { LevelInfo } from "@desktop-common/level";
 import {
   Box,
   Card,
@@ -12,9 +12,10 @@ import PersonIcon from "@mui/icons-material/Person";
 import { Button } from "@/components/ui/Button";
 import React from "react";
 import { RoutePath } from "@/core/config/routes/path";
+import noImage from "/noimage.png";
 
 interface LevelListItemProps {
-  level: Level;
+  level: LevelInfo;
 }
 
 export const LevelListItem: React.FC<LevelListItemProps> = ({ level }) => {
@@ -34,7 +35,7 @@ export const LevelListItem: React.FC<LevelListItemProps> = ({ level }) => {
       <CardMedia
         component="img"
         height="300px"
-        image={level.preview.url}
+        image={level.preview?.url || noImage}
         alt={level.name}
       />
       <CardContent sx={{ flexGrow: 1, p: 3 }}>

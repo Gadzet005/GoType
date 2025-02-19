@@ -1,6 +1,6 @@
 import { User } from "@/core/store/user";
-import { UserProfile, IUser } from "@/core/types/base/user";
-import { AuthTokens } from "@desktop-common/authTokens";
+import { IUser } from "@/core/types/base/user";
+import { UserProfile, AuthTokens, UserInfo } from "@desktop-common/user";
 
 export namespace UserDummy {
     export const profile: UserProfile = {
@@ -18,11 +18,15 @@ export namespace UserDummy {
         refreshToken: "refresh_token",
     };
 
+    export const userInfo: UserInfo = {
+        profile: profile,
+        tokens: authTokens,
+    };
+
     export function create(isAuth: boolean = false): IUser {
         const user = new User();
         if (isAuth) {
-            user.setProfile(profile);
-            user.setTokens(authTokens);
+            user.authorize(userInfo);
         }
         return user;
     }

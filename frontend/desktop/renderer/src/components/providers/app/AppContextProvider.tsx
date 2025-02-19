@@ -1,6 +1,4 @@
-import { loadUserProfile } from "@/core/services/api/user/loadUserProfile";
-import { logout } from "@/core/services/api/user/logout";
-import { getAuthTokens } from "@/core/services/electron/tokens/getAuthTokens";
+import { getUserInfo } from "@/core/services/electron/user/getUserInfo";
 import { GlobalAppContext } from "@/core/store/appContext";
 import { User } from "@/core/store/user";
 import { AppContext } from "@/core/types/base/app";
@@ -24,15 +22,9 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = observer(
     );
 
     const loadUser = React.useCallback(async () => {
-      const getTokensResult = await context.runService(getAuthTokens);
-      if (!getTokensResult.ok) {
-        return;
-      }
-
-      context.user.setTokens(getTokensResult.payload!);
-      const loadResult = await context.runService(loadUserProfile);
-      if (!loadResult.ok) {
-        await context.runService(logout);
+      const result = await context.runService(getUserInfo);
+      if (result.ok) {
+        context.user.authorize(result.payload!);
       }
     }, [context]);
 

@@ -1,9 +1,9 @@
 import { AppContext } from "@/core/types/base/app";
 import { failure, PromiseResult, success } from "../../utils/result";
-import { clearAuthTokens } from "../../electron/tokens/clearAuthTokens";
+import { clearUserInfo } from "@/core/services/electron/user/clearUserInfo";
 import { ApiRoutes } from "@/core/config/api.config";
 import { Refresh } from "@/core/types/api/user";
-import { storeAuthTokens } from "../../electron/tokens/storeAuthTokens";
+import { saveUserInfo } from "@/core/services/electron/user/saveUserInfo";
 
 export async function refresh(ctx: AppContext): PromiseResult<void, void> {
     try {
@@ -19,12 +19,15 @@ export async function refresh(ctx: AppContext): PromiseResult<void, void> {
         };
 
         ctx.user.setTokens(authTokens);
-        ctx.runService(storeAuthTokens, authTokens);
+        ctx.runService(saveUserInfo, {
+            profile: ctx.user.profile!,
+            tokens: authTokens!,
+        });
 
         return success();
     } catch {
         ctx.user.unauthorize();
-        await ctx.runService(clearAuthTokens);
+        await ctx.runService(clearUserInfo);
         return failure();
     }
 }

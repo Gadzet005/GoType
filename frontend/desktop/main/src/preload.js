@@ -1,34 +1,52 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld("commonAPI", {
+contextBridge.exposeInMainWorld("appAPI", {
     quitApp: async () => {
         await ipcRenderer.invoke("quit-app");
     },
 });
 
 contextBridge.exposeInMainWorld("userAPI", {
-    getTokens: async () => {
-        return await ipcRenderer.invoke("get-tokens");
+    getUserInfo: async () => {
+        return await ipcRenderer.invoke("get-user-info");
     },
-    storeTokens: async (accessToken, refreshToken) => {
-        await ipcRenderer.invoke("store-tokens", accessToken, refreshToken);
+    saveUserInfo: async (userInfo) => {
+        await ipcRenderer.invoke("save-user-info", userInfo);
     },
-    clearTokens: async () => {
-        await ipcRenderer.invoke("clear-tokens");
+    clearUserInfo: async () => {
+        await ipcRenderer.invoke("clear-user-info");
     },
 });
 
 contextBridge.exposeInMainWorld("levelAPI", {
-    getLevels: async () => {
-        return await ipcRenderer.invoke("get-levels");
+    getAllLevels: async () => {
+        return await ipcRenderer.invoke("get-all-levels");
     },
     getLevel: async (levelId) => {
         return await ipcRenderer.invoke("get-level", levelId);
     },
-    addLevel: async (level) => {
-        await ipcRenderer.invoke("add-level", level);
+    saveLevel: async (level) => {
+        await ipcRenderer.invoke("save-level", level);
     },
     removeLevel: async (levelId) => {
         await ipcRenderer.invoke("remove-level", levelId);
+    },
+});
+
+contextBridge.exposeInMainWorld("draftAPI", {
+    getAllDrafts: async () => {
+        return await ipcRenderer.invoke("get-all-drafts");
+    },
+    getDraft: async (draftId) => {
+        return await ipcRenderer.invoke("get-draft", draftId);
+    },
+    createDraft: async (draft) => {
+        return await ipcRenderer.invoke("create-draft", draft);
+    },
+    updateDraft: async (draft) => {
+        await ipcRenderer.invoke("update-draft", draft);
+    },
+    removeDraft: async (draftId) => {
+        await ipcRenderer.invoke("remove-level", draftId);
     },
 });

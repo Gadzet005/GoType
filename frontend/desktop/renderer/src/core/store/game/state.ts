@@ -1,5 +1,5 @@
-import { Language } from "@desktop-common/language";
-import { Sentence } from "@desktop-common/sentence";
+import { Language } from "@/core/utils/language";
+import { Sentence } from "@desktop-common/level/sentence";
 import { action, makeObservable, observable } from "mobx";
 import { EventStorage } from "./events/storage";
 import { AddSentenceEvent } from "./events/wordEvents";

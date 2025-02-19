@@ -2,9 +2,10 @@ import { ApiError, ApiRoutes } from "@/core/config/api.config";
 import { failure, PromiseResult } from "@/core/services/utils/result";
 import { SignIn } from "@/core/types/api/user";
 import { AppContext } from "@/core/types/base/app";
-import { storeAuthTokens } from "../../electron/tokens/storeAuthTokens";
+import { saveUserInfo } from "@/core/services/electron/user/saveUserInfo";
 import { commonApiErrorResult, success } from "../../utils/result";
-import { loadUserProfile } from "./loadUserProfile";
+import { getUserProfile } from "./getUserProfile";
+import { AuthTokens } from "@desktop-common/user";
 
 export async function signIn(
     ctx: AppContext,
@@ -18,18 +19,24 @@ export async function signIn(
         } as SignIn.Args);
 
         const data: SignIn.Result = response.data;
-        const authTokens = {
+
+        const tokens: AuthTokens = {
             accessToken: data.access_token,
             refreshToken: data.refresh_token,
         };
+        ctx.user.setTokens(tokens);
 
-        ctx.user.setTokens(authTokens);
-        await ctx.runService(storeAuthTokens, authTokens);
-
-        const result = await ctx.runService(loadUserProfile);
+        const result = await ctx.runService(getUserProfile);
         if (!result.ok) {
             return failure(ApiError.unexpected);
         }
+        const profile = result.payload!;
+        ctx.user.setProfile(profile);
+
+        await ctx.runService(saveUserInfo, {
+            profile,
+            tokens,
+        });
 
         return success();
     } catch (error: any) {

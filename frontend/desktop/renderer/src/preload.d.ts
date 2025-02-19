@@ -1,27 +1,31 @@
+import { LevelInfo } from "@desktop-common/level";
+import { UserInfo } from "@desktop-common/user";
+import { LevelDraftInfo, LevelDraftInitialInfo } from "@desktop-common/draft";
+
 declare global {
     interface Window {
-        commonAPI: {
+        appAPI: {
             quitApp: () => Promise<void>;
         };
         userAPI: {
-            getTokens: () => Promise<
-                | {
-                      accessToken: string;
-                      refreshToken: string;
-                  }
-                | undefined
-            >;
-            storeTokens: (
-                accessToken: string,
-                refreshToken: string
-            ) => Promise<void>;
-            clearTokens: () => Promise<void>;
+            getUserInfo: () => Promise<UserInfo>;
+            saveUserInfo: (userInfo: UserInfo) => Promise<void>;
+            clearUserInfo: () => Promise<void>;
         };
         levelAPI: {
-            getLevels: () => Promise<Level[]>;
-            getLevel: (levelId: number) => Promise<Level | null>;
-            addLevel: (level: Level) => Promise<void>;
+            getAllLevels: () => Promise<LevelInfo[]>;
+            getLevel: (levelId: number) => Promise<LevelInfo | null>;
+            saveLevel: (level: LevelInfo) => Promise<void>;
             removeLevel: (levelId: number) => Promise<void>;
+        };
+        levelDraftAPI: {
+            getAllDrafts: () => Promise<LevelDraftInfo[]>;
+            getDraft: (draftId: number) => Promise<LevelDraftInfo>;
+            removeDraft: (draftId: number) => Promise<void>;
+            createDraft: (
+                draftInitial: LevelDraftInitialInfo
+            ) => Promise<LevelDraftInfo>;
+            updateDraft: (draft: LevelDraftInfo) => Promise<void>;
         };
     }
 }

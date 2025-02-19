@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import React from "react";
-import { LetterStyle } from "@desktop-common/sentence/style";
+import { LetterStyle } from "@desktop-common/level/style";
 import { useIsPaused } from "../pause";
 import { AnimationEasing } from "@desktop-common/types";
 

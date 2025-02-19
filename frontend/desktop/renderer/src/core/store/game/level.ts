@@ -1,17 +1,17 @@
-import { Level } from "@desktop-common/level";
+import { LevelInfo } from "@desktop-common/level";
 import { TICK_TIME } from "./consts";
-import { Language } from "@desktop-common/language";
+import { Language } from "@/core/utils/language";
 
 /* 
     eslint-disable 
     @typescript-eslint/no-empty-object-type,
     @typescript-eslint/no-unsafe-declaration-merging
 */
-export interface GameLevel extends Level {}
-export class GameLevel implements Level {
+export interface Level extends LevelInfo {}
+export class Level implements LevelInfo {
     readonly language: Language;
 
-    constructor(level: Level) {
+    constructor(level: LevelInfo) {
         Object.assign(this, level);
         this.language =
             Language.byCode(this.languageCode) || Language.byCode("eng")!;

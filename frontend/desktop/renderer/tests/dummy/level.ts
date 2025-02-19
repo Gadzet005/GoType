@@ -1,10 +1,10 @@
-import { Level } from "@desktop-common/level";
-import { Sentence } from "@desktop-common/sentence";
+import { LevelInfo } from "@desktop-common/level";
+import { Sentence } from "@desktop-common/level/sentence";
 
 export function createDummyLevel(
-    sentences: Sentence[],
+    sentences: Sentence[] = [],
     duration: number = 10
-): Level {
+): LevelInfo {
     return {
         id: 1,
         name: "dummy",

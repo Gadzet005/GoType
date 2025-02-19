@@ -1,15 +1,4 @@
-import { AuthTokens } from "@desktop-common/authTokens";
-
-export interface UserProfile {
-    id: number;
-    name: string;
-    accessLevel: number;
-    banInfo: {
-        reason: string;
-        // timestamp
-        expiresAt: number;
-    };
-}
+import { UserProfile, AuthTokens, UserInfo } from "@desktop-common/user";
 
 /**
  * Represents a user in the application.
@@ -50,6 +39,11 @@ export interface IUser {
      * @param profile - The new profile information.
      */
     setProfile(profile: UserProfile): void;
+
+    /**
+     * Authorizes the user with the provided authentication tokens and profile information.
+     */
+    authorize(userInfo: UserInfo): void;
 
     /**
      * Unauthorizes the user, clearing their authentication tokens and profile information.

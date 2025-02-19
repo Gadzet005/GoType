@@ -1,6 +1,6 @@
 import { action, observable, makeObservable, computed } from "mobx";
 import { GameScore } from "./consts";
-import { Language } from "@desktop-common/language";
+import { Language } from "@/core/utils/language";
 
 export class GameStatistics {
     private readonly language: Language;

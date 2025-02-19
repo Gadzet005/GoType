@@ -1,6 +1,6 @@
 import { createDummySentence } from "../../../../../../tests/dummy/sentence";
 import { GameField } from "@/core/store/game/field";
-import { Language } from "@desktop-common/language";
+import { Language } from "@/core/utils/language";
 
 describe("GameField tests", () => {
     const eng = Language.byCode("eng")!;

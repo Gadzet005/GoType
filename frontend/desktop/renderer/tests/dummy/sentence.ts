@@ -1,4 +1,4 @@
-import { Sentence } from "@desktop-common/sentence";
+import { Sentence } from "@desktop-common/level/sentence";
 
 export function createDummySentence(text: string, showTime = 1000): Sentence {
     return {

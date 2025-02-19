@@ -1,7 +1,7 @@
 import { RoutePath } from "@/core/config/routes/path";
 import { useAppContext } from "@/core/hooks";
-import { getLevels } from "@/core/services/electron/level/getLevels";
-import { Level } from "@desktop-common/level";
+import { getAllLevels } from "@/core/services/electron/level/getAllLevels";
+import { LevelInfo } from "@desktop-common/level";
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { BackButton } from "../../common/BackButton";
@@ -9,10 +9,10 @@ import { LevelList } from "./LevelList";
 
 export const LevelListPage = () => {
   const ctx = useAppContext();
-  const [levels, setLevels] = React.useState<Level[]>([]);
+  const [levels, setLevels] = React.useState<LevelInfo[]>([]);
 
   const loadLevels = React.useCallback(async () => {
-    const result = await ctx.runService(getLevels);
+    const result = await ctx.runService(getAllLevels);
     if (result.ok) {
       setLevels(result.payload!);
     }

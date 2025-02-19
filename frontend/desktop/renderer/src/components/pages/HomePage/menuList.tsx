@@ -24,8 +24,14 @@ export const menuList: MenuItem[] = [
     icon: <PlayArrowIcon />,
   },
   {
-    label: "Редактор",
-    href: RoutePath.editor,
+    label: "Создать уровень",
+    href: RoutePath.levelEditor,
+    accessType: AccessType.forAuth,
+    icon: <ModeEditOutlineIcon />,
+  },
+  {
+    label: "Тестовый редактор",
+    href: RoutePath.testLevelEditor,
     accessType: AccessType.forAuth,
     icon: <ModeEditOutlineIcon />,
   },

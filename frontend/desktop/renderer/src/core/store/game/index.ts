@@ -1,10 +1,10 @@
-import { Level } from "@desktop-common/level";
+import { LevelInfo } from "@desktop-common/level";
 import { tick } from "@desktop-common/types";
 import { action, computed, makeObservable, observable } from "mobx";
 import { TICK_TIME } from "./consts";
 import { GameState } from "./state";
 import { GameStatistics } from "./statistics";
-import { GameLevel } from "./level";
+import { Level } from "./level";
 
 enum GameStatus {
     idle,
@@ -16,13 +16,13 @@ enum GameStatus {
 export class Game {
     readonly state;
     readonly statistics;
-    readonly level: GameLevel;
+    readonly level: Level;
 
     private status = GameStatus.idle;
     private tickInterval: NodeJS.Timeout | null = null;
     private currentTick: tick = 0;
 
-    constructor(level: Level) {
+    constructor(level: LevelInfo) {
         makeObservable(this, {
             state: observable,
             statistics: observable,
@@ -42,7 +42,7 @@ export class Game {
             input: action,
         });
 
-        this.level = new GameLevel(level);
+        this.level = new Level(level);
         this.state = new GameState(this.level.language);
         this.statistics = new GameStatistics(this.level.language);
         this.init();

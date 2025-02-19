@@ -3,9 +3,12 @@ export type second = number;
 export type millisecond = number;
 export type percent = number;
 
-export type PictureType = "png" | "jpeg" | "jpg";
-export type VideoType = "mp4";
-export type AudioType = "mp3";
+export namespace AssetTypes {
+    export type PictureType = "png" | "jpeg" | "jpg";
+    export type VideoType = "mp4";
+    export type AudioType = "mp3";
+    export type BackgroundType = PictureType | VideoType;
+}
 
 export type Asset<T> = {
     type: T;
