@@ -1,12 +1,16 @@
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
+import { LevelDraftInfo } from "@desktop-common/draft";
 import { Box, Typography } from "@mui/material";
-import { observer } from "mobx-react";
 
-export const LevelEditorPage = observer(() => {
+interface LevelEditorPageProps {
+  draft: LevelDraftInfo;
+}
+
+export const LevelEditorPage: React.FC<LevelEditorPageProps> = ({ draft }) => {
   return (
     <Box sx={{ p: 2 }}>
-      <BackButton href={RoutePath.home} />
+      <BackButton href={RoutePath.levelDraftList} />
       <Box
         sx={{
           display: "flex",
@@ -14,8 +18,8 @@ export const LevelEditorPage = observer(() => {
           alignItems: "center",
         }}
       >
-        <Typography variant="h3">Редактор уровней</Typography>
+        <Typography variant="h3">{draft.name}</Typography>
       </Box>
     </Box>
   );
-});
+};

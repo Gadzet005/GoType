@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import { Button } from "@/components/ui/Button";
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { observer } from "mobx-react";
 import { LevelInfo } from "@desktop-common/level";
 import { useAppContext } from "@/core/hooks";
 import { saveLevel } from "@/core/services/electron/level/saveLevel";
@@ -162,7 +161,7 @@ const level: LevelInfo = {
   },
 };
 
-export const TestLevelEditorPage = observer(() => {
+export const TestLevelEditorPage = () => {
   const ctx = useAppContext();
 
   const handleCreateLevel = async () => {
@@ -195,4 +194,4 @@ export const TestLevelEditorPage = observer(() => {
       </Box>
     </Box>
   );
-});
+};

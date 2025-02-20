@@ -9,6 +9,7 @@ import { SignUpPage } from "@/components/pages/SignUpPage";
 import { TestLevelEditorPage } from "@/components/pages/TestLevelEditorPage";
 import React from "react";
 import { RoutePath } from "./path";
+import { LevelDraftListPage } from "@/components/pages/LevelDraftListPage";
 
 export const routes = new Map<string, React.ElementType>([
     [RoutePath.default, HomePage],
@@ -21,4 +22,5 @@ export const routes = new Map<string, React.ElementType>([
     [RoutePath.gameStatistics, GameStatisticsPage],
     [RoutePath.levelEditor, LevelEditorPage],
     [RoutePath.testLevelEditor, TestLevelEditorPage],
+    [RoutePath.levelDraftList, LevelDraftListPage],
 ]);

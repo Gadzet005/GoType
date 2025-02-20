@@ -25,7 +25,7 @@ export const menuList: MenuItem[] = [
   },
   {
     label: "Создать уровень",
-    href: RoutePath.levelEditor,
+    href: RoutePath.levelDraftList,
     accessType: AccessType.forAuth,
     icon: <ModeEditOutlineIcon />,
   },

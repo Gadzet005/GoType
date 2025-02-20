@@ -10,4 +10,5 @@ export enum RoutePath {
     gameStatistics = "game-statistics",
     levelEditor = "level-editor",
     testLevelEditor = "test-level-editor",
+    levelDraftList = "level-draft-list",
 }

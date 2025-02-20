@@ -7,7 +7,7 @@ export const languages: LanguageInfo[] = [
         alphabet: "abcdefghijklmnopqrstuvwxyz",
     },
     {
-        code: "ru",
+        code: "rus",
         name: "Русский",
         alphabet: "абвгдеёжзийклмнопрстуфхцчшщъыьэюя",
     },
