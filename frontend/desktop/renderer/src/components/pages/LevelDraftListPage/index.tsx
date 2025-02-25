@@ -1,15 +1,18 @@
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { useAppContext } from "@/core/hooks";
+import { useAppContext, useNavigate } from "@/core/hooks";
 import { getAllDrafts } from "@/core/services/electron/levelDraft/getAllDrafts";
 import { LevelDraftInfo } from "@desktop-common/draft";
 import AddIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import React from "react";
 import { DraftListItem } from "./item";
+import { createDraft } from "@/core/services/electron/levelDraft/createDraft";
+import { removeDraft } from "@/core/services/electron/levelDraft/removeDraft";
 
 export const LevelDraftListPage = () => {
   const ctx = useAppContext();
+  const navigate = useNavigate();
 
   const [drafts, setDrafts] = React.useState<LevelDraftInfo[]>([]);
 
@@ -17,19 +20,33 @@ export const LevelDraftListPage = () => {
     const loadDrafts = async () => {
       const result = await ctx.runService(getAllDrafts);
       if (result.ok) {
-        setDrafts(result.payload!);
+        setDrafts(result.payload);
+      } else {
+        console.error("Failed to load drafts:", result.error);
       }
     };
     loadDrafts();
-  });
+  }, [ctx]);
 
-  const handleCreateDraft = () => {};
+  const createNewDraft = async () => {
+    const result = await ctx.runService(createDraft);
+    if (result.ok) {
+      navigate(RoutePath.levelEditor, { draft: result.payload });
+    } else {
+      console.error("Failed to create new draft:", result.error);
+    }
+  };
 
   const deleteDraft = React.useCallback(
-    (draftId: number) => {
-      setDrafts(drafts.filter((draft) => draft.id !== draftId));
+    async (draftId: number) => {
+      const result = await ctx.runService(removeDraft, draftId);
+      if (result.ok) {
+        setDrafts((list) => list.filter((draft) => draft.id !== draftId));
+      } else {
+        console.error("Failed to delete draft:", result.error);
+      }
     },
-    [drafts]
+    [ctx, setDrafts]
   );
 
   const list = React.useMemo(
@@ -37,6 +54,7 @@ export const LevelDraftListPage = () => {
       drafts.map((draft) => {
         return (
           <DraftListItem
+            key={draft.id}
             draft={draft}
             deleleSelf={() => deleteDraft(draft.id)}
           />
@@ -46,7 +64,9 @@ export const LevelDraftListPage = () => {
   );
 
   const onListEmpty = (
-    <Typography variant="h5">Список черновиков пуст</Typography>
+    <Typography sx={{ textAlign: "center" }} variant="h4">
+      Список черновиков пуст
+    </Typography>
   );
 
   return (
@@ -68,13 +88,16 @@ export const LevelDraftListPage = () => {
           variant="contained"
           color="success"
           startIcon={<AddIcon fontSize="large" />}
-          onClick={handleCreateDraft}
+          onClick={createNewDraft}
         >
           <Typography variant="h6">Создать уровень</Typography>
         </Button>
-        <Box sx={{ display: "flex", gap: 3 }}>
+        <Container
+          sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 5 }}
+          maxWidth="md"
+        >
           {list.length === 0 ? onListEmpty : list}
-        </Box>
+        </Container>
       </Box>
     </Box>
   );

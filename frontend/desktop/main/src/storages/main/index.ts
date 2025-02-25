@@ -4,7 +4,7 @@ import { SavedLevelsSubStorage } from "./savedLevels";
 import { SavedLevelDraftsSubStorage } from "./savedLevelDrafts";
 
 export class MainStorage {
-    private store: Store<any> = new Store({
+    readonly store: Store<any> = new Store({
         defaults: {
             savedLevels: [],
             savedLevelDrafts: [],

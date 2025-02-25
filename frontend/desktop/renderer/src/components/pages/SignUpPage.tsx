@@ -15,37 +15,30 @@ export const SignUpPage = observer(() => {
   const [formError, setFormError] = React.useState<string | null>(null);
   const { call: signUp, isPending } = useServicePending(SignUpService);
 
-  const submitHandler = React.useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-      const formData = new FormData(event.target as HTMLFormElement);
-      const name: string = formData.get("name") as string;
-      const password: string = formData.get("password") as string;
-      const passwordRepeat: string = formData.get("passwordRepeat") as string;
+    const formData = new FormData(event.target as HTMLFormElement);
+    const name = formData.get("name") as string;
+    const password = formData.get("password") as string;
+    const passwordRepeat = formData.get("passwordRepeat") as string;
 
-      if (password !== passwordRepeat) {
-        setFormError(() => "Пароли не совпадают.");
-        return;
-      }
+    if (password !== passwordRepeat) {
+      setFormError(() => "Пароли не совпадают.");
+      return;
+    }
 
-      signUp(name, password).then((result) => {
-        if (result.ok) {
-          navigate(RoutePath.profile);
-        } else {
-          const error = result.error!;
-          if (error === ApiError.userExists) {
-            setFormError("Пользователь с таким именем уже зарегистрирован.");
-          } else if (ApiError.invalidInput) {
-            setFormError("Неверный формат имени или пароля");
-          } else {
-            setFormError("Неизвестная ошибка.");
-          }
-        }
-      });
-    },
-    [navigate, signUp]
-  );
+    const result = await signUp(name, password);
+    if (result.ok) {
+      navigate(RoutePath.profile);
+    } else if (result.error === ApiError.userExists) {
+      setFormError("Пользователь с таким именем уже зарегистрирован.");
+    } else if (result.error === ApiError.invalidInput) {
+      setFormError("Неверный формат имени или пароля");
+    } else {
+      setFormError("Неизвестная ошибка.");
+    }
+  };
 
   return (
     <Box sx={{ p: 2 }}>
@@ -82,7 +75,7 @@ export const SignUpPage = observer(() => {
           <Box
             component="form"
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-            onSubmit={submitHandler}
+            onSubmit={handleSubmit}
           >
             <TextField name="name" variant="outlined" label="Имя" type="text" />
             <PasswordField name="password" />

@@ -1,9 +1,9 @@
 import { ApiError, ApiRoutes } from "@/core/config/api.config";
-import { failure, PromiseResult } from "@/core/services/utils/result";
+import { failure, PromiseResult } from "@/core/types/result";
 import { SignUp } from "@/core/types/api/user";
 import { AppContext } from "@/core/types/base/app";
 import { saveUserInfo } from "@/core/services/electron/user/saveUserInfo";
-import { commonApiErrorResult, success } from "../../utils/result";
+import { commonApiErrorResult, success } from "../../../types/result";
 import { getUserProfile } from "./getUserProfile";
 
 export async function signUp(
@@ -29,7 +29,7 @@ export async function signUp(
         if (!result.ok) {
             return failure(ApiError.unexpected);
         }
-        const profile = result.payload!;
+        const profile = result.payload;
         ctx.user.setProfile(profile);
 
         await ctx.runService(saveUserInfo, {

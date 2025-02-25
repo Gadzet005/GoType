@@ -9,7 +9,9 @@ body {
   cursor: url("/cursor/default.png"), default;
 }
 
-button:hover {
+button:hover,
+label:hover,
+a:hover {
   cursor: url("/cursor/pointer.png"), pointer;
 }
 

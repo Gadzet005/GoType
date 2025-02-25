@@ -1,33 +1,31 @@
 import { app, BrowserWindow, protocol } from "electron";
-import path from "path";
-import url from "url";
 import {
     installExtension,
     REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
-import { ProtocolNames } from "./consts";
-import { logError } from "./utils/common";
-import { MainStorage } from "./storages/main";
-import { LevelStorage } from "./storages/level";
-import { LevelDraftStorage } from "./storages/levelDraft";
+import path from "path";
+import url from "url";
+import {
+    ASSET_PROTOCOL_NAME,
+    LEVEL_DRAFTS_DIR_NAME,
+    LEVELS_DIR_NAME,
+    USER_DATA_DIR_NAME,
+} from "./consts";
 import { initAppAPIHandlers } from "./handlers/appAPIHandlers";
-import { initUserAPIHandlers } from "./handlers/userAPIHandlers";
 import { initLevelAPIHandlers } from "./handlers/levelAPIHandlers";
 import { initLevelDraftAPIHandlers } from "./handlers/levelDraftAPIHandlers";
-import { getDirProtocolHandler } from "./utils/protocols";
+import { initUserAPIHandlers } from "./handlers/userAPIHandlers";
+import { LevelStorage } from "./storages/level";
+import { LevelDraftStorage } from "./storages/levelDraft";
+import { MainStorage } from "./storages/main";
+import { logError } from "./utils/common";
+import { initAssetProtocol } from "./protocols/asset";
 
-const isDev = process.env.ELECTRON_IS_DEV || false;
+const isDev = process.env.ELECTRON_IS_DEV ?? false;
 
 protocol.registerSchemesAsPrivileged([
     {
-        scheme: ProtocolNames.LEVEL_ASSET,
-        privileges: {
-            stream: true,
-            bypassCSP: true,
-        },
-    },
-    {
-        scheme: ProtocolNames.LEVEL_DRAFT_ASSET,
+        scheme: ASSET_PROTOCOL_NAME,
         privileges: {
             stream: true,
             bypassCSP: true,
@@ -35,7 +33,7 @@ protocol.registerSchemesAsPrivileged([
     },
 ]);
 
-app.setPath("userData", path.join(app.getPath("appData"), "gotype"));
+app.setPath("userData", path.join(app.getPath("appData"), USER_DATA_DIR_NAME));
 
 function createWindow(): BrowserWindow {
     let mainWindow = new BrowserWindow({
@@ -47,7 +45,7 @@ function createWindow(): BrowserWindow {
     });
 
     const startUrl = isDev
-        ? process.env.ELECTRON_START_URL || ""
+        ? process.env.ELECTRON_START_URL ?? ""
         : url
               .pathToFileURL(path.join(__dirname, "../dist/index.html"))
               .toString();
@@ -67,11 +65,11 @@ app.whenReady().then(() => {
     const mainStorage = new MainStorage();
     const levelStorage = new LevelStorage(
         mainStorage,
-        path.join(app.getPath("userData"), "levels")
+        path.join(app.getPath("userData"), LEVELS_DIR_NAME)
     );
     const levelDraftStorage = new LevelDraftStorage(
         mainStorage,
-        path.join(app.getPath("userData"), "level-drafts")
+        path.join(app.getPath("userData"), LEVEL_DRAFTS_DIR_NAME)
     );
 
     initAppAPIHandlers();
@@ -79,17 +77,7 @@ app.whenReady().then(() => {
     initLevelAPIHandlers(levelStorage);
     initLevelDraftAPIHandlers(levelDraftStorage);
 
-    protocol.handle(
-        ProtocolNames.LEVEL_ASSET,
-        getDirProtocolHandler(ProtocolNames.LEVEL_ASSET, levelStorage.dir)
-    );
-    protocol.handle(
-        ProtocolNames.LEVEL_DRAFT_ASSET,
-        getDirProtocolHandler(
-            ProtocolNames.LEVEL_DRAFT_ASSET,
-            levelDraftStorage.dir
-        )
-    );
+    initAssetProtocol();
 
     createWindow();
 });

@@ -1,6 +1,6 @@
 import { ApiRoutes } from "@/core/config/api.config";
-import { PromiseResult } from "@/core/services/utils/result";
-import { commonApiErrorResult, success } from "../../utils/result";
+import { PromiseResult } from "@/core/types/result";
+import { commonApiErrorResult, success } from "../../../types/result";
 import { AppContext } from "@/core/types/base/app";
 import { clearUserInfo } from "../../electron/user/clearUserInfo";
 

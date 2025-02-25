@@ -1,7 +1,7 @@
 import { ApiRoutes } from "@/core/config/api.config";
-import { PromiseResult } from "@/core/services/utils/result";
+import { PromiseResult } from "@/core/types/result";
 import { UserProfile } from "@desktop-common/user";
-import { commonApiErrorResult, success } from "../../utils/result";
+import { commonApiErrorResult, success } from "../../../types/result";
 import { GetUserInfo } from "@/core/types/api/user";
 import { AppContext } from "@/core/types/base/app";
 

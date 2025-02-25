@@ -1,6 +1,6 @@
 import { LevelInfo } from "@desktop-common/level";
 import { UserInfo } from "@desktop-common/user";
-import { LevelDraftInfo, LevelDraftInitialInfo } from "@desktop-common/draft";
+import { LevelDraftInfo } from "@desktop-common/draft";
 
 declare global {
     interface Window {
@@ -22,9 +22,7 @@ declare global {
             getAllDrafts: () => Promise<LevelDraftInfo[]>;
             getDraft: (draftId: number) => Promise<LevelDraftInfo>;
             removeDraft: (draftId: number) => Promise<void>;
-            createDraft: (
-                draftInitial: LevelDraftInitialInfo
-            ) => Promise<LevelDraftInfo>;
+            createDraft: () => Promise<LevelDraftInfo>;
             updateDraft: (draft: LevelDraftInfo) => Promise<void>;
         };
     }

@@ -1,5 +1,5 @@
 import { LevelDraftStorage } from "@/storages/levelDraft";
-import { LevelDraftInfo, LevelDraftInitialInfo } from "@desktop-common/draft";
+import { LevelDraftInfo } from "@desktop-common/draft";
 import { ipcMain } from "electron";
 
 export function initLevelDraftAPIHandlers(draftStorage: LevelDraftStorage) {
@@ -11,12 +11,9 @@ export function initLevelDraftAPIHandlers(draftStorage: LevelDraftStorage) {
         return await draftStorage.getDraft(draftId);
     });
 
-    ipcMain.handle(
-        "create-draft",
-        async (_, draftInitial: LevelDraftInitialInfo) => {
-            return await draftStorage.createDraft(draftInitial);
-        }
-    );
+    ipcMain.handle("create-draft", async () => {
+        return await draftStorage.createDraft();
+    });
 
     ipcMain.handle("update-draft", async (_, draft: LevelDraftInfo) => {
         await draftStorage.updateDraft(draft);

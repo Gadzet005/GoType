@@ -14,7 +14,9 @@ export const LevelListPage = () => {
   const loadLevels = React.useCallback(async () => {
     const result = await ctx.runService(getAllLevels);
     if (result.ok) {
-      setLevels(result.payload!);
+      setLevels(result.payload);
+    } else {
+      console.error("Failed to load levels:", result.error);
     }
   }, [ctx]);
 

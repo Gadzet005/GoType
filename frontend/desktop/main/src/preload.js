@@ -33,20 +33,20 @@ contextBridge.exposeInMainWorld("levelAPI", {
     },
 });
 
-contextBridge.exposeInMainWorld("draftAPI", {
+contextBridge.exposeInMainWorld("levelDraftAPI", {
     getAllDrafts: async () => {
         return await ipcRenderer.invoke("get-all-drafts");
     },
     getDraft: async (draftId) => {
         return await ipcRenderer.invoke("get-draft", draftId);
     },
-    createDraft: async (draft) => {
-        return await ipcRenderer.invoke("create-draft", draft);
+    createDraft: async () => {
+        return await ipcRenderer.invoke("create-draft");
     },
     updateDraft: async (draft) => {
         await ipcRenderer.invoke("update-draft", draft);
     },
     removeDraft: async (draftId) => {
-        await ipcRenderer.invoke("remove-level", draftId);
+        await ipcRenderer.invoke("remove-draft", draftId);
     },
 });

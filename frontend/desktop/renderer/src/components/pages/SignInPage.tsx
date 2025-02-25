@@ -15,28 +15,23 @@ export const SignInPage: React.FC = observer(() => {
   const [formError, setFormError] = React.useState<string | null>(null);
   const { call: signIn, isPending } = useServicePending(SignInService);
 
-  const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const formData = new FormData(event.target as HTMLFormElement);
-    const name: string = formData.get("name") as string;
-    const password: string = formData.get("password") as string;
+    const name = formData.get("name") as string;
+    const password = formData.get("password") as string;
 
-    signIn(name, password).then((result) => {
-      if (result.ok) {
-        navigate(RoutePath.profile);
-      } else {
-        const error = result.error!;
-        if (error === ApiError.noSuchUser) {
-          setFormError("Неверное имя или пароль.");
-        } else if (error === ApiError.invalidInput) {
-          setFormError("Неверный формат имени или пароля");
-        } else {
-          console.error("Unknown error:", error);
-          setFormError("Неизвестная ошибка.");
-        }
-      }
-    });
+    const result = await signIn(name, password);
+    if (result.ok) {
+      navigate(RoutePath.profile);
+    } else if (result.error === ApiError.noSuchUser) {
+      setFormError("Неверное имя или пароль.");
+    } else if (result.error === ApiError.invalidInput) {
+      setFormError("Неверный формат имени или пароля");
+    } else {
+      setFormError("Неизвестная ошибка.");
+    }
   };
 
   return (
@@ -74,7 +69,7 @@ export const SignInPage: React.FC = observer(() => {
           <Box
             component="form"
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-            onSubmit={submitHandler}
+            onSubmit={handleSubmit}
           >
             <TextField name="name" variant="outlined" label="Имя" type="text" />
             <PasswordField />

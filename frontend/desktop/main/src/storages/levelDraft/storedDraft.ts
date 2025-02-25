@@ -5,17 +5,16 @@ import { getLevelDraftAsset } from "@/utils/asset";
 
 export interface StoredDraft
     extends Omit<LevelDraftInfo, "audio" | "background"> {
-    audioType: AssetTypes.AudioType;
+    audioType: AssetTypes.AudioType | null;
     backgroundType: AssetTypes.BackgroundType | null;
 }
 
 export function toStored(draft: LevelDraftInfo): StoredDraft {
-    const backgroundType = draft.background ? draft.background.type : null;
     return {
         id: draft.id,
         name: draft.name,
-        audioType: draft.audio.type,
-        backgroundType: backgroundType,
+        audioType: draft.audio?.type ?? null,
+        backgroundType: draft.background?.type ?? null,
         sentences: draft.sentences,
         styleClasses: draft.styleClasses,
         updateTime: draft.updateTime,

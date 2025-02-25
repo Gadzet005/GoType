@@ -1,13 +1,17 @@
-import { ProtocolNames } from "@/consts";
+import {
+    ASSET_PROTOCOL_NAME,
+    LEVEL_DRAFTS_DIR_NAME,
+    LEVELS_DIR_NAME,
+} from "@/consts";
 import { Asset } from "@desktop-common/types";
 import path from "path";
 import url from "url";
 
 function getAsset<T>(
+    baseDir: string,
     objId: number,
     name: string,
-    type: string | null,
-    protocolName: string
+    type: string | null
 ): Asset<T> | null {
     if (!type) {
         return null;
@@ -17,8 +21,8 @@ function getAsset<T>(
         type: type as T,
         url: url
             .format({
-                pathname: path.join(String(objId), name + "." + type),
-                protocol: protocolName + ":",
+                pathname: path.join(baseDir, String(objId), name + "." + type),
+                protocol: ASSET_PROTOCOL_NAME + ":",
                 slashes: true,
             })
             .toString(),
@@ -30,7 +34,7 @@ export function getLevelAsset<T>(
     name: string,
     type: string | null
 ): Asset<T> | null {
-    return getAsset(levelId, name, type, ProtocolNames.LEVEL_ASSET);
+    return getAsset(LEVELS_DIR_NAME, levelId, name, type);
 }
 
 export function getLevelDraftAsset<T>(
@@ -38,5 +42,5 @@ export function getLevelDraftAsset<T>(
     name: string,
     type: string | null
 ): Asset<T> | null {
-    return getAsset(draftId, name, type, ProtocolNames.LEVEL_DRAFT_ASSET);
+    return getAsset(LEVEL_DRAFTS_DIR_NAME, draftId, name, type);
 }

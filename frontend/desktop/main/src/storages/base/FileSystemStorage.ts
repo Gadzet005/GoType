@@ -1,19 +1,13 @@
-import { ignoreCode } from "@/utils/common";
-import fs from "fs/promises";
 import { MainStorage } from "../main";
+import { FSJetpack } from "fs-jetpack/types";
+import * as jetpack from "fs-jetpack";
 
 export abstract class FileSystemStorage {
-    readonly dir: string;
+    readonly root: FSJetpack;
     protected mainStorage: MainStorage;
 
-    constructor(mainStorage: MainStorage, dir: string) {
-        this.dir = dir;
+    constructor(mainStorage: MainStorage, root: string) {
+        this.root = jetpack.dir(root);
         this.mainStorage = mainStorage;
-    }
-
-    async init() {
-        await fs
-            .mkdir(this.dir, { recursive: true })
-            .catch(ignoreCode("EEXIST"));
     }
 }

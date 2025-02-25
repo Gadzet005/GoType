@@ -1,4 +1,4 @@
-import { failure, PromiseResult, success } from "@/core/services/utils/result";
+import { failure, PromiseResult, success } from "@/core/types/result";
 import { UserInfo } from "@desktop-common/user";
 
 export async function getUserInfo(): PromiseResult<UserInfo, void> {

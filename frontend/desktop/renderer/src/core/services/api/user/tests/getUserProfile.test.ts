@@ -22,12 +22,14 @@ describe("LoadUserProfile tests", () => {
         });
 
         const result = await ctx.runService(getUserProfile);
-        const profile = result.payload!;
 
         expect(result.ok).toBe(true);
-        expect(profile.id).toBe(Dummy.getUserProfileResult.id);
-        expect(profile.name).toBe(Dummy.getUserProfileResult.username);
-        expect(profile.accessLevel).toBe(Dummy.getUserProfileResult.access);
+        if (result.ok) {
+            const profile = result.payload;
+            expect(profile.id).toBe(Dummy.getUserProfileResult.id);
+            expect(profile.name).toBe(Dummy.getUserProfileResult.username);
+            expect(profile.accessLevel).toBe(Dummy.getUserProfileResult.access);
+        }
     });
 
     it("negative", async () => {
@@ -41,6 +43,8 @@ describe("LoadUserProfile tests", () => {
         const result = await ctx.runService(getUserProfile);
 
         expect(result.ok).toBe(false);
-        expect(result.error).toBe(ApiError.unauthorized);
+        if (!result.ok) {
+            expect(result.error).toBe(ApiError.unauthorized);
+        }
     });
 });

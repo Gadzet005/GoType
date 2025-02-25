@@ -1,49 +1,41 @@
-import path from "path";
 import { FileSystemStorage } from "../base/FileSystemStorage";
-import { LevelDraftInfo, LevelDraftInitialInfo } from "@desktop-common/draft";
-import fs from "fs/promises";
-import { ignoreCode, logError } from "@/utils/common";
+import { LevelDraftInfo } from "@desktop-common/draft";
+import { logError } from "@/utils/common";
+import { getDefaultDraftName } from "@/consts";
 
 export class LevelDraftStorage extends FileSystemStorage {
+    static readonly INFO_FILE_NAME = "draft.json";
     private idCounter: number | null = null;
-
-    private getDraftPath(id: number): string {
-        return path.join(this.dir, String(id));
-    }
 
     private getNewId(): number {
         if (this.idCounter === null) {
             const ids = this.mainStorage.savedLevelDrafts.getAll();
-            this.idCounter = Math.max(...ids);
+            this.idCounter = ids.length === 0 ? 0 : Math.max(...ids);
         }
         this.idCounter++;
         return this.idCounter;
     }
 
-    async createDraft(initial: LevelDraftInitialInfo): Promise<LevelDraftInfo> {
-        const draftId = this.getNewId();
-        const draftPath = this.getDraftPath(draftId);
-
-        await fs
-            .mkdir(draftPath, { recursive: true })
-            .catch(ignoreCode("EEXIST"))
-            .catch(logError("Failed to create draft directory"));
-
-        const draft: LevelDraftInfo = {
-            id: draftId,
-            sentences: [],
+    private getDefaultDraft(id: number): LevelDraftInfo {
+        return {
+            id: id,
             styleClasses: [],
+            sentences: [],
             background: null,
+            audio: null,
+            name: getDefaultDraftName(id),
             updateTime: Date.now(),
-            ...initial,
         };
+    }
 
-        await fs
-            .writeFile(
-                path.join(draftPath, "draft.json"),
-                JSON.stringify(draft, null, 2)
-            )
-            .catch(logError("Failed to write draft info to file"));
+    async createDraft(): Promise<LevelDraftInfo> {
+        const draftId = this.getNewId();
+        const draftDir = this.root.dir(String(draftId));
+        const draft = this.getDefaultDraft(draftId);
+
+        await draftDir
+            .writeAsync(LevelDraftStorage.INFO_FILE_NAME, draft)
+            .catch(logError("Failed to create draft info file"));
 
         this.mainStorage.savedLevelDrafts.add(draftId);
 
@@ -64,39 +56,34 @@ export class LevelDraftStorage extends FileSystemStorage {
     }
 
     async getDraft(draftId: number): Promise<LevelDraftInfo | null> {
-        const draftPath = this.getDraftPath(draftId);
-        const draftJson = await fs
-            .readFile(path.join(draftPath, "draft.json"), "utf8")
-            .catch((err) => {
-                ignoreCode("ENOENT")(err);
-                return null;
-            })
+        const draftDir = this.root.dir(String(draftId));
+
+        const draft: LevelDraftInfo = await draftDir
+            .readAsync(LevelDraftStorage.INFO_FILE_NAME, "json")
             .catch(logError("Failed to read draft info from file"));
 
-        if (!draftJson) {
-            return null;
-        }
-
-        const draft = JSON.parse(draftJson) as LevelDraftInfo;
         return draft;
     }
 
     async updateDraft(draft: LevelDraftInfo) {
-        const draftPath = this.getDraftPath(draft.id);
+        const draftDir = this.root.dir(String(draft.id));
         draft.updateTime = Date.now();
-        await fs
-            .writeFile(
-                path.join(draftPath, "draft.json"),
-                JSON.stringify(draft, null, 2)
-            )
-            .catch(logError("Failed to write draft info to file"));
+
+        await draftDir
+            .writeAsync(LevelDraftStorage.INFO_FILE_NAME, draft)
+            .catch(logError("Failed to update draft info file"));
     }
 
     async removeDraft(draftId: number) {
-        const draftPath = this.getDraftPath(draftId);
-        await fs
-            .rm(draftPath, { recursive: true })
-            .catch(logError("Failed to delete draft directory"));
+        const draftDir = this.root.dir(String(draftId));
+
         this.mainStorage.savedLevelDrafts.remove(draftId);
+        await draftDir
+            .removeAsync()
+            .catch(
+                logError(
+                    `Failed to remove draft directory. draftId = ${draftId}`
+                )
+            );
     }
 }

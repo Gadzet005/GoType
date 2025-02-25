@@ -1,5 +1,13 @@
-import { Sentence } from "../level/sentence";
+import { percent, tick } from "../types";
 
-export interface DraftSentence extends Omit<Sentence, "style"> {
-    styleClass: string;
+export interface DraftSentence {
+    content: string;
+    coord: {
+        x: percent;
+        y: percent;
+    };
+
+    showTime?: tick;
+    duration?: tick;
+    styleClass?: string;
 }

@@ -1,6 +1,6 @@
 import { DraftSentence } from "./sentence";
 import { StyleClass } from "./style";
-import { Asset, AssetTypes } from "@desktop-common/types";
+import { Asset, AssetTypes } from "../types";
 
 export interface GeneralLevelDraftInfo {
     id: number;
@@ -9,10 +9,8 @@ export interface GeneralLevelDraftInfo {
 }
 
 export interface LevelDraftInfo extends GeneralLevelDraftInfo {
-    audio: Asset<AssetTypes.AudioType>;
+    audio: Asset<AssetTypes.AudioType> | null;
     background: Asset<AssetTypes.BackgroundType> | null;
     sentences: DraftSentence[];
     styleClasses: StyleClass[];
 }
-
-export type LevelDraftInitialInfo = Pick<LevelDraftInfo, "name" | "audio">;

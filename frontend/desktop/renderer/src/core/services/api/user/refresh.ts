@@ -1,5 +1,5 @@
 import { AppContext } from "@/core/types/base/app";
-import { failure, PromiseResult, success } from "../../utils/result";
+import { failure, PromiseResult, success } from "../../../types/result";
 import { clearUserInfo } from "@/core/services/electron/user/clearUserInfo";
 import { ApiRoutes } from "@/core/config/api.config";
 import { Refresh } from "@/core/types/api/user";

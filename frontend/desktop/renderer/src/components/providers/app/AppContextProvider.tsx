@@ -24,7 +24,9 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = observer(
     const loadUser = React.useCallback(async () => {
       const result = await context.runService(getUserInfo);
       if (result.ok) {
-        context.user.authorize(result.payload!);
+        context.user.authorize(result.payload);
+      } else {
+        console.error("Failed to load user info:", result.error);
       }
     }, [context]);
 
