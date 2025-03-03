@@ -1,4 +1,4 @@
-import { Language } from "@desktop-common/language";
+import { Language } from "@/core/utils/language";
 import { IGameField } from "./interface";
 import { LetterState } from "./sentence";
 

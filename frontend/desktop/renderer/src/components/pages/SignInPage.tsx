@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link";
 import { ApiError } from "@/core/config/api.config";
 import { RoutePath } from "@/core/config/routes/path";
-import { useNavigate, useServicePending } from "@/core/hooks";
+import { useAppContext, useNavigate, useServicePending } from "@/core/hooks";
 import { signIn as SignInService } from "@/core/services/api/user/signIn";
 import { PasswordField } from "@common/components/form/PasswordField";
 import { Alert, Box, Container, TextField, Typography } from "@mui/material";
@@ -11,7 +11,9 @@ import React from "react";
 import { BackButton } from "../common/BackButton";
 
 export const SignInPage: React.FC = observer(() => {
+  const ctx = useAppContext();
   const navigate = useNavigate();
+
   const [formError, setFormError] = React.useState<string | null>(null);
   const { call: signIn, isPending } = useServicePending(SignInService);
 
@@ -22,7 +24,7 @@ export const SignInPage: React.FC = observer(() => {
     const name = formData.get("name") as string;
     const password = formData.get("password") as string;
 
-    const result = await signIn(name, password);
+    const result = await signIn(ctx, name, password);
     if (result.ok) {
       navigate(RoutePath.profile);
     } else if (result.error === ApiError.noSuchUser) {

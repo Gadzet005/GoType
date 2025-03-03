@@ -1,4 +1,3 @@
-import { AppContext } from "@/core/types/base/app";
 import { ButtonProps } from "@mui/material";
 
 export enum AccessType {
@@ -10,10 +9,7 @@ export enum AccessType {
 export type MenuItem = {
   accessType: AccessType;
   label: string;
-  onClick?: (
-    event: React.MouseEvent<HTMLButtonElement>,
-    ctx: AppContext
-  ) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
   href?: string;
   color?: ButtonProps["color"];
   icon?: React.ReactNode;

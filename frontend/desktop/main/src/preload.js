@@ -4,6 +4,9 @@ contextBridge.exposeInMainWorld("appAPI", {
     quitApp: async () => {
         await ipcRenderer.invoke("quit-app");
     },
+    openFileDialog: async (extensions) => {
+        return await ipcRenderer.invoke("openFileDialog", extensions);
+    },
 });
 
 contextBridge.exposeInMainWorld("userAPI", {
@@ -43,8 +46,8 @@ contextBridge.exposeInMainWorld("levelDraftAPI", {
     createDraft: async () => {
         return await ipcRenderer.invoke("create-draft");
     },
-    updateDraft: async (draft) => {
-        await ipcRenderer.invoke("update-draft", draft);
+    updateDraft: async (args) => {
+        return await ipcRenderer.invoke("update-draft", args);
     },
     removeDraft: async (draftId) => {
         await ipcRenderer.invoke("remove-draft", draftId);

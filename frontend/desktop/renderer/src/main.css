@@ -11,7 +11,8 @@ body {
 
 button:hover,
 label:hover,
-a:hover {
+a:hover,
+.pointer {
   cursor: url("/cursor/pointer.png"), pointer;
 }
 

@@ -45,8 +45,6 @@ export namespace Refresh {
 }
 
 export namespace GetUserInfo {
-    export type Args = void;
-
     export interface Result {
         access: number;
         ban_reason: string;
@@ -59,14 +57,10 @@ export namespace GetUserInfo {
         | ApiError.accessTokenWrong
         | ApiError.unauthorized
         | ApiError.noSuchUser
-        | ApiError.unauthorized
         | ApiError.internal;
 }
 
 export namespace Logout {
-    export type Args = void;
-    export type Result = void;
-
     export type Error =
         | ApiError.accessTokenWrong
         | ApiError.noSuchUser

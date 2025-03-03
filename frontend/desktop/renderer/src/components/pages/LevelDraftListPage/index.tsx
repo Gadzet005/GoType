@@ -2,7 +2,7 @@ import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
 import { useAppContext, useNavigate } from "@/core/hooks";
 import { getAllDrafts } from "@/core/services/electron/levelDraft/getAllDrafts";
-import { LevelDraftInfo } from "@desktop-common/draft";
+import { DraftData } from "@desktop-common/draft";
 import AddIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import { Box, Button, Container, Typography } from "@mui/material";
 import React from "react";
@@ -14,11 +14,11 @@ export const LevelDraftListPage = () => {
   const ctx = useAppContext();
   const navigate = useNavigate();
 
-  const [drafts, setDrafts] = React.useState<LevelDraftInfo[]>([]);
+  const [drafts, setDrafts] = React.useState<DraftData[]>([]);
 
   React.useEffect(() => {
     const loadDrafts = async () => {
-      const result = await ctx.runService(getAllDrafts);
+      const result = await getAllDrafts();
       if (result.ok) {
         setDrafts(result.payload);
       } else {
@@ -29,9 +29,12 @@ export const LevelDraftListPage = () => {
   }, [ctx]);
 
   const createNewDraft = async () => {
-    const result = await ctx.runService(createDraft);
+    const result = await createDraft();
     if (result.ok) {
-      navigate(RoutePath.levelEditor, { draft: result.payload });
+      navigate(RoutePath.levelEditor, {
+        draftData: result.payload,
+        initialTab: 2,
+      });
     } else {
       console.error("Failed to create new draft:", result.error);
     }
@@ -39,14 +42,14 @@ export const LevelDraftListPage = () => {
 
   const deleteDraft = React.useCallback(
     async (draftId: number) => {
-      const result = await ctx.runService(removeDraft, draftId);
+      const result = await removeDraft(draftId);
       if (result.ok) {
         setDrafts((list) => list.filter((draft) => draft.id !== draftId));
       } else {
         console.error("Failed to delete draft:", result.error);
       }
     },
-    [ctx, setDrafts]
+    [setDrafts]
   );
 
   const list = React.useMemo(
@@ -90,7 +93,9 @@ export const LevelDraftListPage = () => {
           startIcon={<AddIcon fontSize="large" />}
           onClick={createNewDraft}
         >
-          <Typography variant="h6">Создать уровень</Typography>
+          <Typography sx={{ textTransform: "none" }} variant="h6">
+            Создать уровень
+          </Typography>
         </Button>
         <Container
           sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 5 }}

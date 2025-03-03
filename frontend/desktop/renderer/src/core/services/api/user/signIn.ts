@@ -26,14 +26,14 @@ export async function signIn(
         };
         ctx.user.setTokens(tokens);
 
-        const result = await ctx.runService(getUserProfile);
+        const result = await getUserProfile(ctx);
         if (!result.ok) {
             return failure(ApiError.unexpected);
         }
         const profile = result.payload;
         ctx.user.setProfile(profile);
 
-        await ctx.runService(saveUserInfo, {
+        await saveUserInfo({
             profile,
             tokens,
         });

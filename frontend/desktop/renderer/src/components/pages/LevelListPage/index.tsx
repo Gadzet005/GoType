@@ -1,24 +1,22 @@
 import { RoutePath } from "@/core/config/routes/path";
-import { useAppContext } from "@/core/hooks";
 import { getAllLevels } from "@/core/services/electron/level/getAllLevels";
-import { LevelInfo } from "@desktop-common/level";
+import { LevelData } from "@desktop-common/level";
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { BackButton } from "../../common/BackButton";
 import { LevelList } from "./LevelList";
 
 export const LevelListPage = () => {
-  const ctx = useAppContext();
-  const [levels, setLevels] = React.useState<LevelInfo[]>([]);
+  const [levels, setLevels] = React.useState<LevelData[]>([]);
 
   const loadLevels = React.useCallback(async () => {
-    const result = await ctx.runService(getAllLevels);
+    const result = await getAllLevels();
     if (result.ok) {
       setLevels(result.payload);
     } else {
       console.error("Failed to load levels:", result.error);
     }
-  }, [ctx]);
+  }, []);
 
   React.useEffect(() => {
     loadLevels();

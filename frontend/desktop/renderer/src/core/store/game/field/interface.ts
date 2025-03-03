@@ -1,4 +1,4 @@
-import { Sentence } from "@desktop-common/sentence";
+import { Sentence } from "@desktop-common/level/sentence";
 import { GameFieldSentence } from "./sentence";
 
 export interface IGameField {

@@ -1,14 +1,12 @@
-import { AppContext } from "@/core/types/base/app";
 import { failure, PromiseResult, success } from "@/core/types/result";
-import { LevelDraftInfo } from "@desktop-common/draft";
+import { DraftData, DraftUpdate } from "@desktop-common/draft";
 
 export async function updateDraft(
-    _: AppContext,
-    draft: LevelDraftInfo
-): PromiseResult<void, void> {
+    updateInfo: DraftUpdate.Args
+): PromiseResult<DraftData, void> {
     try {
-        await window.levelDraftAPI.updateDraft(draft);
-        return success();
+        const draft = await window.levelDraftAPI.updateDraft(updateInfo);
+        return success(draft);
     } catch {
         return failure();
     }

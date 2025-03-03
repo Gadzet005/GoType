@@ -21,7 +21,7 @@ export const ProfilePage: React.FC = observer(() => {
   const navigate = useNavigate();
 
   const handleLogout = React.useCallback(async () => {
-    await ctx.runService(logout);
+    await logout(ctx);
     navigate(RoutePath.home);
   }, [ctx, navigate]);
 

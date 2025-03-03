@@ -22,7 +22,7 @@ describe("logout test", () => {
             data: {},
         });
 
-        const result = await ctx.runService(logout);
+        const result = await logout(ctx);
 
         expect(result.ok).toBe(true);
         expect(user.isAuth).toBe(false);
@@ -33,7 +33,7 @@ describe("logout test", () => {
             throw new Error();
         });
 
-        const result = await ctx.runService(logout);
+        const result = await logout(ctx);
 
         expect(result.ok).toBe(false);
         expect(user.isAuth).toBe(true);

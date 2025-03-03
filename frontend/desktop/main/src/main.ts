@@ -13,13 +13,13 @@ import {
 } from "./consts";
 import { initAppAPIHandlers } from "./handlers/appAPIHandlers";
 import { initLevelAPIHandlers } from "./handlers/levelAPIHandlers";
-import { initLevelDraftAPIHandlers } from "./handlers/levelDraftAPIHandlers";
+import { initDraftAPIHandlers } from "./handlers/draftAPIHandlers";
 import { initUserAPIHandlers } from "./handlers/userAPIHandlers";
+import { initAssetProtocol } from "./protocols/asset";
 import { LevelStorage } from "./storages/level";
-import { LevelDraftStorage } from "./storages/levelDraft";
+import { DraftStorage } from "./storages/draft";
 import { MainStorage } from "./storages/main";
 import { logError } from "./utils/common";
-import { initAssetProtocol } from "./protocols/asset";
 
 const isDev = process.env.ELECTRON_IS_DEV ?? false;
 
@@ -67,7 +67,7 @@ app.whenReady().then(() => {
         mainStorage,
         path.join(app.getPath("userData"), LEVELS_DIR_NAME)
     );
-    const levelDraftStorage = new LevelDraftStorage(
+    const draftStorage = new DraftStorage(
         mainStorage,
         path.join(app.getPath("userData"), LEVEL_DRAFTS_DIR_NAME)
     );
@@ -75,7 +75,7 @@ app.whenReady().then(() => {
     initAppAPIHandlers();
     initUserAPIHandlers(mainStorage);
     initLevelAPIHandlers(levelStorage);
-    initLevelDraftAPIHandlers(levelDraftStorage);
+    initDraftAPIHandlers(draftStorage);
 
     initAssetProtocol();
 

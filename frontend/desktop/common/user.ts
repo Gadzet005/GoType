@@ -9,7 +9,7 @@ export interface UserProfile {
     accessLevel: number;
     banInfo: {
         reason: string;
-        // timestamp
+        /** timestamp */
         expiresAt: number;
     };
 }

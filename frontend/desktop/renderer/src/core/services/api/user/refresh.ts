@@ -19,15 +19,15 @@ export async function refresh(ctx: AppContext): PromiseResult<void, void> {
         };
 
         ctx.user.setTokens(authTokens);
-        ctx.runService(saveUserInfo, {
+        saveUserInfo({
             profile: ctx.user.profile!,
-            tokens: authTokens!,
+            tokens: authTokens,
         });
 
         return success();
     } catch {
         ctx.user.unauthorize();
-        await ctx.runService(clearUserInfo);
+        await clearUserInfo();
         return failure();
     }
 }

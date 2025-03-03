@@ -44,9 +44,9 @@ export const menuList: MenuItem[] = [
   {
     label: "Выход",
     accessType: AccessType.forAll,
-    onClick: async (event, ctx) => {
+    onClick: async (event) => {
       event.preventDefault();
-      await ctx.runService(quitApp);
+      await quitApp();
     },
     icon: <ExitToAppIcon />,
     color: "error",

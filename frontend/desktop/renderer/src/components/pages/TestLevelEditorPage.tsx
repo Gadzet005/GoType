@@ -2,11 +2,10 @@ import { Box, Typography } from "@mui/material";
 import { Button } from "@/components/ui/Button";
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { LevelInfo } from "@desktop-common/level";
-import { useAppContext } from "@/core/hooks";
+import { LevelData } from "@desktop-common/level";
 import { saveLevel } from "@/core/services/electron/level/saveLevel";
 
-const level: LevelInfo = {
+const level: LevelData = {
   id: 3,
   name: "Walk on Water",
   description:
@@ -17,7 +16,7 @@ const level: LevelInfo = {
   },
   duration: 26,
   preview: {
-    type: "jpg",
+    ext: "jpg",
     url: "",
   },
   tags: ["имба"],
@@ -25,11 +24,11 @@ const level: LevelInfo = {
 
   game: {
     audio: {
-      type: "mp3",
+      ext: "mp3",
       url: "",
     },
     background: {
-      type: "jpg",
+      ext: "jpg",
       url: "",
     },
     sentences: [
@@ -162,10 +161,8 @@ const level: LevelInfo = {
 };
 
 export const TestLevelEditorPage = () => {
-  const ctx = useAppContext();
-
   const handleCreateLevel = async () => {
-    await ctx.runService(saveLevel, level);
+    await saveLevel(level);
   };
 
   return (

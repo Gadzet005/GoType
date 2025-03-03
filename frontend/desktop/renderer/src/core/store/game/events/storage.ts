@@ -1,9 +1,8 @@
-import { tick } from "@desktop-common/types";
 import { GameEvent } from "./interface";
 import { action, makeObservable, observable } from "mobx";
 
 export class EventStorage {
-    private events = new Map<tick, GameEvent[]>();
+    private events = new Map<number, GameEvent[]>();
 
     constructor() {
         makeObservable(this, {
@@ -15,7 +14,7 @@ export class EventStorage {
         });
     }
 
-    addEvent(tick: tick, event: GameEvent) {
+    addEvent(tick: number, event: GameEvent) {
         const tickEvents = this.events.get(tick);
         if (tickEvents) {
             tickEvents.push(event);
@@ -24,11 +23,11 @@ export class EventStorage {
         }
     }
 
-    getEvents(tick: tick): GameEvent[] {
+    getEvents(tick: number): GameEvent[] {
         return this.events.get(tick) || [];
     }
 
-    removeTickEvents(tick: tick) {
+    removeTickEvents(tick: number) {
         this.events.delete(tick);
     }
 

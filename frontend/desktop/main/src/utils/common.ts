@@ -7,8 +7,8 @@
  */
 export function logError(msg: string) {
     return (err: any) => {
-        console.error(msg);
-        console.error(err);
+        console.debug(msg);
+        console.debug(err);
         throw err;
     };
 }

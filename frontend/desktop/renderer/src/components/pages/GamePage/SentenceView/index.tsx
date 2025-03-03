@@ -69,7 +69,7 @@ export const SentenceView: React.FC<SentenceViewProps> = observer(
         i * fadeOutStep;
       return (
         <LetterView
-          key={i}
+          key={i} // NOSONAR: sentence size and letter indexes are fixed
           letter={letter}
           style={style}
           useUnderline={i < activeLetters}

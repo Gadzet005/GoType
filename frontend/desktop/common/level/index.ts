@@ -1,7 +1,7 @@
 import { Sentence } from "./sentence";
-import { Asset, second, AssetTypes } from "../types";
+import { Asset } from "../asset";
 
-export interface GeneralLevelInfo {
+export interface LevelData {
     id: number;
     name: string;
     description: string;
@@ -9,18 +9,14 @@ export interface GeneralLevelInfo {
         id: number;
         name: string;
     };
-    duration: second;
+    //** seconds */
+    duration: number;
     tags: string[];
     languageCode: string;
-    preview: Asset<AssetTypes.PictureType> | null;
-}
-
-export interface GameLevelInfo {
-    audio: Asset<AssetTypes.AudioType>;
-    background: Asset<AssetTypes.BackgroundType> | null;
-    sentences: Sentence[];
-}
-
-export interface LevelInfo extends GeneralLevelInfo {
-    game: GameLevelInfo;
+    preview: Asset;
+    game: {
+        audio: Asset;
+        background: Asset;
+        sentences: Sentence[];
+    };
 }

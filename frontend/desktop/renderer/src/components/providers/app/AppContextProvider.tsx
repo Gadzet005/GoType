@@ -22,7 +22,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = observer(
     );
 
     const loadUser = React.useCallback(async () => {
-      const result = await context.runService(getUserInfo);
+      const result = await getUserInfo();
       if (result.ok) {
         context.user.authorize(result.payload);
       } else {

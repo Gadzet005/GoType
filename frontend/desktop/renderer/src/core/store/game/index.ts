@@ -1,5 +1,4 @@
-import { LevelInfo } from "@desktop-common/level";
-import { tick } from "@desktop-common/types";
+import { LevelData } from "@desktop-common/level";
 import { action, computed, makeObservable, observable } from "mobx";
 import { TICK_TIME } from "./consts";
 import { GameState } from "./state";
@@ -20,9 +19,9 @@ export class Game {
 
     private status = GameStatus.idle;
     private tickInterval: NodeJS.Timeout | null = null;
-    private currentTick: tick = 0;
+    private currentTick = 0;
 
-    constructor(level: LevelInfo) {
+    constructor(level: LevelData) {
         makeObservable(this, {
             state: observable,
             statistics: observable,

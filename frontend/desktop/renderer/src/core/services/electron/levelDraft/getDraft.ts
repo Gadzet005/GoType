@@ -1,11 +1,9 @@
-import { AppContext } from "@/core/types/base/app";
 import { failure, PromiseResult, success } from "@/core/types/result";
-import { LevelDraftInfo } from "@desktop-common/draft";
+import { DraftData } from "@desktop-common/draft";
 
 export async function getDraft(
-    _: AppContext,
     draftId: number
-): PromiseResult<LevelDraftInfo, void> {
+): PromiseResult<DraftData, void> {
     try {
         const result = await window.levelDraftAPI.getDraft(draftId);
         if (!result) {

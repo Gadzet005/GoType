@@ -29,7 +29,7 @@ export const BaseAuthTests = (
     });
 
     it("positive", async () => {
-        const result = await ctx.runService(service, serviceArgs);
+        const result = await service(ctx, serviceArgs);
 
         expect(result.ok).toBe(true);
         expect(user.isAuth).toBe(true);
@@ -46,13 +46,13 @@ export const BaseAuthTests = (
         requestMock.post.mockImplementationOnce(() => {
             throw new Error();
         });
-        const result1 = await ctx.runService(service, serviceArgs);
+        const result1 = await service(ctx, serviceArgs);
         expect(result1.ok).toBe(false);
 
         requestMock.get.mockImplementationOnce(() => {
             throw new Error();
         });
-        const result2 = await ctx.runService(service, serviceArgs);
+        const result2 = await service(ctx, serviceArgs);
         expect(result2.ok).toBe(false);
     });
 };

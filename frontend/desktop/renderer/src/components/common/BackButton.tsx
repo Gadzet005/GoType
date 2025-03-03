@@ -3,16 +3,17 @@ import { Button, ButtonProps } from "@/components/ui/Button";
 import { useNavigate } from "@/core/hooks";
 import { useHotkeys } from "react-hotkeys-hook";
 
-interface BackButtonProps extends ButtonProps {
+interface BackButtonProps extends Omit<ButtonProps, "children"> {
   href: string;
   params?: object;
+  label?: string;
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({
   variant = "contained",
   startIcon = <ArrowBackIcon />,
   color = "error",
-  children = "Назад",
+  label = "Назад",
   ...other
 }) => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export const BackButton: React.FC<BackButtonProps> = ({
       color={color}
       {...other}
     >
-      {children}
+      {label}
     </Button>
   );
 };

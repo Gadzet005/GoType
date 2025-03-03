@@ -11,10 +11,10 @@ export const Link: React.FC<LinkProps> = (props) => {
   const navigate = useNavigate();
 
   const handleClick = (event: any) => {
-    onClick && onClick(event); // eslint-disable-line
+    onClick?.(event);
     if (href) {
       event.preventDefault();
-      navigate(href, params || {});
+      navigate(href, params ?? {});
     }
   };
 

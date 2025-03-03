@@ -82,6 +82,16 @@ export const appTheme = createTheme({
     MuiLink: {
       defaultProps: {
         draggable: false,
+        underline: "none",
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: () => ({
+          "&:hover": {
+            backgroundColor: appTheme.palette["grey"]["800"],
+          },
+        }),
       },
     },
   },

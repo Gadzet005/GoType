@@ -6,8 +6,8 @@ export abstract class FileSystemStorage {
     readonly root: FSJetpack;
     protected mainStorage: MainStorage;
 
-    constructor(mainStorage: MainStorage, root: string) {
-        this.root = jetpack.dir(root);
+    constructor(mainStorage: MainStorage, path: string) {
+        this.root = jetpack.dir(path);
         this.mainStorage = mainStorage;
     }
 }

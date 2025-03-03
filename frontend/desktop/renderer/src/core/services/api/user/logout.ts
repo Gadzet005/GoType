@@ -8,7 +8,7 @@ export async function logout(ctx: AppContext): PromiseResult<void, string> {
     try {
         await ctx.authApi.post(ApiRoutes.UserActions.LOGOUT);
         ctx.user.unauthorize();
-        await ctx.runService(clearUserInfo);
+        await clearUserInfo();
         return success();
     } catch (error: any) {
         return commonApiErrorResult(error);

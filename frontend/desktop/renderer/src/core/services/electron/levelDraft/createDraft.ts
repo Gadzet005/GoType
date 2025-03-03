@@ -1,7 +1,7 @@
 import { failure, PromiseResult, success } from "@/core/types/result";
-import { LevelDraftInfo } from "@desktop-common/draft";
+import { DraftData } from "@desktop-common/draft";
 
-export async function createDraft(): PromiseResult<LevelDraftInfo, void> {
+export async function createDraft(): PromiseResult<DraftData, void> {
     try {
         const result = await window.levelDraftAPI.createDraft();
         return success(result);

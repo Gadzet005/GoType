@@ -12,7 +12,7 @@ export namespace ElectronAPIMock {
         removeLevel: vi.fn(),
     };
 
-    export const LevelDraft = {
+    export const Draft = {
         getDraft: vi.fn(),
         createDraft: vi.fn(),
         updateDraft: vi.fn(),
@@ -22,10 +22,11 @@ export namespace ElectronAPIMock {
 
     export const App = {
         quitApp: vi.fn(),
+        openFileDialog: vi.fn(),
     };
 }
 
 window.userAPI = ElectronAPIMock.User;
 window.levelAPI = ElectronAPIMock.Level;
 window.appAPI = ElectronAPIMock.App;
-window.levelDraftAPI = ElectronAPIMock.LevelDraft;
+window.levelDraftAPI = ElectronAPIMock.Draft;

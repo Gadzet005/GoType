@@ -1,4 +1,4 @@
-import { Sentence } from "@desktop-common/sentence";
+import { Sentence } from "@desktop-common/level/sentence";
 import { GameState } from "../state";
 import { GameEvent } from "./interface";
 

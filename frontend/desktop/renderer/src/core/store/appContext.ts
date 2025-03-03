@@ -1,8 +1,7 @@
-import { AppContext, Service } from "@/core/types/base/app";
+import { AppContext } from "@/core/types/base/app";
 import { User } from "./user";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { BACKEND_URL } from "@/core/config/api.config";
-import { RemoveFirst } from "@/core/types/utils";
 import { refresh } from "../services/api/user/refresh";
 import { action, makeObservable, observable } from "mobx";
 import { IUser } from "../types/base/user";
@@ -15,7 +14,6 @@ export class GlobalAppContext implements AppContext {
     constructor(user?: IUser) {
         makeObservable(this, {
             user: observable,
-            runService: action,
 
             // @ts-expect-error private actions
             authInterceptor: action,
@@ -36,13 +34,6 @@ export class GlobalAppContext implements AppContext {
         );
     }
 
-    runService<TService extends Service>(
-        service: TService,
-        ...args: RemoveFirst<Parameters<TService>>
-    ): Promise<Awaited<ReturnType<TService>>> {
-        return service(this, ...args);
-    }
-
     private authInterceptor = async (config: InternalAxiosRequestConfig) => {
         if (this.user.tokens) {
             config.headers.setAuthorization(
@@ -57,7 +48,7 @@ export class GlobalAppContext implements AppContext {
             return Promise.reject(error);
         }
 
-        const result = await this.runService(refresh);
+        const result = await refresh(this);
         if (result.ok) {
             return this.authApi.request(error.config!);
         }

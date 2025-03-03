@@ -21,7 +21,7 @@ describe("LoadUserProfile tests", () => {
             data: Dummy.getUserProfileResult,
         });
 
-        const result = await ctx.runService(getUserProfile);
+        const result = await getUserProfile(ctx);
 
         expect(result.ok).toBe(true);
         if (result.ok) {
@@ -40,7 +40,7 @@ describe("LoadUserProfile tests", () => {
             },
         });
 
-        const result = await ctx.runService(getUserProfile);
+        const result = await getUserProfile(ctx);
 
         expect(result.ok).toBe(false);
         if (!result.ok) {

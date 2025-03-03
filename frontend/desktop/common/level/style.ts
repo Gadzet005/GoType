@@ -1,5 +1,3 @@
-import { AnimationEasing, millisecond } from "../types";
-
 export interface LetterStyle {
     fontFamily?: string;
     fontSize?: number;
@@ -8,9 +6,11 @@ export interface LetterStyle {
 }
 
 export interface FadeAnimation {
-    duration: millisecond;
-    letterDuration: millisecond;
-    easing?: AnimationEasing;
+    /** milliseconds */
+    duration: number;
+    /** milliseconds */
+    letterDuration: number;
+    easing?: string;
 }
 
 export interface SentenceAnimations {

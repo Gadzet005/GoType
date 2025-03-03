@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { RoutePath } from "@/core/config/routes/path";
 import { useNavigate } from "@/core/hooks";
 import { Game } from "@/core/store/game";
-import { LevelInfo } from "@desktop-common/level";
+import { LevelData } from "@desktop-common/level";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 import { when } from "mobx";
@@ -17,7 +17,7 @@ import { useAudioPlayer } from "react-use-audio-player";
 import "./index.css";
 
 interface GamePageProps {
-  level: LevelInfo;
+  level: LevelData;
 }
 
 export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
@@ -65,7 +65,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
     audioPlayer.load(level.game.audio.url, {
       autoplay: true,
       loop: false,
-      format: level.game.audio.type,
+      format: level.game.audio.ext,
     });
     return () => audioPlayer.cleanup();
     // eslint-disable-next-line react-hooks/exhaustive-deps

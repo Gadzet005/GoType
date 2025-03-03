@@ -1,7 +1,7 @@
-import { Sentence } from "@desktop-common/sentence";
+import { Sentence } from "@desktop-common/level/sentence";
 import { GameFieldSentence } from "./sentence";
 import { Queue } from "@datastructures-js/queue";
-import { Language } from "@desktop-common/language";
+import { Language } from "@/core/utils/language";
 import {
     action,
     computed,

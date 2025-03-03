@@ -2,7 +2,7 @@ import { languages } from "@/core/config/lang.config";
 import { LanguageInfo } from "../types/language";
 
 export class Language implements LanguageInfo {
-    private static languages: Map<string, LanguageInfo> =
+    static readonly languages: Map<string, LanguageInfo> =
         Language.getLanguageMap();
 
     private static getLanguageMap(): Map<string, LanguageInfo> {

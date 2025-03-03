@@ -10,24 +10,32 @@ export const AppNavigation: React.FC<AppNavigationProps> = ({ routes }) => {
   const [path, setPath] = React.useState<string>(DEFAULT_PATH);
   const [params, setParams] = React.useState<object>({});
 
-  const navigate = (path: string, params?: object) => {
-    const pageGetter = routes.get(path);
-    if (pageGetter) {
-      setPath(path);
-      setParams(params || {});
-    } else {
-      setPath(DEFAULT_PATH);
-      setParams([]);
-    }
-  };
+  const navigate = React.useCallback(
+    (path: string, params?: object) => {
+      const pageGetter = routes.get(path);
+      if (pageGetter) {
+        setPath(path);
+        setParams(params ?? {});
+      } else {
+        setPath(DEFAULT_PATH);
+        setParams([]);
+      }
+    },
+    [routes]
+  );
 
   const PageComponent =
     routes.get(path) || routes.get(DEFAULT_PATH) || (() => null);
 
   const page = <PageComponent {...params} />;
 
+  const navContext = React.useMemo(
+    () => ({ navigate, path, params }),
+    [navigate, path, params]
+  );
+
   return (
-    <NavigationContext.Provider value={{ navigate, path, params }}>
+    <NavigationContext.Provider value={navContext}>
       {page}
     </NavigationContext.Provider>
   );

@@ -2,14 +2,13 @@ import { Typography } from "@mui/material";
 import React from "react";
 import { LetterStyle } from "@desktop-common/level/style";
 import { useIsPaused } from "../pause";
-import { AnimationEasing } from "@desktop-common/types";
 
 import "./fade.css";
 
 interface LetterFadeAnimation {
   time: number;
   duration: number;
-  easing?: AnimationEasing;
+  easing?: string;
 }
 
 interface LetterViewProps {
@@ -22,8 +21,8 @@ interface LetterViewProps {
 
 export const LetterView: React.FC<LetterViewProps> = React.memo(
   ({ letter, style, fadeIn, fadeOut, useUnderline = false }) => {
-    fadeIn.easing = fadeIn.easing || "ease-in";
-    fadeOut.easing = fadeOut.easing || "ease-in";
+    fadeIn.easing = fadeIn.easing ?? "ease-in";
+    fadeOut.easing = fadeOut.easing ?? "ease-in";
 
     const isPaused = useIsPaused();
 

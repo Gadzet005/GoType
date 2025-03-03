@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link";
 import { ApiError } from "@/core/config/api.config";
 import { RoutePath } from "@/core/config/routes/path";
-import { useNavigate, useServicePending } from "@/core/hooks";
+import { useAppContext, useNavigate, useServicePending } from "@/core/hooks";
 import { PasswordField } from "@common/components/form/PasswordField";
 import { Alert, Box, Container, TextField, Typography } from "@mui/material";
 import React from "react";
@@ -11,7 +11,9 @@ import { observer } from "mobx-react";
 import { signUp as SignUpService } from "@/core/services/api/user/signUp";
 
 export const SignUpPage = observer(() => {
+  const ctx = useAppContext();
   const navigate = useNavigate();
+
   const [formError, setFormError] = React.useState<string | null>(null);
   const { call: signUp, isPending } = useServicePending(SignUpService);
 
@@ -28,7 +30,7 @@ export const SignUpPage = observer(() => {
       return;
     }
 
-    const result = await signUp(name, password);
+    const result = await signUp(ctx, name, password);
     if (result.ok) {
       navigate(RoutePath.profile);
     } else if (result.error === ApiError.userExists) {

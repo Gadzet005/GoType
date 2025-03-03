@@ -23,7 +23,7 @@ describe("Refresh tests", () => {
             } as Refresh.Args,
         });
 
-        const result = await ctx.runService(refresh);
+        const result = await refresh(ctx);
         expect(result.ok).toBe(true);
         expect(ctx.user.isAuth).toBe(true);
         expect(ctx.user.tokens?.accessToken).toBe("access_token");
@@ -38,7 +38,7 @@ describe("Refresh tests", () => {
             },
         });
 
-        const result = await ctx.runService(refresh);
+        const result = await refresh(ctx);
         expect(result.ok).toBe(false);
         expect(ctx.user.isAuth).toBe(false);
     });

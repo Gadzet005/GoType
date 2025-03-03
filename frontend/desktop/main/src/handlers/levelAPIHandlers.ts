@@ -1,5 +1,5 @@
 import { LevelStorage } from "@/storages/level";
-import { LevelInfo } from "@desktop-common/level";
+import { LevelData } from "@desktop-common/level";
 import { ipcMain } from "electron";
 
 export function initLevelAPIHandlers(levelStorage: LevelStorage) {
@@ -11,7 +11,7 @@ export function initLevelAPIHandlers(levelStorage: LevelStorage) {
         return await levelStorage.getLevel(levelId);
     });
 
-    ipcMain.handle("save-level", async (_, level: LevelInfo) => {
+    ipcMain.handle("save-level", async (_, level: LevelData) => {
         await levelStorage.saveLevel(level);
     });
 

@@ -1,13 +1,11 @@
-import { percent, tick } from "../types";
-
 export interface DraftSentence {
     content: string;
     coord: {
-        x: percent;
-        y: percent;
+        x: number;
+        y: number;
     };
 
-    showTime?: tick;
-    duration?: tick;
+    showTime?: number;
+    duration?: number;
     styleClass?: string;
 }
