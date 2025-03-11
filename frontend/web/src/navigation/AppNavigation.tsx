@@ -1,34 +1,27 @@
-import React from "react";
-import { DEFAULT_PATH, RouteList } from "./common";
-import { NavigationContext } from "./context";
+import { Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { RoutePath } from '../config/routes';
+import { Level } from '../components/pages/levels/current_level';
 
 interface AppNavigationProps {
-  routes: RouteList;
+  routes: Map<string, React.ElementType>;
 }
 
 export const AppNavigation: React.FC<AppNavigationProps> = ({ routes }) => {
-  const [path, setPath] = React.useState<string>(DEFAULT_PATH);
-  const [params, setParams] = React.useState<object>({});
-
-  const navigate = (path: string, params?: object) => {
-    const pageGetter = routes.get(path);
-    if (pageGetter) {
-      setPath(path);
-      setParams(params || {});
-    } else {
-      setPath(DEFAULT_PATH);
-      setParams([]);
-    }
-  };
-
-  const PageComponent =
-    routes.get(path) || routes.get(DEFAULT_PATH) || (() => null);
-
-  const page = <PageComponent {...params} />;
-
   return (
-    <NavigationContext.Provider value={{ navigate, path, params }}>
-      {page}
-    </NavigationContext.Provider>
+    <Routes>
+      {Array.from(routes.entries()).map(([path, Component]) => (
+        <Route 
+          key={path} 
+          path={path === RoutePath.default ? '/' : path} 
+          element={<Component />} 
+        />
+      ))}
+      
+      <Route 
+        path={RoutePath.level} 
+        element={<Level />} 
+      />
+    </Routes>
   );
 };

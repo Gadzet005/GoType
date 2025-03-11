@@ -1,10 +1,183 @@
-import { Typography } from '@mui/material'
+import { useState, useEffect } from 'react';
+import {
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Chip,
+  CircularProgress,
+  Alert,
+  Container,
+  Pagination,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  TextField,
+  Box
+} from '@mui/material';
+import { LevelService } from '@/api/level';
+import { RoutePath } from '@/config/routes/path';
+import { Link as RouterLink } from 'react-router-dom';
+
+interface Level {
+  id: number;
+  name: string;
+  author_name: string;
+  difficulty: number;
+  language: string;
+  preview_path: string;
+  tags: string[];
+  type: string;
+  duration: number;
+}
+
 export const Levels = () => {
-    
-  
-    return (
-        <Typography variant='h1'>
-        Уровни
+  const [levels, setLevels] = useState<Level[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState({
+    difficulty: 0,
+    language: '',
+    tags: [] as string[],
+    search: ''
+  });
+
+  const PAGE_SIZE = 12;
+
+  useEffect(() => {
+    const fetchLevels = async () => {
+      try {
+        const response = await LevelService.getLevels({
+          filter_params: {
+            difficulty: filters.difficulty,
+            language: filters.language,
+            level_name: filters.search
+          },
+          page_info: {
+            offset: (page - 1) * PAGE_SIZE,
+            page_size: PAGE_SIZE
+          },
+          tags: filters.tags
+        });
+
+        setLevels(response.levels);
+      } catch (err) {
+        setError('Ошибка загрузки уровней');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLevels();
+  }, [page, filters]);
+
+  const handleFilterChange = (name: string, value: any) => {
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setPage(1);
+  };
+
+  if (loading) return <CircularProgress sx={{ mt: 4 }} />;
+
+  if (error) return <Alert severity="error">{error}</Alert>;
+
+  return (
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Typography variant="h2" gutterBottom>
+        Все уровни
       </Typography>
-    );
-  }
+
+      <Box sx={{ mb: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel>Сложность</InputLabel>
+          <Select
+            value={filters.difficulty}
+            onChange={(e) => handleFilterChange('difficulty', e.target.value)}
+            label="Сложность"
+          >
+            <MenuItem value={0}>Все</MenuItem>
+            <MenuItem value={1}>Легкий</MenuItem>
+            <MenuItem value={2}>Средний</MenuItem>
+            <MenuItem value={3}>Сложный</MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel>Язык</InputLabel>
+          <Select
+            value={filters.language}
+            onChange={(e) => handleFilterChange('language', e.target.value)}
+            label="Язык"
+          >
+            <MenuItem value="">Все</MenuItem>
+            <MenuItem value="en">Английский</MenuItem>
+            <MenuItem value="ru">Русский</MenuItem>
+          </Select>
+        </FormControl>
+
+        <TextField
+          label="Поиск по названию"
+          value={filters.search}
+          onChange={(e) => handleFilterChange('search', e.target.value)}
+          sx={{ flexGrow: 1 }}
+        />
+      </Box>
+
+      <Grid container spacing={3}>
+        {levels.map((level) => (
+          <Grid item key={level.id} xs={12} sm={6} md={4} lg={3}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <CardMedia
+                component="img"
+                height="200"
+                image={level.preview_path || '/placeholder-level.jpg'}
+                alt={level.name}
+              />
+              <CardContent sx={{ flexGrow: 1 }}>
+                <Typography gutterBottom variant="h5" component="div">
+                  <RouterLink to={`${RoutePath.level}/${level.id}`}>
+                    {level.name}
+                  </RouterLink>
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Автор: {level.author_name}
+                </Typography>
+                <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  <Chip 
+                    label={`Сложность: ${level.difficulty}`} 
+                    color="primary" 
+                    size="small" 
+                  />
+                  <Chip 
+                    label={level.language.toUpperCase()} 
+                    variant="outlined" 
+                    size="small" 
+                  />
+                  {level.tags.map((tag) => (
+                    <Chip 
+                      key={tag} 
+                      label={tag} 
+                      variant="outlined" 
+                      size="small" 
+                    />
+                  ))}
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Pagination
+          count={10}
+          page={page}
+          onChange={(_, value) => setPage(value)}
+          color="primary"
+        />
+      </Box>
+    </Container>
+  );
+};

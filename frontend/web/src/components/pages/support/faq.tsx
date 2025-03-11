@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { Typography } from '@mui/material'
+import MarkdownViewer from './viewer'
+import { Box } from "@mui/material"
+
 export const FAQ = () => {
-    
   
     return (
-      <Typography variant='body1'>
-        Отвечаем на вопросики
-      </Typography>
+        <Box sx={{ maxWidth: 1200, mx: 'auto', px: 3, py: 3 }}>
+            <MarkdownViewer filePath='/documents/help_information.md' />
+        </Box>
     );
   }

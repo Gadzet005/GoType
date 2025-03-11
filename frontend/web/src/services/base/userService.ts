@@ -7,9 +7,6 @@ import axios, {
 } from "axios";
 import { ApiService } from "./apiService";
 
-/**
- * Abstract class representing a user service with authentication handling.
- */
 export abstract class UserService extends ApiService {
     protected user: User;
     protected authApi: AxiosInstance;

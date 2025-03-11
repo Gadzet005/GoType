@@ -5,7 +5,7 @@ export enum RoutePath {
     download = "download",
     rating = "rating",
     levelList = "levels",
-    level = "level/:leveld",
+    level = "level/:levelId",
     admin = "admin",
     profile = "profile",
     rules = "support/rules",

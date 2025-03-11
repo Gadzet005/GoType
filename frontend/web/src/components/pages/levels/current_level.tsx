@@ -1,13 +1,7 @@
-import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { Typography } from '@mui/material'
+// components/pages/levels/current_level.tsx
+import { useParams } from 'react-router-dom';
 
-export const Level: React.FC<{ levelId: string }> = ({ levelId }) => {//+
-    
-  
-    return (
-      <Typography variant='body1'>
-        Конкретный уровень под номером {levelId}
-      </Typography>
-    );
-}
+export const Level: React.FC = () => {
+    const { levelId } = useParams<{ levelId: string }>();
+    return <div>Level ID: {levelId}</div>;
+};

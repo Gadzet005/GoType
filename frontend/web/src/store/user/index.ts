@@ -1,4 +1,4 @@
-import { AuthTokens } from "@desktop-common/authTokens";
+import { AuthTokens } from "@/auth"
 import { makeObservable, computed, observable, action } from "mobx";
 
 export interface UserProfile {
