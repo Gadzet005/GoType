@@ -2,7 +2,7 @@ import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
 import { useAppContext, useNavigate } from "@/core/hooks";
 import { getAllDrafts } from "@/core/services/electron/levelDraft/getAllDrafts";
-import { DraftData } from "@desktop-common/draft";
+import { DraftInfo } from "@desktop-common/draft";
 import AddIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import { Box, Button, Container, Typography } from "@mui/material";
 import React from "react";
@@ -14,7 +14,7 @@ export const LevelDraftListPage = () => {
   const ctx = useAppContext();
   const navigate = useNavigate();
 
-  const [drafts, setDrafts] = React.useState<DraftData[]>([]);
+  const [drafts, setDrafts] = React.useState<DraftInfo[]>([]);
 
   React.useEffect(() => {
     const loadDrafts = async () => {

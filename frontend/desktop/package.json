@@ -19,7 +19,7 @@
     "@mui/material": "*",
     "react": "*",
     "react-dom": "*",
-    "yarn": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "yarn": "*"
   }
 }

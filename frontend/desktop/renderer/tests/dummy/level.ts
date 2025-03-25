@@ -1,10 +1,10 @@
-import { LevelData } from "@desktop-common/level";
-import { Sentence } from "@desktop-common/level/sentence";
+import { LevelInfo } from "@desktop-common/level";
+import { SentenceInfo } from "@desktop-common/level/sentence";
 
 export function createDummyLevel(
-    sentences: Sentence[] = [],
+    sentences: SentenceInfo[] = [],
     duration: number = 10
-): LevelData {
+): LevelInfo {
     return {
         id: 1,
         name: "dummy",
@@ -20,16 +20,17 @@ export function createDummyLevel(
         },
         tags: [],
         languageCode: "eng",
-        game: {
-            audio: {
-                ext: "mp3",
-                url: "",
-            },
-            background: {
+        audio: {
+            ext: "mp3",
+            url: "",
+        },
+        background: {
+            asset: {
                 ext: "jpg",
                 url: "",
             },
-            sentences: sentences,
+            brightness: 0.5,
         },
+        sentences: sentences,
     };
 }

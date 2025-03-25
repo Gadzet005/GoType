@@ -1,5 +1,5 @@
 import { action, observable, makeObservable, computed } from "mobx";
-import { GameScore } from "./consts";
+import { Score } from "@/core/config/game.config";
 import { Language } from "@/core/utils/language";
 
 export class GameStatistics {
@@ -44,7 +44,7 @@ export class GameStatistics {
         }
     }
 
-    get score(): number {
+    get score() {
         return this._score;
     }
 
@@ -68,31 +68,31 @@ export class GameStatistics {
         });
     }
 
-    get totalLetters(): number {
+    get totalLetters() {
         return this._alphabetTotal.reduce((a, b) => a + b, 0);
     }
 
-    get rightLetters(): number {
+    get rightLetters() {
         return this._alphabetRight.reduce((a, b) => a + b, 0);
     }
 
     // right / total in %
-    get accuracy(): number {
+    get accuracy() {
         if (this.totalLetters === 0) {
             return 100;
         }
         return (this.rightLetters / this.totalLetters) * 100;
     }
 
-    get comboCounter(): number {
+    get comboCounter() {
         return this._comboCounter;
     }
 
-    get maxCombo(): number {
+    get maxCombo() {
         return this._maxCombo;
     }
 
-    // Add to statistics that letter was typed
+    /** Add to statistics that letter was typed */
     addInputResult(letter: string, isRight: boolean) {
         if (!this.language.includes(letter)) {
             return;
@@ -101,7 +101,7 @@ export class GameStatistics {
         if (isRight) {
             this._comboCounter++;
             this._maxCombo = Math.max(this._comboCounter, this._maxCombo);
-            this._score += this.comboCounter * GameScore.letter;
+            this._score += this.comboCounter * Score.LETTER;
         } else {
             this._comboCounter = 1;
         }

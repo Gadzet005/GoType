@@ -1,26 +1,30 @@
-import { Sentence } from "@desktop-common/level/sentence";
+import { SentenceInfo } from "@desktop-common/level/sentence";
 
-export function createDummySentence(text: string, showTime = 1000): Sentence {
+export function createDummySentence(
+    text: string,
+    showTime = 1000,
+    duration = 1000,
+    introDuration = 200,
+    outroDuration = 200
+): SentenceInfo {
     return {
         content: text,
         showTime: showTime,
-        duration: 2000,
+        duration: duration,
         style: {
             animations: {
-                fadeIn: {
-                    duration: 1000,
-                    letterDuration: 500,
+                intro: {
+                    duration: introDuration,
                 },
-                fadeOut: {
-                    duration: 1000,
-                    letterDuration: 500,
+                outro: {
+                    duration: outroDuration,
                 },
             },
             letter: {
                 default: {
                     color: "black",
                 },
-                current: {
+                active: {
                     color: "blue",
                 },
                 mistake: {

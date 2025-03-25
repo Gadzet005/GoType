@@ -1,4 +1,4 @@
-import { languages } from "@/core/config/lang.config";
+import { LANGUAGES, DEFAULT_LANGUAGE_CODE } from "@/core/config/lang.config";
 import { LanguageInfo } from "../types/language";
 
 export class Language implements LanguageInfo {
@@ -7,13 +7,21 @@ export class Language implements LanguageInfo {
 
     private static getLanguageMap(): Map<string, LanguageInfo> {
         const result = new Map<string, LanguageInfo>();
-        languages.forEach((lang) => result.set(lang.code, lang));
+        LANGUAGES.forEach((lang) => result.set(lang.code, lang));
         return result;
     }
 
     static byCode(code: string): Language | null {
         const langInfo = Language.languages.get(code);
         return langInfo ? new Language(langInfo) : null;
+    }
+
+    static default(): Language {
+        const lang = this.byCode(DEFAULT_LANGUAGE_CODE);
+        if (!lang) {
+            throw new Error("Default language not found");
+        }
+        return lang;
     }
 
     readonly code: string;

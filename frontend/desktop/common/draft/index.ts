@@ -1,26 +1,26 @@
-import { DraftSentence } from "./sentence";
+import { DraftSentenceInfo } from "./sentence";
 import { StyleClass } from "./style";
 import { NamedAsset } from "../asset";
 
 /**
  * Represents the data structure for a level draft.
  */
-export interface DraftData {
+export interface DraftInfo {
     id: number;
     name: string;
     updateTime: number;
     audio: NamedAsset | null;
     background: NamedAsset | null;
-    sentences: DraftSentence[];
+    sentences: DraftSentenceInfo[];
     styleClasses: StyleClass[];
 }
 
 export type DraftAssetType = "audio" | "background";
 
 export namespace DraftUpdate {
-    type RequiredArgs = Pick<DraftData, "id">;
+    type RequiredArgs = Pick<DraftInfo, "id">;
     type NoRequiredArgs = Pick<
-        DraftData,
+        DraftInfo,
         "name" | "sentences" | "styleClasses"
     >;
 

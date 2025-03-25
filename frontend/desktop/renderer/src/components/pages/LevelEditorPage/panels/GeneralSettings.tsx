@@ -77,7 +77,7 @@ export const GeneralSettings: React.FC = observer(() => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 5,
+        gap: 3,
       }}
     >
       <Typography variant="h4">Основные настройки</Typography>

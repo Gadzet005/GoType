@@ -1,7 +1,7 @@
 import { RoutePath } from "@/core/config/routes/path";
 import { useNavigate } from "@/core/hooks";
 import { GameStatistics } from "@/core/store/game/statistics";
-import { LevelData } from "@desktop-common/level";
+import { LevelInfo } from "@desktop-common/level";
 import { Box, Container, Typography } from "@mui/material";
 import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -9,7 +9,7 @@ import { Button } from "../../ui/Button";
 import { StatTable } from "./StatTable";
 
 interface GameStatisticsPageProps {
-  level: LevelData;
+  level: LevelInfo;
   statistics: GameStatistics;
 }
 

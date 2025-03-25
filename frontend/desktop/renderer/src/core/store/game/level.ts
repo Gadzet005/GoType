@@ -1,24 +1,58 @@
-import { LevelData } from "@desktop-common/level";
-import { TICK_TIME } from "./consts";
+import { LevelInfo } from "@desktop-common/level";
+import { TICK_TIME } from "@/core/config/game.config";
 import { Language } from "@/core/utils/language";
 
-/* 
-    eslint-disable 
-    @typescript-eslint/no-empty-object-type,
-    @typescript-eslint/no-unsafe-declaration-merging
-*/
-export interface Level extends LevelData {}
-export class Level implements LevelData {
+export class Level {
+    private readonly info: LevelInfo;
     readonly language: Language;
 
-    constructor(level: LevelData) {
-        Object.assign(this, level);
+    constructor(levelData: LevelInfo) {
+        this.info = levelData;
         this.language =
-            Language.byCode(this.languageCode) || Language.byCode("eng")!;
+            Language.byCode(levelData.languageCode) ?? Language.default();
     }
 
-    get durationInTicks(): number {
-        return Math.ceil((this.duration * 1000) / TICK_TIME);
+    get id() {
+        return this.info.id;
+    }
+
+    get name() {
+        return this.info.name;
+    }
+
+    get description() {
+        return this.info.description;
+    }
+
+    get author() {
+        return this.info.author;
+    }
+
+    get duration() {
+        return this.info.duration;
+    }
+
+    get durationInMilliseconds() {
+        return this.info.duration * TICK_TIME;
+    }
+
+    get tags() {
+        return this.info.tags;
+    }
+
+    get preview() {
+        return this.info.preview;
+    }
+
+    get audio() {
+        return this.info.audio;
+    }
+
+    get background() {
+        return this.info.background;
+    }
+
+    get sentences() {
+        return this.info.sentences;
     }
 }
-/* eslint-enable */

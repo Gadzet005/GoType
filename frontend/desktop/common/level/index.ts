@@ -1,7 +1,7 @@
-import { Sentence } from "./sentence";
+import { SentenceInfo } from "./sentence";
 import { Asset } from "../asset";
 
-export interface LevelData {
+export interface LevelInfo {
     id: number;
     name: string;
     description: string;
@@ -9,14 +9,15 @@ export interface LevelData {
         id: number;
         name: string;
     };
-    //** seconds */
+    /** in ticks */
     duration: number;
     tags: string[];
     languageCode: string;
     preview: Asset;
-    game: {
-        audio: Asset;
-        background: Asset;
-        sentences: Sentence[];
+    audio: Asset;
+    background: {
+        asset: Asset;
+        brightness: number;
     };
+    sentences: SentenceInfo[];
 }

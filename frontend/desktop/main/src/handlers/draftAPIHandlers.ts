@@ -1,5 +1,5 @@
 import { DraftStorage } from "@/storages/draft";
-import { DraftData, DraftUpdate } from "@desktop-common/draft";
+import { DraftInfo, DraftUpdate } from "@desktop-common/draft";
 import { ipcMain } from "electron";
 
 export function initDraftAPIHandlers(draftStorage: DraftStorage) {
@@ -17,7 +17,7 @@ export function initDraftAPIHandlers(draftStorage: DraftStorage) {
 
     ipcMain.handle(
         "update-draft",
-        async (_, args: DraftUpdate.Args): Promise<DraftData> => {
+        async (_, args: DraftUpdate.Args): Promise<DraftInfo> => {
             await draftStorage.updateDraft(args);
             return (await draftStorage.getDraft(args.id))!;
         }

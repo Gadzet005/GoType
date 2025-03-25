@@ -1,4 +1,3 @@
-import { LevelData } from "@desktop-common/level";
 import {
   Box,
   Card,
@@ -13,12 +12,14 @@ import { Button } from "@/components/ui/Button";
 import React from "react";
 import { RoutePath } from "@/core/config/routes/path";
 import noImage from "/noimage.png";
+import { Level } from "@/core/store/game/level";
 
 interface LevelListItemProps {
-  level: LevelData;
+  level: Level;
 }
 
 export const LevelListItem: React.FC<LevelListItemProps> = ({ level }) => {
+  const durationInMinutes = (level.durationInMilliseconds / 60000).toFixed(1);
   return (
     <Card
       sx={{
@@ -67,7 +68,7 @@ export const LevelListItem: React.FC<LevelListItemProps> = ({ level }) => {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <AccessTimeIcon fontSize="small" color="action" />
             <Typography variant="body2" color="text.secondary">
-              {(level.duration / 60).toFixed(1)} мин.
+              {durationInMinutes} мин.
             </Typography>
           </Box>
         </Stack>

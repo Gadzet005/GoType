@@ -1,6 +1,6 @@
 import { LanguageInfo } from "../types/language";
 
-export const languages: LanguageInfo[] = [
+export const LANGUAGES: LanguageInfo[] = [
     {
         code: "eng",
         name: "English",
@@ -12,3 +12,5 @@ export const languages: LanguageInfo[] = [
         alphabet: "абвгдеёжзийклмнопрстуфхцчшщъыьэюя",
     },
 ];
+
+export const DEFAULT_LANGUAGE_CODE = "eng";

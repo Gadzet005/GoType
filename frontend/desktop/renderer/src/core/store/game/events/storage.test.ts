@@ -1,8 +1,10 @@
 import { EventStorage } from "@/core/store/game/events/storage";
-import { GameEvent } from "@/core/store/game/events/interface";
+import { GameEvent } from "@/core/store/game/events/types";
 
 class DoNothingEvent implements GameEvent {
-    run(): void {}
+    run() {
+        // Do nothing
+    }
 }
 
 describe("EventStorage tests", () => {

@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { DraftData } from "@desktop-common/draft";
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { DraftInfo } from "@desktop-common/draft";
+import { Box, Tabs, Typography } from "@mui/material";
 import { observer } from "mobx-react";
 import React from "react";
 import { EditorContext } from "./context";
@@ -11,9 +11,11 @@ import { GeneralSettings } from "./panels/GeneralSettings";
 import { TextEditor } from "./panels/TextEditor";
 import { EditorTabPanel } from "./utils/EditorTabPanel";
 import { truncateString } from "@/core/utils/string";
+import { EditorTab } from "./utils/EditorTab";
+import { StyleEditor } from "./panels/StyleEditor";
 
 interface LevelEditorPageProps {
-  draftData: DraftData;
+  draftData: DraftInfo;
   initialTab?: number;
 }
 
@@ -44,12 +46,10 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
               value={curTab}
               onChange={(_: any, newTab: number) => setCurTab(newTab)}
             >
-              <Tab sx={{ fontSize: 25, textTransform: "none" }} label="Поле" />
-              <Tab sx={{ fontSize: 25, textTransform: "none" }} label="Текст" />
-              <Tab
-                sx={{ fontSize: 25, textTransform: "none" }}
-                label="Настройки"
-              />
+              <EditorTab label="Поле" />
+              <EditorTab label="Текст" />
+              <EditorTab label="Стиль" />
+              <EditorTab label="Настройки" />
             </Tabs>
             <BackButton
               sx={{ p: 2 }}
@@ -66,6 +66,9 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
             <TextEditor />
           </EditorTabPanel>
           <EditorTabPanel value={curTab} index={2}>
+            <StyleEditor />
+          </EditorTabPanel>
+          <EditorTabPanel value={curTab} index={3}>
             <GeneralSettings />
           </EditorTabPanel>
         </Box>

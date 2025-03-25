@@ -1,7 +1,7 @@
-import { LevelData } from "@desktop-common/level";
+import { LevelInfo } from "@desktop-common/level";
 import { UserInfo } from "@desktop-common/user";
 import { FileInfo } from "@desktop-common/file";
-import { DraftUpdate, DraftData } from "@desktop-common/draft";
+import { DraftUpdate, DraftInfo } from "@desktop-common/draft";
 
 declare global {
     interface Window {
@@ -15,17 +15,17 @@ declare global {
             clearUserInfo: () => Promise<void>;
         };
         levelAPI: {
-            getAllLevels: () => Promise<LevelData[]>;
-            getLevel: (levelId: number) => Promise<LevelData | null>;
-            saveLevel: (level: LevelData) => Promise<void>;
+            getAllLevels: () => Promise<LevelInfo[]>;
+            getLevel: (levelId: number) => Promise<LevelInfo | null>;
+            saveLevel: (level: LevelInfo) => Promise<void>;
             removeLevel: (levelId: number) => Promise<void>;
         };
         levelDraftAPI: {
             getAllDrafts: () => Promise<s[]>;
-            getDraft: (draftId: number) => Promise<DraftData>;
+            getDraft: (draftId: number) => Promise<DraftInfo>;
             removeDraft: (draftId: number) => Promise<void>;
-            createDraft: () => Promise<DraftData>;
-            updateDraft: (args: DraftUpdate.Args) => Promise<DraftData>;
+            createDraft: () => Promise<DraftInfo>;
+            updateDraft: (args: DraftUpdate.Args) => Promise<DraftInfo>;
         };
     }
 }

@@ -11,12 +11,12 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@datastructures-js/queue": "^4.2.3",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/onest": "^5.1.1",
     "@fontsource/roboto": "^5.1.1",
     "@mui/icons-material": "^6.3.0",
+    "@react-spring/web": "^9.7.5",
     "axios": "^1.7.9",
     "mobx": "^6.13.5",
     "mobx-react": "^9.2.0",

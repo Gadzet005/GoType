@@ -1,113 +1,84 @@
-import { Sentence } from "@desktop-common/level/sentence";
-import { action, computed, makeObservable, observable } from "mobx";
+import { SentenceInfo } from "@desktop-common/level/sentence";
+import { makeObservable, observable } from "mobx";
+import { Letter } from "./letter";
 
-export enum LetterState {
-    default,
-    mistake,
-    success,
+export enum SentenceState {
+    initial,
+    intro,
+    active,
+    outro,
+    hidden,
 }
 
-export class SentenceCursor {
-    private readonly maxValue: number;
-    private _position: number = -1;
+/** sentence on game field */
+export class Sentence {
+    readonly idx: number;
+    private readonly letters: Letter[];
+    private readonly info: SentenceInfo;
+    state: SentenceState = SentenceState.initial;
 
-    constructor(maxValue: number) {
-        this.maxValue = maxValue;
-
+    constructor(idx: number, info: SentenceInfo) {
         makeObservable(this, {
             // @ts-expect-error: private observable
-            _position: observable,
-            move: action,
-            position: computed,
-            isInited: computed,
-            isOnEnd: computed,
-        });
-    }
-
-    // move cursor forward
-    // returns false if cursor is at end of sentence
-    move(): boolean {
-        this._position++;
-        return this._position < this.maxValue;
-    }
-
-    get position() {
-        return this._position;
-    }
-
-    get isInited(): boolean {
-        return this._position !== -1;
-    }
-
-    get isOnEnd(): boolean {
-        return this._position >= this.maxValue;
-    }
-}
-
-/* 
-    eslint-disable 
-    @typescript-eslint/no-empty-object-type,
-    @typescript-eslint/no-unsafe-declaration-merging
-*/
-// sentence on game field
-export interface GameFieldSentence extends Sentence {}
-export class GameFieldSentence implements Sentence {
-    readonly id: number;
-    readonly cursor: SentenceCursor;
-    private state: LetterState[];
-
-    constructor(id: number, sentence: Sentence) {
-        makeObservable(this, {
-            // @ts-expect-error: private observable
+            letters: observable.shallow,
             state: observable,
-            cursor: observable,
         });
 
-        this.id = id;
-        this.state = Array(sentence.content.length).fill(LetterState.default);
-        this.cursor = new SentenceCursor(sentence.content.length);
-        Object.assign(this, sentence);
+        this.idx = idx;
+        this.info = info;
+        this.letters = this.info.content
+            .split("")
+            .map((letter: string) => new Letter(letter, info.style.letter));
     }
 
-    getLetterStyle(index: number) {
-        if (index === this.cursor.position) {
-            return {
-                ...this.style.letter.default,
-                ...this.style.letter.current,
-            };
-        }
-
-        switch (this.state[index]) {
-            case LetterState.mistake:
-                return {
-                    ...this.style.letter.default,
-                    ...this.style.letter.mistake,
-                };
-            case LetterState.success:
-                return {
-                    ...this.style.letter.default,
-                    ...this.style.letter.success,
-                };
-            default:
-                return this.style.letter.default;
-        }
+    getLetters() {
+        return this.letters;
     }
 
-    getLetterState(index: number): LetterState {
-        return this.state[index];
+    getLetter(idx: number) {
+        return this.letters[idx];
     }
 
-    setLetterState(index: number, state: LetterState): void {
-        this.state[index] = state;
+    isVisible(): boolean {
+        return (
+            this.state != SentenceState.hidden &&
+            this.state != SentenceState.initial
+        );
     }
 
-    get length(): number {
-        return this.content.length;
+    get introDuration() {
+        return this.info.style.animations.intro.duration;
     }
 
-    get cursorLetter(): string {
-        return this.content[this.cursor.position];
+    get outroDuration() {
+        return this.info.style.animations.outro.duration;
+    }
+
+    get activeDuration() {
+        return this.info.duration - this.introDuration - this.outroDuration;
+    }
+
+    get activeStart() {
+        return this.info.showTime + this.introDuration;
+    }
+
+    get showTime() {
+        return this.info.showTime;
+    }
+
+    get duration() {
+        return this.info.duration;
+    }
+
+    get style() {
+        return this.info.style;
+    }
+
+    get coord() {
+        return this.info.coord;
+    }
+
+    get length() {
+        return this.letters.length;
     }
 }
-
-/* eslint-enable */

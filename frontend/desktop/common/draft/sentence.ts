@@ -1,4 +1,4 @@
-export interface DraftSentence {
+export interface DraftSentenceInfo {
     content: string;
     coord: {
         x: number;

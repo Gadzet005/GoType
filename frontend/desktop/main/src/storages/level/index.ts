@@ -1,4 +1,4 @@
-import { LevelData } from "@desktop-common/level";
+import { LevelInfo } from "@desktop-common/level";
 import { logError } from "@/utils/common";
 import { toStored, fromStored } from "./storedLevel";
 import { FileSystemStorage } from "../base/FileSystemStorage";
@@ -6,7 +6,7 @@ import { FileSystemStorage } from "../base/FileSystemStorage";
 export class LevelStorage extends FileSystemStorage {
     static readonly INFO_FILE_NAME = "level.json";
 
-    async saveLevel(level: LevelData) {
+    async saveLevel(level: LevelInfo) {
         const levelDir = this.root.dir(String(level.id));
 
         await levelDir
@@ -20,7 +20,7 @@ export class LevelStorage extends FileSystemStorage {
         this.mainStorage.savedLevels.add(level.id);
     }
 
-    async getLevel(levelId: number): Promise<LevelData | null> {
+    async getLevel(levelId: number): Promise<LevelInfo | null> {
         const levelDir = this.root.dir(String(levelId));
 
         const storedLevel = await levelDir
@@ -34,15 +34,15 @@ export class LevelStorage extends FileSystemStorage {
         return fromStored(storedLevel);
     }
 
-    async getAllLevels(): Promise<LevelData[]> {
+    async getAllLevels(): Promise<LevelInfo[]> {
         const levelIds = this.mainStorage.savedLevels.getAll();
 
-        const awaitedLevels: Promise<LevelData | null>[] = [];
+        const awaitedLevels: Promise<LevelInfo | null>[] = [];
         for (const levelId of levelIds) {
             awaitedLevels.push(this.getLevel(levelId));
         }
 
-        const levels: LevelData[] = [];
+        const levels: LevelInfo[] = [];
         for (const awaitedLevel of awaitedLevels) {
             const level = await awaitedLevel;
             if (level) {

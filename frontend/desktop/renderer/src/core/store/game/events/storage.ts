@@ -1,18 +1,7 @@
-import { GameEvent } from "./interface";
-import { action, makeObservable, observable } from "mobx";
+import { GameEvent } from "./types";
 
 export class EventStorage {
     private events = new Map<number, GameEvent[]>();
-
-    constructor() {
-        makeObservable(this, {
-            // @ts-expect-error: private observable
-            events: observable.shallow,
-            addEvent: action,
-            removeTickEvents: action,
-            removeAllEvents: action,
-        });
-    }
 
     addEvent(tick: number, event: GameEvent) {
         const tickEvents = this.events.get(tick);

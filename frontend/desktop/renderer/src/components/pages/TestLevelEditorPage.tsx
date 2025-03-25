@@ -2,10 +2,10 @@ import { Box, Typography } from "@mui/material";
 import { Button } from "@/components/ui/Button";
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { LevelData } from "@desktop-common/level";
+import { LevelInfo } from "@desktop-common/level";
 import { saveLevel } from "@/core/services/electron/level/saveLevel";
 
-const level: LevelData = {
+const level: LevelInfo = {
   id: 3,
   name: "Walk on Water",
   description:
@@ -14,7 +14,7 @@ const level: LevelData = {
     id: 1,
     name: "John Doe",
   },
-  duration: 26,
+  duration: 3000,
   preview: {
     ext: "jpg",
     url: "",
@@ -22,142 +22,119 @@ const level: LevelData = {
   tags: ["имба"],
   languageCode: "eng",
 
-  game: {
-    audio: {
-      ext: "mp3",
-      url: "",
-    },
-    background: {
+  audio: {
+    ext: "mp3",
+    url: "",
+  },
+  background: {
+    asset: {
       ext: "jpg",
       url: "",
     },
-    sentences: [
-      {
-        content: "Can you even see what you're fighting for?",
-        showTime: 0,
-        duration: 1000,
-        style: {
-          bgcolor: "lightgrey",
-          padding: 1,
-          borderRadius: 4,
-          animations: {
-            fadeIn: {
-              duration: 1000,
-              letterDuration: 500,
-              easing: "ease-in-out",
-            },
-            fadeOut: {
-              duration: 1000,
-              letterDuration: 500,
-              easing: "ease-in-out",
-            },
-          },
-          letter: {
-            default: {
-              fontFamily: "Roboto",
-              fontSize: 50,
-              fontWeight: "bold",
-              color: "black",
-            },
-            current: {
-              color: "blue",
-              fontSize: 60,
-            },
-            mistake: {
-              color: "red",
-            },
-            success: {
-              color: "green",
-            },
-          },
-        },
-        coord: { x: 5, y: 5 },
-      },
-      {
-        content: "Bloodlust and a holy war",
-        showTime: 800,
-        duration: 700,
-        style: {
-          bgcolor: "lightgrey",
-          padding: 1,
-          borderRadius: 4,
-          rotate: 30,
-          animations: {
-            fadeIn: {
-              duration: 500,
-              letterDuration: 200,
-              easing: "ease-in-out",
-            },
-            fadeOut: {
-              duration: 500,
-              letterDuration: 200,
-              easing: "ease-in-out",
-            },
-          },
-          letter: {
-            default: {
-              fontFamily: "Roboto",
-              fontSize: 50,
-              fontWeight: "bold",
-              color: "black",
-            },
-            current: {
-              color: "blue",
-              fontSize: 60,
-            },
-            mistake: {
-              color: "red",
-            },
-            success: {
-              color: "green",
-            },
-          },
-        },
-        coord: { x: 50, y: 50 },
-      },
-      {
-        content: "Listen up, hear the patriots shout",
-        showTime: 1700,
-        duration: 800,
-        style: {
-          bgcolor: "lightgrey",
-          padding: 1,
-          borderRadius: 4,
-          animations: {
-            fadeIn: {
-              duration: 500,
-              letterDuration: 200,
-              easing: "ease-in-out",
-            },
-            fadeOut: {
-              duration: 500,
-              letterDuration: 200,
-              easing: "ease-in-out",
-            },
-          },
-          letter: {
-            default: {
-              fontFamily: "Roboto",
-              fontSize: 70,
-              fontWeight: "bold",
-              color: "black",
-            },
-            current: {
-              color: "blue",
-              fontSize: 80,
-            },
-            mistake: {
-              color: "red",
-            },
-            success: {
-              color: "green",
-            },
-          },
-        },
-        coord: { x: 10, y: 90 },
-      },
-    ],
+    brightness: 0.3,
   },
+  sentences: [
+    {
+      content: "Can you even see what you're fighting for?",
+      showTime: 0,
+      duration: 1000,
+      style: {
+        bgcolor: "lightgrey",
+        padding: 1,
+        borderRadius: 4,
+        animations: {
+          intro: { duration: 50 },
+          outro: { duration: 50 },
+        },
+        letter: {
+          default: {
+            fontFamily: "Roboto",
+            fontSize: 50,
+            fontWeight: "bold",
+            color: "black",
+          },
+          active: {
+            color: "blue",
+            fontSize: 60,
+          },
+          mistake: {
+            color: "red",
+          },
+          success: {
+            color: "green",
+          },
+        },
+      },
+      coord: { x: 5, y: 5 },
+    },
+    {
+      content: "Bloodlust and a holy war",
+      showTime: 800,
+      duration: 700,
+      style: {
+        bgcolor: "lightgrey",
+        padding: 1,
+        borderRadius: 4,
+        rotate: 30,
+        animations: {
+          intro: { duration: 50 },
+          outro: { duration: 50 },
+        },
+        letter: {
+          default: {
+            fontFamily: "Roboto",
+            fontSize: 50,
+            fontWeight: "bold",
+            color: "black",
+          },
+          active: {
+            color: "blue",
+            fontSize: 60,
+          },
+          mistake: {
+            color: "red",
+          },
+          success: {
+            color: "green",
+          },
+        },
+      },
+      coord: { x: 50, y: 50 },
+    },
+    {
+      content: "Listen up, hear the patriots shout",
+      showTime: 1700,
+      duration: 800,
+      style: {
+        bgcolor: "lightgrey",
+        padding: 1,
+        borderRadius: 4,
+        animations: {
+          intro: { duration: 50 },
+          outro: { duration: 50 },
+        },
+        letter: {
+          default: {
+            fontFamily: "Roboto",
+            fontSize: 70,
+            fontWeight: "bold",
+            color: "black",
+          },
+          active: {
+            color: "blue",
+            fontSize: 80,
+          },
+          mistake: {
+            color: "red",
+          },
+          success: {
+            color: "green",
+          },
+        },
+      },
+      coord: { x: 10, y: 90 },
+    },
+  ],
 };
 
 export const TestLevelEditorPage = () => {

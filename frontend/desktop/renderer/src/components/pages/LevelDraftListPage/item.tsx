@@ -10,11 +10,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "@/core/hooks";
 import { RoutePath } from "@/core/config/routes/path";
 import React from "react";
-import { DraftData } from "@desktop-common/draft";
+import { DraftInfo } from "@desktop-common/draft";
 import { truncateString } from "@/core/utils/string";
 
 interface DraftListItemProps {
-  draft: DraftData;
+  draft: DraftInfo;
   deleleSelf: () => void;
 }
 
@@ -46,10 +46,10 @@ export const DraftListItem: React.FC<DraftListItemProps> = ({
       }}
       onClick={handleEdit}
       secondaryAction={
-        <Box>
+        <Box sx={{ px: 2 }}>
           <IconButton
             edge="end"
-            aria-label="edit"
+            aria-label="редактировать"
             onClick={(event) => {
               event.stopPropagation();
               handleEdit();
@@ -60,7 +60,7 @@ export const DraftListItem: React.FC<DraftListItemProps> = ({
           </IconButton>
           <IconButton
             edge="end"
-            aria-label="delete"
+            aria-label="удалить"
             onClick={(event) => {
               event.stopPropagation();
               deleleSelf();

@@ -1,10 +1,10 @@
 import { AssetType } from "@/consts";
 import { getLevelUrl } from "@/utils/url";
 import { Asset } from "@desktop-common/asset";
-import { LevelData } from "@desktop-common/level";
-import { Sentence } from "@desktop-common/level/sentence";
+import { LevelInfo } from "@desktop-common/level";
+import { SentenceInfo } from "@desktop-common/level/sentence";
 
-export interface StoredLevelData {
+export interface StoredLevelInfo {
     id: number;
     name: string;
     description: string;
@@ -16,9 +16,12 @@ export interface StoredLevelData {
     tags: string[];
     languageCode: string;
     previewExt: string;
-    backgroundExt: string;
+    background: {
+        ext: string;
+        brightness: number;
+    };
     audioExt: string;
-    sentences: Sentence[];
+    sentences: SentenceInfo[];
 }
 
 function fromStoredAsset(levelId: number, type: AssetType, ext: string): Asset {
@@ -28,7 +31,7 @@ function fromStoredAsset(levelId: number, type: AssetType, ext: string): Asset {
     };
 }
 
-export function toStored(level: LevelData): StoredLevelData {
+export function toStored(level: LevelInfo): StoredLevelInfo {
     return {
         id: level.id,
         name: level.name,
@@ -38,13 +41,16 @@ export function toStored(level: LevelData): StoredLevelData {
         tags: level.tags,
         languageCode: level.languageCode,
         previewExt: level.preview.ext,
-        audioExt: level.game.audio.ext,
-        backgroundExt: level.game.background.ext,
-        sentences: level.game.sentences,
+        audioExt: level.audio.ext,
+        background: {
+            ext: level.background.asset.ext,
+            brightness: level.background.brightness,
+        },
+        sentences: level.sentences,
     };
 }
 
-export function fromStored(stored: StoredLevelData): LevelData {
+export function fromStored(stored: StoredLevelInfo): LevelInfo {
     return {
         id: stored.id,
         name: stored.name,
@@ -54,14 +60,15 @@ export function fromStored(stored: StoredLevelData): LevelData {
         tags: stored.tags,
         languageCode: stored.languageCode,
         preview: fromStoredAsset(stored.id, "preview", stored.previewExt),
-        game: {
-            audio: fromStoredAsset(stored.id, "preview", stored.audioExt),
-            background: fromStoredAsset(
+        audio: fromStoredAsset(stored.id, "audio", stored.audioExt),
+        background: {
+            asset: fromStoredAsset(
                 stored.id,
                 "background",
-                stored.backgroundExt
+                stored.background.ext
             ),
-            sentences: stored.sentences,
+            brightness: stored.background.brightness,
         },
+        sentences: stored.sentences,
     };
 }

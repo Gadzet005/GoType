@@ -1,12 +1,12 @@
 import { GameStatistics } from "@/core/store/game/statistics";
 import { Language } from "@/core/utils/language";
-import { GameScore } from "@/core/store/game/consts";
-
-const eng = Language.byCode("eng")!;
+import { Score } from "@/core/config/game.config";
 
 describe("GameStatistics tests", () => {
+    const lang = Language.default();
+
     it("reset", () => {
-        const statistics = new GameStatistics(eng);
+        const statistics = new GameStatistics(lang);
         statistics.addInputResult("a", true);
         statistics.addInputResult("b", false);
         statistics.reset();
@@ -20,7 +20,7 @@ describe("GameStatistics tests", () => {
     });
 
     it("addInputResult", () => {
-        const statistics = new GameStatistics(eng);
+        const statistics = new GameStatistics(lang);
         const input = [
             ["a", true],
             ["b", false],
@@ -33,14 +33,14 @@ describe("GameStatistics tests", () => {
             statistics.addInputResult(letter as string, isRight as boolean)
         );
 
-        expect(statistics.score).toBeGreaterThanOrEqual(GameScore.letter * 3);
+        expect(statistics.score).toBeGreaterThanOrEqual(Score.LETTER * 3);
         expect(statistics.rightLetters).toBe(3);
         expect(statistics.totalLetters).toBe(4);
         expect(statistics.accuracy).toBe(75);
     });
 
     it("total", () => {
-        const statistics = new GameStatistics(eng);
+        const statistics = new GameStatistics(lang);
         const input = [
             ["a", true],
             ["b", false],
@@ -62,7 +62,7 @@ describe("GameStatistics tests", () => {
     });
 
     it("ratio", () => {
-        const statistics = new GameStatistics(eng);
+        const statistics = new GameStatistics(lang);
         const input = [
             ["a", true],
             ["a", true],
@@ -92,7 +92,7 @@ describe("GameStatistics tests", () => {
     });
 
     it("combo", () => {
-        const statistics = new GameStatistics(eng);
+        const statistics = new GameStatistics(lang);
         const input = [
             ["a", true],
             ["c", true],

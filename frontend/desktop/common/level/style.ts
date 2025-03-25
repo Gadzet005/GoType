@@ -5,17 +5,21 @@ export interface LetterStyle {
     color?: string;
 }
 
-export interface FadeAnimation {
-    /** milliseconds */
+export interface SentenceLetterStyles {
+    default: LetterStyle;
+    active: LetterStyle;
+    mistake: LetterStyle;
+    success: LetterStyle;
+}
+
+export interface SimpleAnimation {
+    /** in ticks */
     duration: number;
-    /** milliseconds */
-    letterDuration: number;
-    easing?: string;
 }
 
 export interface SentenceAnimations {
-    fadeIn: FadeAnimation;
-    fadeOut: FadeAnimation;
+    intro: SimpleAnimation;
+    outro: SimpleAnimation;
 }
 
 export interface SentenceStyle {
@@ -24,12 +28,6 @@ export interface SentenceStyle {
     rotate?: number;
     borderRadius?: number;
 
-    letter: {
-        default: LetterStyle;
-        current: LetterStyle;
-        mistake: LetterStyle;
-        success: LetterStyle;
-    };
-
+    letter: SentenceLetterStyles;
     animations: SentenceAnimations;
 }

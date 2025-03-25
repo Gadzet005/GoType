@@ -1,10 +1,10 @@
-import { LevelData } from "@desktop-common/level";
 import { Box } from "@mui/material";
 import React from "react";
 import { LevelListItem } from "./LevelListItem";
+import { Level } from "@/core/store/game/level";
 
 interface LevelListProps {
-  levels: LevelData[];
+  levels: Level[];
 }
 
 export const LevelList: React.FC<LevelListProps> = React.memo(({ levels }) => {

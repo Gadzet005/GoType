@@ -1,19 +1,19 @@
 import { NamedAsset } from "@desktop-common/asset";
-import { DraftData } from "@desktop-common/draft";
-import { DraftSentence } from "@desktop-common/draft/sentence";
+import { DraftInfo } from "@desktop-common/draft";
+import { DraftSentenceInfo } from "@desktop-common/draft/sentence";
 import { StyleClass } from "@desktop-common/draft/style";
 import { action, makeAutoObservable, observable } from "mobx";
 
-export class Draft implements DraftData {
+export class Draft implements DraftInfo {
     private _id!: number;
     private _name!: string;
     private _updateTime!: number;
     private _audio!: NamedAsset | null;
     private _background!: NamedAsset | null;
-    private _sentences!: DraftSentence[];
+    private _sentences!: DraftSentenceInfo[];
     private _styleClasses!: StyleClass[];
 
-    constructor(data: DraftData) {
+    constructor(data: DraftInfo) {
         this.update(data);
 
         makeAutoObservable(this, {
@@ -29,7 +29,7 @@ export class Draft implements DraftData {
         });
     }
 
-    update(data: Partial<DraftData>): void {
+    update(data: Partial<DraftInfo>): void {
         if (data.id) {
             this._id = data.id;
         }
@@ -73,7 +73,7 @@ export class Draft implements DraftData {
         return this._background;
     }
 
-    get sentences(): DraftSentence[] {
+    get sentences(): DraftSentenceInfo[] {
         return this._sentences;
     }
 

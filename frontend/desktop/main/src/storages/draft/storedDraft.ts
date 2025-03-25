@@ -1,7 +1,7 @@
 import { DraftAssetType, DraftUpdate } from "@desktop-common/draft";
 import jetpack from "fs-jetpack";
 import { FSJetpack } from "fs-jetpack/types";
-import { defaultStoredDraftData, StoredDraftData } from "./storedDraftData";
+import { defaultStoredDraftData, StoredDraftInfo } from "./storedDraftInfo";
 import { logError } from "@/utils/common";
 import { cache, Cached } from "../../utils/cache";
 import path from "path";
@@ -18,13 +18,13 @@ export class StoredDraft {
     }
 
     @cache({ argsConverter: (obj) => obj.root.path() })
-    async loadData(): Promise<StoredDraftData> {
+    async loadData(): Promise<StoredDraftInfo> {
         return await this.root
             .readAsync(StoredDraft.DATA_FILE, "json")
             .catch(logError("Failed to read draft data from file"));
     }
 
-    async saveData(data: StoredDraftData) {
+    async saveData(data: StoredDraftInfo) {
         (this.loadData as Cached).clearCache(this.root.path());
         await this.root
             .writeAsync(StoredDraft.DATA_FILE, data)
@@ -74,7 +74,7 @@ export class StoredDraft {
         return this.root.existsAsync(StoredDraft.DATA_FILE);
     }
 
-    async init(id: number): Promise<StoredDraftData> {
+    async init(id: number): Promise<StoredDraftInfo> {
         const storedData = defaultStoredDraftData(id);
         await this.root
             .writeAsync(StoredDraft.DATA_FILE, storedData)

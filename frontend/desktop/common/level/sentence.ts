@@ -3,12 +3,12 @@ import { SentenceStyle } from "./style";
 /**
  * Represents a sentence with its content, display timing, style, and position.
  */
-export interface Sentence {
+export interface SentenceInfo {
     /** The textual content of the sentence. */
     content: string;
-    /** The time at which the sentence should be shown, in milliseconds. */
+    /** The time at which the sentence should be shown, in ticks. */
     showTime: number;
-    /** The duration for which the sentence should be displayed, in milliseconds. */
+    /** The duration for which the sentence should be displayed, in ticks. */
     duration: number;
     /** The style attributes applied to the sentence. */
     style: SentenceStyle;

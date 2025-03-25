@@ -1,9 +1,9 @@
 import { failure, PromiseResult, success } from "@/core/types/result";
-import { LevelData } from "@desktop-common/level";
+import { LevelInfo } from "@desktop-common/level";
 
 export async function getLevel(
     levelId: number
-): PromiseResult<LevelData, void> {
+): PromiseResult<LevelInfo, void> {
     try {
         const result = await window.levelAPI.getLevel(levelId);
         if (!result) {

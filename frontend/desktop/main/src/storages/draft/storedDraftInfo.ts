@@ -1,4 +1,4 @@
-import { DraftData } from "@desktop-common/draft";
+import { DraftInfo } from "@desktop-common/draft";
 import {
     namedAssetFromStored,
     namedAssetToStored,
@@ -6,14 +6,14 @@ import {
 } from "./storedAsset";
 import { getDefaultDraftName } from "@/consts";
 
-type DraftDataWithoutAssets = Omit<DraftData, "audio" | "background">;
+type DraftDataWithoutAssets = Omit<DraftInfo, "audio" | "background">;
 
-export interface StoredDraftData extends DraftDataWithoutAssets {
+export interface StoredDraftInfo extends DraftDataWithoutAssets {
     audio: StoredNamedAsset | null;
     background: StoredNamedAsset | null;
 }
 
-export function toStored(draft: DraftData): StoredDraftData {
+export function toStored(draft: DraftInfo): StoredDraftInfo {
     return {
         id: draft.id,
         name: draft.name,
@@ -25,7 +25,7 @@ export function toStored(draft: DraftData): StoredDraftData {
     };
 }
 
-export function fromStored(storedDraft: StoredDraftData): DraftData {
+export function fromStored(storedDraft: StoredDraftInfo): DraftInfo {
     return {
         id: storedDraft.id,
         name: storedDraft.name,
@@ -40,7 +40,7 @@ export function fromStored(storedDraft: StoredDraftData): DraftData {
     };
 }
 
-export function defaultStoredDraftData(id: number): StoredDraftData {
+export function defaultStoredDraftData(id: number): StoredDraftInfo {
     return {
         id,
         styleClasses: [],

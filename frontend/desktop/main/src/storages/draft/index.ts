@@ -1,6 +1,6 @@
 import { FileSystemStorage } from "../base/FileSystemStorage";
-import { DraftData, DraftUpdate } from "@desktop-common/draft";
-import { fromStored } from "./storedDraftData";
+import { DraftInfo, DraftUpdate } from "@desktop-common/draft";
+import { fromStored } from "./storedDraftInfo";
 import { StoredDraft } from "./storedDraft";
 import { logError } from "@/utils/common";
 
@@ -21,7 +21,7 @@ export class DraftStorage extends FileSystemStorage {
         return new StoredDraft(this.root.path(String(draftId)));
     }
 
-    async createDraft(): Promise<DraftData> {
+    async createDraft(): Promise<DraftInfo> {
         const id = this.getNewId();
         const stored = this.getStoredDraft(id);
         const storedData = await stored.init(id);
@@ -31,7 +31,7 @@ export class DraftStorage extends FileSystemStorage {
         return fromStored(storedData);
     }
 
-    async getDraft(draftId: number): Promise<DraftData | null> {
+    async getDraft(draftId: number): Promise<DraftInfo | null> {
         const stored = this.getStoredDraft(draftId);
         const isInited = await stored.isInited();
         if (!isInited) {
@@ -40,7 +40,7 @@ export class DraftStorage extends FileSystemStorage {
         return fromStored(await stored.loadData());
     }
 
-    async getAllDrafts(): Promise<DraftData[]> {
+    async getAllDrafts(): Promise<DraftInfo[]> {
         const draftIds = this.mainStorage.savedLevelDrafts.getAll();
         const drafts = await Promise.all(
             draftIds.map(async (draftId) => {
@@ -48,7 +48,7 @@ export class DraftStorage extends FileSystemStorage {
                 return draft;
             })
         ).catch(logError("Failed to get all drafts"));
-        return drafts.filter((draft): draft is DraftData => draft !== null);
+        return drafts.filter((draft): draft is DraftInfo => draft !== null);
     }
 
     async updateDraft(args: DraftUpdate.Args) {

@@ -1,55 +1,57 @@
+import { Background } from "@/components/common/Background";
+import { ProgressBar } from "@/components/common/ProgressBar";
+import { GameField } from "@/components/game/GameField";
 import { Button } from "@/components/ui/Button";
 import { RoutePath } from "@/core/config/routes/path";
 import { useNavigate } from "@/core/hooks";
-import { Game } from "@/core/store/game";
-import { LevelData } from "@desktop-common/level";
+import { GameRunner } from "@/core/store/game";
+import { Game } from "@/core/store/game/game";
+import { Level } from "@/core/store/game/level";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, LinearProgress, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { when } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useAudioPlayer } from "react-use-audio-player";
 import { ComboCounter } from "./ComboCounter";
-import { GameField } from "./GameField";
 import PauseMenu from "./PauseMenu";
 
-import { useAudioPlayer } from "react-use-audio-player";
-import "./index.css";
-
 interface GamePageProps {
-  level: LevelData;
+  level: Level;
 }
 
 export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   const navigate = useNavigate();
   const [game] = React.useState<Game>(new Game(level));
+  const [gameRunner] = React.useState<GameRunner>(new GameRunner(game));
   const audioPlayer = useAudioPlayer();
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (game.isRunning) {
+    if (game.isRunning()) {
       game.input(event.key);
     }
   };
 
   const handleResume = React.useCallback(() => {
-    game.start();
+    gameRunner.start();
     audioPlayer.play();
-  }, [game, audioPlayer]);
+  }, [gameRunner, audioPlayer]);
 
   const handlePause = () => {
-    game.pause();
+    gameRunner.pause();
     audioPlayer.pause();
   };
 
   const handleRestart = () => {
-    game.init();
-    game.start();
+    gameRunner.init();
+    gameRunner.start();
     audioPlayer.stop();
     audioPlayer.play();
   };
 
   const handleTogglePause = () => {
-    if (game.isPaused) {
+    if (game.isPaused()) {
       handleResume();
     } else {
       handlePause();
@@ -62,26 +64,26 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   ]);
 
   React.useEffect(() => {
-    audioPlayer.load(level.game.audio.url, {
+    audioPlayer.load(level.audio.url, {
       autoplay: true,
       loop: false,
-      format: level.game.audio.ext,
+      format: level.audio.ext,
     });
     return () => audioPlayer.cleanup();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [level.game.audio.url]);
+  }, [level.audio.url]);
 
   React.useEffect(() => {
-    game.init();
-    game.start();
+    gameRunner.init();
+    gameRunner.start();
     return () => {
-      game.pause();
+      gameRunner.pause();
     };
-  }, [game]);
+  }, [game, gameRunner]);
 
   React.useEffect(() => {
     when(
-      () => game.isFinished,
+      () => game.isFinished(),
       () => {
         navigate(RoutePath.gameStatistics, {
           level,
@@ -89,17 +91,14 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
         });
       }
     );
-  }, [game.isFinished, game.statistics, level, navigate]);
+  }, [game, level, navigate]);
 
   return (
-    <Box
-      sx={{
-        height: "100%",
-        backgroundImage: `url(${level.game.background?.url})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-    >
+    <Box sx={{ height: "100%" }}>
+      <Background
+        imageUrl={level.background.asset.url}
+        brightness={level.background.brightness}
+      />
       <Box
         sx={{
           height: "100%",
@@ -129,15 +128,12 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
               </Button>
             </Box>
             <Box sx={{ width: "50%", px: 3 }}>
-              <LinearProgress
+              <ProgressBar
                 sx={{
                   height: 15,
                   borderRadius: 10,
-                  bgcolor: "background.paper",
                 }}
-                color="primary"
-                variant="determinate"
-                value={game.progress}
+                value={game.getProgress()}
               />
             </Box>
             <Box
@@ -167,7 +163,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
           <GameField width={"100%"} height={"100%"} game={game} />
         </Stack>
         <PauseMenu
-          open={game.isPaused}
+          open={game.isPaused()}
           onClose={handleResume}
           onContinue={handleResume}
           onRestart={handleRestart}
