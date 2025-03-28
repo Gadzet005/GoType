@@ -1,26 +1,30 @@
 import { GameEvent } from "./types";
+import { Heap } from "heap-js";
+
+interface EventRecord {
+    time: number;
+    event: GameEvent;
+}
 
 export class EventStorage {
-    private events = new Map<number, GameEvent[]>();
+    private events = new Heap<EventRecord>(
+        (a: EventRecord, b: EventRecord) => a.time - b.time
+    );
 
-    addEvent(tick: number, event: GameEvent) {
-        const tickEvents = this.events.get(tick);
-        if (tickEvents) {
-            tickEvents.push(event);
-        } else {
-            this.events.set(tick, [event]);
+    addEvent(time: number, event: GameEvent) {
+        this.events.push({ time, event });
+    }
+
+    getEventsBefore(time: number): GameEvent[] {
+        const events = [];
+        while (!this.events.isEmpty() && this.events.peek()!.time <= time) {
+            events.push(this.events.pop()!.event);
         }
+        events.sort((a, b) => b.priority() - a.priority());
+        return events;
     }
 
-    getEvents(tick: number): GameEvent[] {
-        return this.events.get(tick) || [];
-    }
-
-    removeTickEvents(tick: number) {
-        this.events.delete(tick);
-    }
-
-    removeAllEvents() {
+    clear() {
         this.events.clear();
     }
 }

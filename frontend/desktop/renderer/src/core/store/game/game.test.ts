@@ -4,12 +4,6 @@ import { Game } from "./game";
 import { Level } from "./level";
 
 describe("Game Tests", () => {
-    function steps(game: Game, n: number) {
-        for (let i = 0; i < n; i++) {
-            game.step();
-        }
-    }
-
     it("game unit", () => {
         const sentence1 = createDummySentence("foo", 0, 4, 1, 1);
         const sentence2 = createDummySentence("bar", 1, 3, 1, 1);
@@ -25,18 +19,18 @@ describe("Game Tests", () => {
         expect(game.isFinished()).toBeFalsy();
         expect(game.getProgress()).toBe(0);
 
-        // step 1
-        steps(game, 1);
-        expect(game.tick).toBe(1);
-        expect(game.field.getVisibleSentences().length).toBe(1);
-
         game.input("f");
         expect(game.statistics.totalLetters).toBe(0);
 
+        // step 1
+        game.step(1);
+        expect(game.time).toBe(1);
+        expect(game.field.getVisibleSentences()).lengthOf(2);
+
         // step 2
-        steps(game, 1);
-        expect(game.tick).toBe(2);
-        expect(game.field.getVisibleSentences().length).toBe(2);
+        game.step(2);
+        expect(game.time).toBe(2);
+        expect(game.field.getVisibleSentences()).lengthOf(2);
 
         game.input("f");
         game.input("o");
@@ -44,27 +38,22 @@ describe("Game Tests", () => {
         game.input("!");
         game.input("b");
 
-        expect(game.statistics.totalLetters).toBe(3);
-
-        // steps 3-5
-        steps(game, 3);
-        expect(game.tick).toBe(5);
-        expect(game.field.getVisibleSentences().length).toBe(0);
-
-        // steps 6-10
-        steps(game, 5);
-        expect(game.tick).toBe(10);
-        expect(game.field.getVisibleSentences().length).toBe(1);
-
-        game.input("p");
-        game.input("p");
         expect(game.statistics.totalLetters).toBe(4);
 
-        // last step
-        steps(game, 1);
-        expect(game.tick).toBe(10);
-        expect(game.field.getVisibleSentences().length).toBe(0);
+        // steps 3-5
+        game.step(5);
+        expect(game.time).toBe(5);
+        expect(game.field.getVisibleSentences()).lengthOf(0);
 
+        // steps 6-9
+        game.step(9);
+        expect(game.time).toBe(9);
+        expect(game.field.getVisibleSentences()).lengthOf(1);
+
+        // step 10
+        game.step(10);
+        expect(game.time).toBe(10);
+        expect(game.field.getVisibleSentences()).lengthOf(0);
         expect(game.getProgress()).toBe(100);
         expect(game.isFinished()).toBeTruthy();
     });

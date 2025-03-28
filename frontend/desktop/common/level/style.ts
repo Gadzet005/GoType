@@ -13,7 +13,6 @@ export interface SentenceLetterStyles {
 }
 
 export interface SimpleAnimation {
-    /** in ticks */
     duration: number;
 }
 

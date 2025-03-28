@@ -23,9 +23,9 @@ function getSentenceCursor(
   return cursor && cursor.sentence == idx ? cursor.position : undefined;
 }
 
-function getSentenceProgress(tick: number, sentence: Sentence) {
+function getSentenceProgress(time: number, sentence: Sentence) {
   const v = Math.min(
-    Math.max(0, tick - sentence.activeStart) / sentence.activeDuration,
+    Math.max(0, time - sentence.activeStart) / sentence.activeDuration,
     1
   );
   return Math.round(v * 1000) / 10;
@@ -40,7 +40,7 @@ export const GameField: React.FC<GameFieldProps> = observer(
         game.field.getVisibleSentences().map((sentence) => {
           const cursor = game.field.getCursor();
           const sentenceCursor = getSentenceCursor(cursor, sentence.idx);
-          const progress = getSentenceProgress(game.tick, sentence);
+          const progress = getSentenceProgress(game.time, sentence);
 
           return (
             <SentenceContainer
@@ -59,7 +59,7 @@ export const GameField: React.FC<GameFieldProps> = observer(
           );
         }),
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      [game.tick]
+      [game.time]
     );
 
     return (

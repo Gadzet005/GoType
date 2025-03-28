@@ -19,7 +19,7 @@ interface LevelListItemProps {
 }
 
 export const LevelListItem: React.FC<LevelListItemProps> = ({ level }) => {
-  const durationInMinutes = (level.durationInMilliseconds / 60000).toFixed(1);
+  const durationInMinutes = (level.duration / 60000).toFixed(1);
   return (
     <Card
       sx={{

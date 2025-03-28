@@ -14,7 +14,7 @@ const level: LevelInfo = {
     id: 1,
     name: "John Doe",
   },
-  duration: 3000,
+  duration: 30000,
   preview: {
     ext: "jpg",
     url: "",
@@ -37,14 +37,14 @@ const level: LevelInfo = {
     {
       content: "Can you even see what you're fighting for?",
       showTime: 0,
-      duration: 1000,
+      duration: 10000,
       style: {
         bgcolor: "lightgrey",
         padding: 1,
         borderRadius: 4,
         animations: {
-          intro: { duration: 50 },
-          outro: { duration: 50 },
+          intro: { duration: 500 },
+          outro: { duration: 500 },
         },
         letter: {
           default: {
@@ -69,16 +69,16 @@ const level: LevelInfo = {
     },
     {
       content: "Bloodlust and a holy war",
-      showTime: 800,
-      duration: 700,
+      showTime: 8000,
+      duration: 7000,
       style: {
         bgcolor: "lightgrey",
         padding: 1,
         borderRadius: 4,
         rotate: 30,
         animations: {
-          intro: { duration: 50 },
-          outro: { duration: 50 },
+          intro: { duration: 500 },
+          outro: { duration: 500 },
         },
         letter: {
           default: {
@@ -103,15 +103,15 @@ const level: LevelInfo = {
     },
     {
       content: "Listen up, hear the patriots shout",
-      showTime: 1700,
-      duration: 800,
+      showTime: 17000,
+      duration: 8000,
       style: {
         bgcolor: "lightgrey",
         padding: 1,
         borderRadius: 4,
         animations: {
-          intro: { duration: 50 },
-          outro: { duration: 50 },
+          intro: { duration: 500 },
+          outro: { duration: 500 },
         },
         letter: {
           default: {

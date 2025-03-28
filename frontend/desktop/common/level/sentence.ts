@@ -6,9 +6,9 @@ import { SentenceStyle } from "./style";
 export interface SentenceInfo {
     /** The textual content of the sentence. */
     content: string;
-    /** The time at which the sentence should be shown, in ticks. */
+    /** The time at which the sentence should be shown. */
     showTime: number;
-    /** The duration for which the sentence should be displayed, in ticks. */
+    /** The duration for which the sentence should be displayed. */
     duration: number;
     /** The style attributes applied to the sentence. */
     style: SentenceStyle;

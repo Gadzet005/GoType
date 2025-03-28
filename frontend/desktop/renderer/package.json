@@ -20,6 +20,7 @@
     "axios": "^1.7.9",
     "formik": "^2.4.6",
     "formik-mui": "^5.0.0-alpha.1",
+    "heap-js": "^2.6.0",
     "mobx": "^6.13.5",
     "mobx-react": "^9.2.0",
     "react-hotkeys-hook": "^4.6.1",

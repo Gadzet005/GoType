@@ -7,7 +7,6 @@ import { observer } from "mobx-react";
 import React from "react";
 import { useIsPaused } from "../pause";
 import { LetterView } from "./LetterView";
-import { toMilliseconds } from "@/core/utils/conv";
 
 const AnimatedBox = animated(Box);
 
@@ -34,8 +33,8 @@ export const SentenceView: React.FC<SentenceViewProps> = observer(
     );
 
     React.useEffect(() => {
-      const introDuration = toMilliseconds(sentence.introDuration);
-      const outroDuration = toMilliseconds(sentence.outroDuration);
+      const introDuration = sentence.introDuration;
+      const outroDuration = sentence.outroDuration;
       const introLetterDuration = Math.max(50, introDuration / sentence.length);
       const outroLetterDuration = Math.max(30, outroDuration / sentence.length);
 

@@ -1,5 +1,4 @@
 import { LevelInfo } from "@desktop-common/level";
-import { TICK_TIME } from "@/core/config/game.config";
 import { Language } from "@/core/utils/language";
 
 export class Level {
@@ -30,10 +29,6 @@ export class Level {
 
     get duration() {
         return this.info.duration;
-    }
-
-    get durationInMilliseconds() {
-        return this.info.duration * TICK_TIME;
     }
 
     get tags() {

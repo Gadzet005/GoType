@@ -1,44 +1,72 @@
-import { TICK_TIME } from "@/core/config/game.config";
 import { Game } from "./game";
 
 export class GameRunner {
-    private stepInterval: NodeJS.Timeout | null = null;
     readonly game: Game;
+    readonly tickTime: number;
+    private stepTimeout: NodeJS.Timeout | null = null;
+    private timePassed: number = 0;
+    private lastStepTime: number | null = null;
 
-    constructor(game: Game) {
+    constructor(game: Game, tickTime: number) {
         this.game = game;
+        this.tickTime = tickTime;
     }
 
     private stop() {
-        if (this.stepInterval) {
-            clearInterval(this.stepInterval);
+        if (this.stepTimeout) {
+            clearInterval(this.stepTimeout);
         }
-        this.stepInterval = null;
+        this.stepTimeout = null;
+        this.lastStepTime = null;
     }
 
     init() {
         this.stop();
         this.game.init();
+        this.timePassed = 0;
     }
 
-    start() {
-        if (!this.game.isRunning()) {
-            this.game.start();
-            this.stepInterval = setInterval(() => {
-                this.game.step();
-                if (this.game.isFinished()) {
-                    this.stop();
-                }
-            }, TICK_TIME);
+    private step() {
+        const stepStartTime = Date.now();
+        if (this.lastStepTime) {
+            this.timePassed += stepStartTime - this.lastStepTime;
+        }
+        this.lastStepTime = stepStartTime;
+
+        this.game.step(this.timePassed);
+        if (this.game.isFinished()) {
+            this.stop();
+        } else {
+            const timeout = this.tickTime - Date.now() + stepStartTime;
+            this.stepTimeout = setTimeout(() => {
+                this.step();
+            }, Math.max(0, timeout));
         }
     }
 
+    start() {
+        if (this.game.isRunning()) {
+            return;
+        }
+
+        this.game.start();
+        this.step();
+    }
+
     finish() {
+        if (this.game.isFinished()) {
+            return;
+        }
+
         this.stop();
         this.game.finish();
     }
 
     pause() {
+        if (this.game.isPaused()) {
+            return;
+        }
+
         this.stop();
         this.game.pause();
     }

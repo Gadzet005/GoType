@@ -5,43 +5,63 @@ class DoNothingEvent implements GameEvent {
     run() {
         // Do nothing
     }
+    priority() {
+        return 0;
+    }
+}
+
+class ImportantEvent implements GameEvent {
+    run() {
+        // Do something important
+    }
+
+    priority() {
+        return 1;
+    }
 }
 
 describe("EventStorage tests", () => {
-    const tick = 123;
+    it("EventStorage addEvent and getEventsBefore", () => {
+        const storage = new EventStorage();
 
-    it("EventStorage.addEvent", () => {
-        const manager = new EventStorage();
+        storage.addEvent(0, new DoNothingEvent());
+        storage.addEvent(0, new DoNothingEvent());
+        storage.addEvent(1, new DoNothingEvent());
 
-        manager.addEvent(tick, new DoNothingEvent());
-        manager.addEvent(tick, new DoNothingEvent());
-        manager.addEvent(tick + 1, new DoNothingEvent());
-
-        expect(manager.getEvents(tick)).lengthOf(2);
-        expect(manager.getEvents(tick + 1)).lengthOf(1);
+        expect(storage.getEventsBefore(-1)).lengthOf(0);
+        expect(storage.getEventsBefore(0)).lengthOf(2);
+        expect(storage.getEventsBefore(1)).lengthOf(1);
+        expect(storage.getEventsBefore(100)).lengthOf(0);
     });
 
-    it("EventStorage.removeTickEvents", () => {
-        const manager = new EventStorage();
+    it("EventStorage clear", () => {
+        const storage = new EventStorage();
 
-        manager.addEvent(tick, new DoNothingEvent());
-        manager.addEvent(tick + 1, new DoNothingEvent());
+        storage.addEvent(0, new DoNothingEvent());
+        storage.addEvent(1, new DoNothingEvent());
 
-        manager.removeTickEvents(tick);
+        storage.clear();
 
-        expect(manager.getEvents(tick)).lengthOf(0);
-        expect(manager.getEvents(tick + 1)).lengthOf(1);
+        expect(storage.getEventsBefore(0)).lengthOf(0);
+        expect(storage.getEventsBefore(1)).lengthOf(0);
     });
 
-    it("EventStorage.removeAllEvents", () => {
-        const manager = new EventStorage();
+    it("EventStorage priority", () => {
+        const storage = new EventStorage();
 
-        manager.addEvent(tick, new DoNothingEvent());
-        manager.addEvent(tick + 1, new DoNothingEvent());
+        storage.addEvent(0, new DoNothingEvent());
+        storage.addEvent(1, new DoNothingEvent());
+        storage.addEvent(1, new ImportantEvent());
+        storage.addEvent(1, new DoNothingEvent());
+        storage.addEvent(2, new DoNothingEvent());
+        storage.addEvent(1000, new ImportantEvent());
 
-        manager.removeAllEvents();
-
-        expect(manager.getEvents(tick)).lengthOf(0);
-        expect(manager.getEvents(tick + 1)).lengthOf(0);
+        const events = storage.getEventsBefore(1000);
+        expect(events[0]).toBeInstanceOf(ImportantEvent);
+        expect(events[1]).toBeInstanceOf(ImportantEvent);
+        expect(events[2]).toBeInstanceOf(DoNothingEvent);
+        expect(events[3]).toBeInstanceOf(DoNothingEvent);
+        expect(events[4]).toBeInstanceOf(DoNothingEvent);
+        expect(events[5]).toBeInstanceOf(DoNothingEvent);
     });
 });

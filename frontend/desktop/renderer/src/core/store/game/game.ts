@@ -24,18 +24,18 @@ export class Game {
 
     private field_: GameField;
     private status = GameStatus.idle;
-    private currentTick = 0;
+    private time_: number = 0;
 
     constructor(level: Level) {
         makeObservable(this, {
             statistics: observable,
             // @ts-expect-error: private observable
-            currentTick: observable,
-            status: observable,
+            time_: observable,
             field_: observable,
+            status: observable,
 
             field: computed,
-            tick: computed,
+            time: computed,
 
             init: action,
             start: action,
@@ -54,10 +54,10 @@ export class Game {
     /** set initial game state */
     init() {
         this.statistics.reset();
-        this.currentTick = 0;
+        this.time_ = 0;
         this.status = GameStatus.idle;
 
-        this.events.removeAllEvents();
+        this.events.clear();
         this.field_ = new GameField(this.level.sentences, this.level.language);
 
         this.level.sentences.forEach((sentence) => {
@@ -82,18 +82,17 @@ export class Game {
         });
     }
 
-    step() {
-        const events = this.events.getEvents(this.currentTick);
+    step(time: number) {
+        this.time_ = time;
+
+        const events = this.events.getEventsBefore(time);
         events?.forEach((event) => {
             event.run(this.field);
         });
 
-        if (this.currentTick === this.level.duration) {
+        if (time >= this.level.duration) {
             this.finish();
-            return;
         }
-
-        this.currentTick++;
     }
 
     start() {
@@ -125,7 +124,7 @@ export class Game {
         if (this.level.duration === 0) {
             return 100;
         }
-        return (this.currentTick / this.level.duration) * 100;
+        return Math.min(1, this.time_ / this.level.duration) * 100;
     }
 
     input(letter: string): void {
@@ -139,8 +138,12 @@ export class Game {
         );
     }
 
-    get tick() {
-        return this.currentTick;
+    /**
+     * Returns the time passed since the start of the game,
+     * not including time in paused state.
+     */
+    get time() {
+        return this.time_;
     }
 
     get field() {

@@ -9,7 +9,6 @@ export interface LevelInfo {
         id: number;
         name: string;
     };
-    /** in ticks */
     duration: number;
     tags: string[];
     languageCode: string;
