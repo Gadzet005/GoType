@@ -25,10 +25,8 @@ export namespace DraftUpdate {
     >;
 
     /**
-     * Handle asset update with special semantics:
-     * - undefined: No change to the current file
-     * - null: Remove/clear the current file
-     * - string: Path to a new file to use
+     * - null: remove the current file
+     * - string: path to a new file to use
      */
     type AssetUpdateArgs = {
         newAudioFile?: string | null;

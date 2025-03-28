@@ -2,82 +2,81 @@ import { NamedAsset } from "@desktop-common/asset";
 import { DraftInfo } from "@desktop-common/draft";
 import { DraftSentenceInfo } from "@desktop-common/draft/sentence";
 import { StyleClass } from "@desktop-common/draft/style";
-import { action, makeAutoObservable, observable } from "mobx";
+import { action, computed, makeAutoObservable, observable } from "mobx";
 
-export class Draft implements DraftInfo {
-    private _id!: number;
-    private _name!: string;
-    private _updateTime!: number;
-    private _audio!: NamedAsset | null;
-    private _background!: NamedAsset | null;
-    private _sentences!: DraftSentenceInfo[];
-    private _styleClasses!: StyleClass[];
+export class Draft {
+    private info: Omit<DraftInfo, "styleClasses">;
+    private styleClasses_ = new Map<string, StyleClass>();
 
-    constructor(data: DraftInfo) {
-        this.update(data);
-
+    constructor(info: DraftInfo) {
         makeAutoObservable(this, {
             // @ts-expect-error: private observable
-            _id: observable,
-            _name: observable,
-            _updateTime: observable,
-            _audio: observable,
-            _background: observable,
-            _sentences: observable,
-            _styleClasses: observable,
-            update: action,
+            info: observable,
+
+            addStyleClass: action,
+            removeStyleClass: action,
+
+            id: computed,
+            name: computed,
+            updateTime: computed,
+            audio: computed,
+            background: computed,
+            sentences: computed,
+            styleClasses: computed,
         });
+
+        this.info = info;
     }
 
-    update(data: Partial<DraftInfo>): void {
-        if (data.id) {
-            this._id = data.id;
+    setName(name: string) {
+        this.info.name = name;
+    }
+
+    addStyleClass(styleClass: StyleClass): boolean {
+        if (this.styleClasses_.has(styleClass.name)) {
+            return false;
         }
-        if (data.name) {
-            this._name = data.name;
-        }
-        if (data.updateTime) {
-            this._updateTime = data.updateTime;
-        }
-        if (data.audio !== undefined) {
-            this._audio = data.audio;
-        }
-        if (data.background !== undefined) {
-            this._background = data.background;
-        }
-        if (data.sentences) {
-            this._sentences = data.sentences;
-        }
-        if (data.styleClasses) {
-            this._styleClasses = data.styleClasses;
-        }
+        this.styleClasses_.set(styleClass.name, styleClass);
+        return true;
+    }
+
+    removeStyleClass(name: string): void {
+        this.styleClasses_.delete(name);
+    }
+
+    setAudio(asset: NamedAsset | null) {
+        this.info.audio = asset;
+    }
+
+    setBackground(asset: NamedAsset | null) {
+        this.info.background = asset;
     }
 
     get id(): number {
-        return this._id;
+        return this.info.id;
     }
 
     get name(): string {
-        return this._name;
+        return this.info.name;
     }
 
     get updateTime(): number {
-        return this._updateTime;
+        return this.info.updateTime;
     }
 
     get audio(): NamedAsset | null {
-        return this._audio;
+        return this.info.audio;
     }
 
     get background(): NamedAsset | null {
-        return this._background;
+        return this.info.background;
     }
 
     get sentences(): DraftSentenceInfo[] {
-        return this._sentences;
+        return this.info.sentences;
     }
 
     get styleClasses(): StyleClass[] {
-        return this._styleClasses;
+        return Array.from(this.styleClasses_.values());
     }
 }

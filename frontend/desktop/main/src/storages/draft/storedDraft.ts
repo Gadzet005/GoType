@@ -35,7 +35,7 @@ export class StoredDraft {
         type: DraftAssetType,
         newAssetPath: string | null
     ): Promise<StoredNamedAsset | null> {
-        this.deleteAsset(type);
+        await this.deleteAsset(type);
         if (!newAssetPath) {
             return null;
         }

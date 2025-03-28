@@ -1,4 +1,4 @@
-import { PasswordField } from "@/components/common/PasswordField";
+import { PasswordField } from "@/components/common/form/PasswordField";
 import { ApiError } from "@/core/config/api.config";
 import { RoutePath } from "@/core/config/routes/path";
 import { useAppContext, useNavigate } from "@/core/hooks";

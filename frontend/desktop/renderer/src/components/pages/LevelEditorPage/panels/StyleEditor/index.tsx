@@ -1,10 +1,12 @@
 import { Box, Button, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-// import React from "react";
-// import { StyleForm } from "./StyleForm";
+import React from "react";
+import { StyleFormDialog } from "./StyleFormDialog";
+import { useEditorContext } from "../../context";
 
 export const StyleEditor = () => {
-  // const [styleFormOpen, setStyleFormOpen] = React.useState(false);
+  const draft = useEditorContext();
+  const [styleFormOpen, setStyleFormOpen] = React.useState(false);
 
   return (
     <Box>
@@ -20,12 +22,16 @@ export const StyleEditor = () => {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          // onClick={() => setStyleFormOpen(true)}
+          onClick={() => setStyleFormOpen(true)}
         >
           Добавить стиль
         </Button>
       </Box>
-      {/* <StyleForm open={styleFormOpen} onClose={() => setStyleFormOpen(false)} /> */}
+      <StyleFormDialog
+        open={styleFormOpen}
+        onClose={() => setStyleFormOpen(false)}
+        onSave={() => {}}
+      />
     </Box>
   );
 };

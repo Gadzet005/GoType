@@ -7,7 +7,7 @@ import React from "react";
 import { EditorContext } from "./context";
 import { Draft } from "./draft";
 import { FieldEditor } from "./panels/FieldEditor";
-import { GeneralSettings } from "./panels/GeneralSettings";
+import { Settings } from "./panels/Settings";
 import { TextEditor } from "./panels/TextEditor";
 import { EditorTabPanel } from "./utils/EditorTabPanel";
 import { truncateString } from "@/core/utils/string";
@@ -69,7 +69,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
             <StyleEditor />
           </EditorTabPanel>
           <EditorTabPanel value={curTab} index={3}>
-            <GeneralSettings />
+            <Settings />
           </EditorTabPanel>
         </Box>
       </EditorContext.Provider>

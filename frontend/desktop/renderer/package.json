@@ -22,7 +22,6 @@
     "formik-mui": "^5.0.0-alpha.1",
     "mobx": "^6.13.5",
     "mobx-react": "^9.2.0",
-    "mui-file-input": "^6.0.0",
     "react-hotkeys-hook": "^4.6.1",
     "react-use-audio-player": "^3.0.2",
     "react-use-measure": "^2.1.7",
