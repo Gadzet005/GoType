@@ -26,7 +26,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = observer(
       if (result.ok) {
         context.user.authorize(result.payload);
       } else {
-        console.error("Failed to load user info:", result.error);
+        console.error("Failed to load user info");
       }
     }, [context]);
 
