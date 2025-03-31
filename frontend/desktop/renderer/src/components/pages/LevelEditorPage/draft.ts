@@ -5,16 +5,18 @@ import { StyleClass } from "@desktop-common/draft/style";
 import { action, computed, makeAutoObservable, observable } from "mobx";
 
 export class Draft {
-    private info: Omit<DraftInfo, "styleClasses">;
+    private info!: Omit<DraftInfo, "styleClasses">;
     private styleClasses_ = new Map<string, StyleClass>();
 
     constructor(info: DraftInfo) {
         makeAutoObservable(this, {
             // @ts-expect-error: private observable
             info: observable,
+            styleClasses_: observable,
 
             addStyleClass: action,
             removeStyleClass: action,
+            setStyleClass: action,
 
             id: computed,
             name: computed,
@@ -25,6 +27,14 @@ export class Draft {
             styleClasses: computed,
         });
 
+        this.init(info);
+    }
+
+    init(info: DraftInfo) {
+        this.styleClasses_.clear();
+        info.styleClasses.forEach((styleClass) => {
+            this.styleClasses_.set(styleClass.name, styleClass);
+        });
         this.info = info;
     }
 
@@ -40,8 +50,12 @@ export class Draft {
         return true;
     }
 
-    removeStyleClass(name: string): void {
-        this.styleClasses_.delete(name);
+    setStyleClass(name: string, styleClass: StyleClass) {
+        this.styleClasses_.set(name, styleClass);
+    }
+
+    removeStyleClass(name: string): boolean {
+        return this.styleClasses_.delete(name);
     }
 
     setAudio(asset: NamedAsset | null) {

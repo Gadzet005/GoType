@@ -60,25 +60,14 @@ export class Game {
         this.events.clear();
         this.field_ = new GameField(this.level.sentences, this.level.language);
 
-        this.level.sentences.forEach((sentence) => {
-            const introDuration =
-                sentence.style.animations.intro?.duration ?? 0;
-            const outroDuration =
-                sentence.style.animations.outro?.duration ?? 0;
-
-            this.events.addEvent(sentence.showTime, new SentenceIntroEvent());
+        this.field_.sentences.forEach((sentence) => {
+            this.events.addEvent(sentence.introTime, new SentenceIntroEvent());
             this.events.addEvent(
-                sentence.showTime + introDuration,
+                sentence.activeTime,
                 new SentenceActiveEvent()
             );
-            this.events.addEvent(
-                sentence.showTime + sentence.duration - outroDuration,
-                new SentenceOutroEvent()
-            );
-            this.events.addEvent(
-                sentence.showTime + sentence.duration,
-                new SentenceHideEvent()
-            );
+            this.events.addEvent(sentence.outroTime, new SentenceOutroEvent());
+            this.events.addEvent(sentence.hideTime, new SentenceHideEvent());
         });
     }
 
@@ -129,12 +118,12 @@ export class Game {
 
     input(letter: string): void {
         const result = this.field.moveCursor(letter);
-        if (result == MoveCursorResult.ignore) {
+        if (result === MoveCursorResult.ignore) {
             return;
         }
         this.statistics.addInputResult(
             letter,
-            result == MoveCursorResult.correct
+            result === MoveCursorResult.correct
         );
     }
 

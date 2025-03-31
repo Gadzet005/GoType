@@ -101,7 +101,7 @@ export class GameStatistics {
         if (isRight) {
             this._comboCounter++;
             this._maxCombo = Math.max(this._comboCounter, this._maxCombo);
-            this._score += this.comboCounter * Score.LETTER;
+            this._score += this.comboCounter * Score.letter;
         } else {
             this._comboCounter = 1;
         }

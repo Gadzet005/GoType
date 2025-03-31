@@ -6,7 +6,7 @@ export type StoredNamedAsset = Omit<NamedAsset, "url">;
 export function namedAssetToStored(
     asset: NamedAsset | null
 ): StoredNamedAsset | null {
-    if (asset == null) {
+    if (asset === null) {
         return null;
     }
     return {
@@ -19,7 +19,7 @@ export function namedAssetFromStored(
     storedAsset: StoredNamedAsset | null,
     draftId: number
 ): NamedAsset | null {
-    if (storedAsset == null) {
+    if (storedAsset === null) {
         return null;
     }
     return {

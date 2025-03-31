@@ -15,6 +15,7 @@ export const LevelDraftListPage = () => {
   const navigate = useNavigate();
 
   const [drafts, setDrafts] = React.useState<DraftInfo[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     const loadDrafts = async () => {
@@ -25,7 +26,8 @@ export const LevelDraftListPage = () => {
         console.error("Failed to load drafts:", result.error);
       }
     };
-    loadDrafts();
+
+    loadDrafts().then(() => setIsLoading(false));
   }, [ctx]);
 
   const createNewDraft = async () => {
@@ -101,7 +103,7 @@ export const LevelDraftListPage = () => {
           sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 5 }}
           maxWidth="md"
         >
-          {list.length === 0 ? onListEmpty : list}
+          {!isLoading && list.length === 0 ? onListEmpty : list}
         </Container>
       </Box>
     </Box>

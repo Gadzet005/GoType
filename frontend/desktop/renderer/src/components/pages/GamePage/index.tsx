@@ -2,7 +2,7 @@ import { Background } from "@/components/common/Background";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { GameField } from "@/components/game/GameField";
 import { Button } from "@/components/ui/Button";
-import { TICK_TIME } from "@/core/config/game.config";
+import { tickTime } from "@/core/config/game.config";
 import { RoutePath } from "@/core/config/routes/path";
 import { useNavigate } from "@/core/hooks";
 import { GameRunner } from "@/core/store/game";
@@ -26,7 +26,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   const navigate = useNavigate();
   const [game] = React.useState<Game>(new Game(level));
   const [gameRunner] = React.useState<GameRunner>(
-    new GameRunner(game, TICK_TIME)
+    new GameRunner(game, tickTime)
   );
   const audioPlayer = useAudioPlayer();
 

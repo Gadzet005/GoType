@@ -1,5 +1,5 @@
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
-import { appTheme } from "@/core/theme/appTheme";
+import { appTheme } from "@/core/style/appTheme";
 import { AppContextProvider } from "./components/providers/app/AppContextProvider";
 import { AppNavigation } from "./components/navigation/AppNavigation";
 import { routes } from "./core/config/routes";

@@ -25,7 +25,7 @@ function getSentenceCursor(
 
 function getSentenceProgress(time: number, sentence: Sentence) {
   const v = Math.min(
-    Math.max(0, time - sentence.activeStart) / sentence.activeDuration,
+    Math.max(0, time - sentence.activeTime) / sentence.activeDuration,
     1
   );
   return Math.round(v * 1000) / 10;

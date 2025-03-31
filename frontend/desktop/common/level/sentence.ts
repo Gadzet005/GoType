@@ -10,6 +10,13 @@ export interface SentenceInfo {
     showTime: number;
     /** The duration for which the sentence should be displayed. */
     duration: number;
+    /**
+     * Sentence appearance state duration as a
+     * percentage of the total duration.
+     */
+    introDuration: number;
+    /** Sentence hide state duration as a percentage of the total duration. */
+    outroDuration: number;
     /** The style attributes applied to the sentence. */
     style: SentenceStyle;
 

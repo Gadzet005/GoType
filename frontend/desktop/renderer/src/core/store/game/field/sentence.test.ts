@@ -9,7 +9,7 @@ it("Sentence unit", () => {
     expect(sentence.coord).toBe(sentenceInfo.coord);
     expect(sentence.duration).toBe(sentenceInfo.duration);
     expect(sentence.style).toBe(sentenceInfo.style);
-    expect(sentence.showTime).toBe(sentenceInfo.showTime);
+    expect(sentence.introTime).toBe(sentenceInfo.showTime);
 
     for (let i = 0; i < sentence.length; i++) {
         const letter = sentence.getLetter(i);

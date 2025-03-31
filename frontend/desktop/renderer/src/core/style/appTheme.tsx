@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material";
+import "./fonts";
 
 export const appTheme = createTheme({
   palette: {

@@ -14,9 +14,9 @@ export const LetterView: React.FC<LetterViewProps> = React.memo(
       <Typography
         component="span"
         sx={{
-          fontFamily: style.fontFamily,
+          fontFamily: style.font,
           fontSize: `${style.fontSize}px`,
-          fontWeight: style.fontWeight,
+          fontWeight: style.bold ? "bold" : "normal",
           color: style.color,
         }}
       >

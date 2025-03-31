@@ -41,29 +41,37 @@ export class Sentence {
 
     isVisible(): boolean {
         return (
-            this.state != SentenceState.hidden &&
-            this.state != SentenceState.initial
+            this.state !== SentenceState.hidden &&
+            this.state !== SentenceState.initial
         );
     }
 
     get introDuration() {
-        return this.info.style.animations.intro.duration;
+        return (this.info.introDuration * this.info.duration) / 100;
     }
 
     get outroDuration() {
-        return this.info.style.animations.outro.duration;
+        return (this.info.outroDuration * this.info.duration) / 100;
     }
 
     get activeDuration() {
         return this.info.duration - this.introDuration - this.outroDuration;
     }
 
-    get activeStart() {
+    get introTime() {
+        return this.info.showTime;
+    }
+
+    get activeTime() {
         return this.info.showTime + this.introDuration;
     }
 
-    get showTime() {
-        return this.info.showTime;
+    get outroTime() {
+        return this.info.showTime + this.duration - this.outroDuration;
+    }
+
+    get hideTime() {
+        return this.info.showTime + this.duration;
     }
 
     get duration() {

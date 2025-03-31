@@ -21,8 +21,8 @@ describe("GameField tests", () => {
         a: SentenceState,
         b: SentenceState
     ) {
-        expect(field.getSentence(0).state == a);
-        expect(field.getSentence(1).state == b);
+        expect(field.getSentence(0).state).toEqual(a);
+        expect(field.getSentence(1).state).toEqual(b);
     }
 
     it("show first sentence", () => {

@@ -1,8 +1,8 @@
 export interface LetterStyle {
-    fontFamily?: string;
-    fontSize?: number;
-    fontWeight?: string;
-    color?: string;
+    font: string;
+    fontSize: number;
+    color: string;
+    bold: boolean;
 }
 
 export interface SentenceLetterStyles {
@@ -12,21 +12,11 @@ export interface SentenceLetterStyles {
     success: LetterStyle;
 }
 
-export interface SimpleAnimation {
-    duration: number;
-}
-
-export interface SentenceAnimations {
-    intro: SimpleAnimation;
-    outro: SimpleAnimation;
-}
-
 export interface SentenceStyle {
-    padding?: number;
+    padding: number;
+    rotation: number;
+    borderRadius: number;
     bgcolor?: string;
-    rotate?: number;
-    borderRadius?: number;
 
     letter: SentenceLetterStyles;
-    animations: SentenceAnimations;
 }

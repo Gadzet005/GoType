@@ -4,6 +4,7 @@ import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
 import { LevelInfo } from "@desktop-common/level";
 import { saveLevel } from "@/core/services/electron/level/saveLevel";
+import { createSentenceStyle } from "@/core/utils/create";
 
 const level: LevelInfo = {
   id: 3,
@@ -38,100 +39,36 @@ const level: LevelInfo = {
       content: "Can you even see what you're fighting for?",
       showTime: 0,
       duration: 10000,
-      style: {
+      introDuration: 10,
+      outroDuration: 10,
+      style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
-        borderRadius: 4,
-        animations: {
-          intro: { duration: 500 },
-          outro: { duration: 500 },
-        },
-        letter: {
-          default: {
-            fontFamily: "Roboto",
-            fontSize: 50,
-            fontWeight: "bold",
-            color: "black",
-          },
-          active: {
-            color: "blue",
-            fontSize: 60,
-          },
-          mistake: {
-            color: "red",
-          },
-          success: {
-            color: "green",
-          },
-        },
-      },
+      }),
       coord: { x: 5, y: 5 },
     },
     {
       content: "Bloodlust and a holy war",
       showTime: 8000,
       duration: 7000,
-      style: {
+      introDuration: 10,
+      outroDuration: 10,
+      style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
-        borderRadius: 4,
-        rotate: 30,
-        animations: {
-          intro: { duration: 500 },
-          outro: { duration: 500 },
-        },
-        letter: {
-          default: {
-            fontFamily: "Roboto",
-            fontSize: 50,
-            fontWeight: "bold",
-            color: "black",
-          },
-          active: {
-            color: "blue",
-            fontSize: 60,
-          },
-          mistake: {
-            color: "red",
-          },
-          success: {
-            color: "green",
-          },
-        },
-      },
+      }),
       coord: { x: 50, y: 50 },
     },
     {
       content: "Listen up, hear the patriots shout",
       showTime: 17000,
       duration: 8000,
-      style: {
+      introDuration: 10,
+      outroDuration: 10,
+      style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
-        borderRadius: 4,
-        animations: {
-          intro: { duration: 500 },
-          outro: { duration: 500 },
-        },
-        letter: {
-          default: {
-            fontFamily: "Roboto",
-            fontSize: 70,
-            fontWeight: "bold",
-            color: "black",
-          },
-          active: {
-            color: "blue",
-            fontSize: 80,
-          },
-          mistake: {
-            color: "red",
-          },
-          success: {
-            color: "green",
-          },
-        },
-      },
+      }),
       coord: { x: 10, y: 90 },
     },
   ],

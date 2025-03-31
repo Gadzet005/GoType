@@ -33,7 +33,7 @@ describe("GameStatistics tests", () => {
             statistics.addInputResult(letter as string, isRight as boolean)
         );
 
-        expect(statistics.score).toBeGreaterThanOrEqual(Score.LETTER * 3);
+        expect(statistics.score).toBeGreaterThanOrEqual(Score.letter * 3);
         expect(statistics.rightLetters).toBe(3);
         expect(statistics.totalLetters).toBe(4);
         expect(statistics.accuracy).toBe(75);

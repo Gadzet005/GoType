@@ -6,10 +6,10 @@ export async function openOneFileDialog(
 ): PromiseResult<FileInfo | null, string> {
     try {
         const files = await window.appAPI.openFileDialog(extensions);
-        if (files.length == 0) {
+        if (files.length === 0) {
             return success(null);
         }
-        if (files.length == 1) {
+        if (files.length === 1) {
             return success(files[0]);
         }
         return failure("too many files");

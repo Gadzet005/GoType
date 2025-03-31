@@ -1,11 +1,11 @@
-import { DraftInfo } from "@desktop-common/draft";
 import React from "react";
 import { Draft } from "./draft";
+import { requireTrue } from "@/core/utils/panic";
 
-export const EditorContext = React.createContext<Draft>(
-    new Draft({} as DraftInfo)
-);
+export const EditorContext = React.createContext<Draft | null>(null);
 
-export function useEditorContext() {
-    return React.useContext(EditorContext);
+export function useEditorContext(): Draft {
+    const draft = React.useContext(EditorContext);
+    requireTrue(draft !== null, "EditorContext is not available");
+    return draft!;
 }

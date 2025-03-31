@@ -104,7 +104,7 @@ export const SentenceView: React.FC<SentenceViewProps> = observer(
           p: sentence.style.padding,
           bgcolor: sentence.style.bgcolor,
           borderRadius: sentence.style.borderRadius,
-          rotate: `${sentence.style.rotate}deg`,
+          rotate: `${sentence.style.rotation}deg`,
         }}
         style={{ ...animationProps }}
       >

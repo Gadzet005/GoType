@@ -16,8 +16,8 @@ export interface Cursor {
 }
 
 export class GameField {
-    private readonly sentences: Sentence[];
-    private readonly lang: Language;
+    readonly sentences: Sentence[];
+    readonly lang: Language;
     private cursor: Cursor = {
         sentence: 0,
         position: 0,
@@ -48,7 +48,7 @@ export class GameField {
      * `SentenceState.outro` to `SentenceState.hidden`
      * */
     hideFirstSentence() {
-        if (this.thresholds.outro != this.thresholds.active) {
+        if (this.thresholds.outro !== this.thresholds.active) {
             const s = this.sentences[this.thresholds.outro];
             s.state = SentenceState.hidden;
             this.thresholds.outro++;
@@ -60,7 +60,7 @@ export class GameField {
      * `SentenceState.active` to `SentenceState.outro`
      */
     completeFirstSentence() {
-        if (this.thresholds.active != this.thresholds.intro) {
+        if (this.thresholds.active !== this.thresholds.intro) {
             const s = this.sentences[this.thresholds.active];
             s.state = SentenceState.outro;
             if (this.cursor.sentence == this.thresholds.active) {
@@ -77,11 +77,11 @@ export class GameField {
      * `SentenceState.intro` to `SentenceState.active`
      */
     activateFirstSentence() {
-        if (this.thresholds.intro != this.thresholds.initial) {
+        if (this.thresholds.intro !== this.thresholds.initial) {
             const s = this.sentences[this.thresholds.intro];
             s.state = SentenceState.active;
             const old = this.thresholds.intro++;
-            if (old == this.cursor.sentence) {
+            if (old === this.cursor.sentence) {
                 this.normalizeCursor();
             }
         }
@@ -92,7 +92,7 @@ export class GameField {
      * `SentenceState.initial` to `SentenceState.active`
      */
     showFirstSentence() {
-        if (this.thresholds.initial != this.sentences.length) {
+        if (this.thresholds.initial !== this.sentences.length) {
             const s = this.sentences[this.thresholds.initial];
             s.state = SentenceState.intro;
             this.thresholds.initial++;
