@@ -14,7 +14,12 @@ export const EditorTabPanel: React.FC<TabPanelProps> = ({
   ...other
 }) => {
   return (
-    <Box role="tabpanel" hidden={value !== index} {...other}>
+    <Box
+      role="tabpanel"
+      hidden={value !== index}
+      {...other}
+      sx={{ height: "100%", ...other.sx }}
+    >
       {value === index && children}
     </Box>
   );

@@ -48,7 +48,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
             >
               <EditorTab label="Поле" />
               <EditorTab label="Текст" />
-              <EditorTab label="Стиль" />
+              <EditorTab label="Дизайн" />
               <EditorTab label="Настройки" />
             </Tabs>
             <BackButton
@@ -59,7 +59,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
             />
           </Box>
 
-          <EditorTabPanel sx={{ height: "100%" }} value={curTab} index={0}>
+          <EditorTabPanel value={curTab} index={0}>
             <FieldEditor />
           </EditorTabPanel>
           <EditorTabPanel value={curTab} index={1}>
