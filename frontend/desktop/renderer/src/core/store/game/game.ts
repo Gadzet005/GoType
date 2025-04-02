@@ -22,6 +22,7 @@ export interface GameInfo {
 export class Game {
     readonly statistics: GameStatistics;
     readonly duration: number;
+    readonly language: Language;
 
     private readonly field: GameField;
     private readonly cursor: Cursor;
@@ -53,6 +54,7 @@ export class Game {
         this.cursor = new Cursor(this.field.sentences, info.language);
         this.statistics = new GameStatistics(info.language);
         this.duration = info.duration;
+        this.language = info.language;
     }
 
     reset() {
@@ -71,7 +73,9 @@ export class Game {
     }
 
     start() {
-        this.status = GameStatus.running;
+        if (this.status !== GameStatus.finished) {
+            this.status = GameStatus.running;
+        }
     }
 
     finish() {
@@ -79,7 +83,9 @@ export class Game {
     }
 
     pause() {
-        this.status = GameStatus.paused;
+        if (this.status === GameStatus.running) {
+            this.status = GameStatus.paused;
+        }
     }
 
     isRunning() {

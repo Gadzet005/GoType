@@ -108,11 +108,8 @@ export const SentenceView: React.FC<SentenceViewProps> = observer(
     const letterViews = React.useMemo(
       () =>
         sentence.letters.map((letter, i) => {
-          const color = getLetterColor(
-            letter,
-            sentence.style.colors,
-            i == cursor
-          );
+          const isActive = i == cursor;
+          const color = getLetterColor(letter, sentence.style.colors, isActive);
           return (
             <LetterView
               key={i}
@@ -122,6 +119,7 @@ export const SentenceView: React.FC<SentenceViewProps> = observer(
               font={sentence.style.font}
               bold={sentence.style.bold}
               opacity={animationState.letterOpacity(i)}
+              isActive={isActive}
             />
           );
         }),
