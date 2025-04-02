@@ -29,13 +29,13 @@ export const OptionalField = <T,>({
     if (isSubmitting) return;
 
     const isChecked = event.target.checked;
-    form.setFieldValue(field.name, isChecked ? null : defaultValue);
+    form.setFieldValue(field.name, isChecked ? defaultValue : null);
   };
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
       <Checkbox
-        checked={field.value === null}
+        checked={field.value !== null}
         onChange={handleCheckboxChange}
         color="primary"
         disabled={isSubmitting}

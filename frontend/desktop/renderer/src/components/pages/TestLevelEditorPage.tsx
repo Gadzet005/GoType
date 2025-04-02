@@ -39,8 +39,6 @@ const level: LevelInfo = {
       content: "Can you even see what you're fighting for?",
       showTime: 0,
       duration: 10000,
-      introDuration: 10,
-      outroDuration: 10,
       style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
@@ -51,8 +49,6 @@ const level: LevelInfo = {
       content: "Bloodlust and a holy war",
       showTime: 8000,
       duration: 7000,
-      introDuration: 10,
-      outroDuration: 10,
       style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
@@ -63,8 +59,6 @@ const level: LevelInfo = {
       content: "Listen up, hear the patriots shout",
       showTime: 17000,
       duration: 8000,
-      introDuration: 10,
-      outroDuration: 10,
       style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,

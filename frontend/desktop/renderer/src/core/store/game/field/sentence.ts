@@ -28,7 +28,7 @@ export class Sentence {
         this.info = info;
         this.letters = this.info.content
             .split("")
-            .map((letter: string) => new Letter(letter, info.style.letter));
+            .map((letter: string) => new Letter(letter));
     }
 
     getLetters() {
@@ -47,11 +47,11 @@ export class Sentence {
     }
 
     get introDuration() {
-        return (this.info.introDuration * this.info.duration) / 100;
+        return (this.info.style.introDurationRatio * this.info.duration) / 100;
     }
 
     get outroDuration() {
-        return (this.info.outroDuration * this.info.duration) / 100;
+        return (this.info.style.outroDurationRatio * this.info.duration) / 100;
     }
 
     get activeDuration() {

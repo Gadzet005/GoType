@@ -13,31 +13,16 @@ export namespace Defaults {
         padding: 0,
         borderRadius: 3,
         rotation: 0,
-        letter: {
-            default: {
-                font: "Onest",
-                fontSize: 40,
-                bold: false,
-                color: "#000000",
-            },
-            active: {
-                font: "Onest",
-                fontSize: 50,
-                bold: true,
-                color: "#0693e3",
-            },
-            mistake: {
-                font: "Onest",
-                fontSize: 40,
-                bold: false,
-                color: "#eb144c",
-            },
-            success: {
-                font: "Onest",
-                fontSize: 40,
-                bold: false,
-                color: "#00d084",
-            },
+        font: "Onest",
+        fontSize: 50,
+        bold: true,
+        introDurationRatio: 0.1,
+        outroDurationRatio: 0.1,
+        colors: {
+            default: "#000000",
+            active: "#0693e3",
+            mistake: "#eb144c",
+            success: "#00d084",
         },
     };
 }
@@ -49,4 +34,6 @@ export namespace Constraints {
     export const maxBorderRadius = 10;
     export const minFontSize = 10;
     export const maxFontSize = 100;
+    export const maxIntroDurationPercent = 20;
+    export const maxOutroDurationPercent = 20;
 }

@@ -8,11 +8,13 @@ import {
   Paper,
   useTheme,
   Typography,
+  Stack,
 } from "@mui/material";
 
 interface ColorPickerFieldProps extends FieldProps {
   label?: string;
   disabled?: boolean;
+  fullWidth?: boolean;
 }
 
 export const ColorField: React.FC<ColorPickerFieldProps> = ({
@@ -20,6 +22,7 @@ export const ColorField: React.FC<ColorPickerFieldProps> = ({
   form,
   label = "Цвет",
   disabled = false,
+  fullWidth = false,
 }) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -47,7 +50,7 @@ export const ColorField: React.FC<ColorPickerFieldProps> = ({
 
   return (
     <Box>
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+      <Stack direction="row" alignItems="center" spacing={1}>
         <Button
           aria-describedby={id}
           onClick={handleClick}
@@ -62,15 +65,22 @@ export const ColorField: React.FC<ColorPickerFieldProps> = ({
               backgroundColor: field.value || "#ffffff",
               opacity: isActuallyDisabled ? 1 : 0.8,
             },
+            flexShrink: 0,
           }}
         />
         <Typography
           variant="subtitle1"
           color={isActuallyDisabled ? "text.disabled" : "text.primary"}
+          sx={{
+            width: fullWidth ? "100%" : "auto",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
         >
           {label}
         </Typography>
-      </Box>
+      </Stack>
       <Popover
         id={id}
         open={open}

@@ -1,22 +1,24 @@
-export interface LetterStyle {
-    font: string;
-    fontSize: number;
-    color: string;
-    bold: boolean;
-}
-
-export interface SentenceLetterStyles {
-    default: LetterStyle;
-    active: LetterStyle;
-    mistake: LetterStyle;
-    success: LetterStyle;
+export interface SentenceColors {
+    default: string;
+    active: string;
+    mistake: string;
+    success: string;
 }
 
 export interface SentenceStyle {
+    font: string;
+    fontSize: number;
+    bold: boolean;
+
     padding: number;
     rotation: number;
     borderRadius: number;
     bgcolor?: string;
 
-    letter: SentenceLetterStyles;
+    /** from 0 to 1 */
+    introDurationRatio: number;
+    /** from 0 to 1 */
+    outroDurationRatio: number;
+
+    colors: SentenceColors;
 }

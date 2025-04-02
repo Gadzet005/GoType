@@ -7,6 +7,26 @@ import { observer } from "mobx-react";
 import React from "react";
 import { useIsPaused } from "../pause";
 import { LetterView } from "./LetterView";
+import { Letter, LetterState } from "@/core/store/game/field/letter";
+import { SentenceColors } from "@desktop-common/level/style";
+
+function getLetterColor(
+  letter: Letter,
+  colors: SentenceColors,
+  isActive: boolean
+) {
+  if (isActive) {
+    return colors.active;
+  }
+  switch (letter.state) {
+    case LetterState.default:
+      return colors.default;
+    case LetterState.mistake:
+      return colors.mistake;
+    case LetterState.success:
+      return colors.success;
+  }
+}
 
 const AnimatedBox = animated(Box);
 
@@ -80,17 +100,24 @@ export const SentenceView: React.FC<SentenceViewProps> = observer(
     const letterViews = React.useMemo(
       () =>
         sentence.getLetters().map((letter, i) => {
-          const isActive = i == cursor;
+          const color = getLetterColor(
+            letter,
+            sentence.style.colors,
+            i == cursor
+          );
           return (
             <AnimatedBox
-              key={i} // NOSONAR: sentence size and letter indexes are fixed
-              // @ts-expect-error: it's ok
+              key={i}
+              // @ts-expect-error: valid prop
               component="span"
               style={letterTrails[i]}
             >
               <LetterView
                 letter={letter.char}
-                style={letter.getStyle(isActive)}
+                color={color}
+                fontSize={sentence.style.fontSize}
+                font={sentence.style.font}
+                bold={sentence.style.bold}
               />
             </AnimatedBox>
           );

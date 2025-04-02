@@ -1,20 +1,21 @@
-import { Defaults } from "@/core/config/game.config";
+import { createSentenceStyle } from "@/core/utils/create";
 import { SentenceInfo } from "@desktop-common/level/sentence";
 
 export function createDummySentence(
     text: string,
     showTime = 1000,
     duration = 1000,
-    introDuration = 10,
-    outroDuration = 10
+    introDurationRatio = 0.1,
+    outroDurationRatio = 0.1
 ): SentenceInfo {
     return {
         content: text,
         showTime: showTime,
         duration: duration,
-        introDuration: introDuration,
-        outroDuration: outroDuration,
-        style: Defaults.sentenceStyle,
+        style: createSentenceStyle({
+            introDurationRatio: introDurationRatio,
+            outroDurationRatio: outroDurationRatio,
+        }),
         coord: {
             x: 0,
             y: 0,

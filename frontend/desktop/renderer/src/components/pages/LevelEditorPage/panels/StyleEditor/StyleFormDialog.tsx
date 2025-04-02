@@ -24,18 +24,6 @@ const maxMsg = (max: number) => {
   return `Максимальное значение: ${max}`;
 };
 
-const letterValidationSchema = yup.object({
-  font: yup.string().required(requiredMsg),
-  fontSize: yup
-    .number()
-    .required(requiredMsg)
-    .min(Constraints.minFontSize, minMsg(Constraints.minFontSize))
-    .max(Constraints.maxFontSize, maxMsg(Constraints.maxFontSize))
-    .integer(),
-  color: yup.string().required(requiredMsg),
-  bold: yup.bool().required(requiredMsg),
-});
-
 const validationSchema = yup.object({
   name: yup.string().required(requiredMsg).max(20, "Слишком большое название"),
   padding: yup
@@ -56,11 +44,28 @@ const validationSchema = yup.object({
     .min(0, minMsg(0))
     .max(360, maxMsg(360))
     .integer(),
-  bgcolor: yup.string().nullable(),
-  default: letterValidationSchema,
-  active: letterValidationSchema,
-  mistake: letterValidationSchema,
-  success: letterValidationSchema,
+  fontSize: yup
+    .number()
+    .required(requiredMsg)
+    .min(Constraints.minFontSize, minMsg(Constraints.minFontSize))
+    .max(Constraints.maxFontSize, maxMsg(Constraints.maxFontSize))
+    .integer(),
+  introDurationPercent: yup
+    .number()
+    .required(requiredMsg)
+    .min(0, minMsg(0))
+    .max(
+      Constraints.maxIntroDurationPercent,
+      maxMsg(Constraints.maxIntroDurationPercent)
+    ),
+  outroDurationPercent: yup
+    .number()
+    .required(requiredMsg)
+    .min(0, minMsg(0))
+    .max(
+      Constraints.maxOutroDurationPercent,
+      maxMsg(Constraints.maxOutroDurationPercent)
+    ),
 });
 
 interface StyleFormProps {

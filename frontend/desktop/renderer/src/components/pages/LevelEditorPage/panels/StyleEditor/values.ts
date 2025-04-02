@@ -1,5 +1,4 @@
 import { StyleClass } from "@desktop-common/draft/style";
-import { LetterStyle } from "@desktop-common/level/style";
 
 export interface StyleFormValues {
     name: string;
@@ -9,10 +8,19 @@ export interface StyleFormValues {
     rotation: number;
     borderRadius: number;
 
-    default: LetterStyle;
-    active: LetterStyle;
-    mistake: LetterStyle;
-    success: LetterStyle;
+    introDurationPercent: number;
+    outroDurationPercent: number;
+
+    font: string;
+    fontSize: number;
+    bold: boolean;
+
+    colors: {
+        default: string;
+        active: string;
+        mistake: string;
+        success: string;
+    };
 }
 
 export function toValues(styleClass: StyleClass): StyleFormValues {
@@ -22,11 +30,17 @@ export function toValues(styleClass: StyleClass): StyleFormValues {
         bgcolor: styleClass.style.bgcolor ?? null,
         rotation: styleClass.style.rotation,
         borderRadius: styleClass.style.borderRadius,
-
-        default: styleClass.style.letter.default,
-        active: styleClass.style.letter.active,
-        mistake: styleClass.style.letter.mistake,
-        success: styleClass.style.letter.success,
+        introDurationPercent: styleClass.style.introDurationRatio * 100,
+        outroDurationPercent: styleClass.style.outroDurationRatio * 100,
+        font: styleClass.style.font,
+        fontSize: styleClass.style.fontSize,
+        bold: styleClass.style.bold,
+        colors: {
+            default: styleClass.style.colors.default,
+            active: styleClass.style.colors.active,
+            mistake: styleClass.style.colors.mistake,
+            success: styleClass.style.colors.success,
+        },
     };
 }
 
@@ -38,12 +52,16 @@ export function fromValues(values: StyleFormValues): StyleClass {
             bgcolor: values.bgcolor ?? undefined,
             rotation: values.rotation,
             borderRadius: values.borderRadius,
-
-            letter: {
-                default: values.default,
-                active: values.active,
-                mistake: values.mistake,
-                success: values.success,
+            font: values.font,
+            fontSize: values.fontSize,
+            bold: values.bold,
+            introDurationRatio: values.introDurationPercent / 100,
+            outroDurationRatio: values.outroDurationPercent / 100,
+            colors: {
+                default: values.colors.default,
+                active: values.colors.active,
+                mistake: values.colors.mistake,
+                success: values.colors.success,
             },
         },
     };

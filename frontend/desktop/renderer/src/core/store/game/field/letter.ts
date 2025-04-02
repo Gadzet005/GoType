@@ -1,5 +1,4 @@
 import { requireEqual } from "@/core/utils/panic";
-import { LetterStyle, SentenceLetterStyles } from "@desktop-common/level/style";
 import { action, computed, makeObservable, observable } from "mobx";
 
 export enum LetterState {
@@ -10,10 +9,9 @@ export enum LetterState {
 
 export class Letter {
     readonly char: string;
-    private readonly styles: SentenceLetterStyles;
     private state_: LetterState = LetterState.default;
 
-    constructor(letter: string, styles: SentenceLetterStyles) {
+    constructor(letter: string) {
         requireEqual(letter.length, 1, "invalid letter length");
 
         makeObservable(this, {
@@ -27,7 +25,6 @@ export class Letter {
         });
 
         this.char = letter;
-        this.styles = styles;
     }
 
     mistake() {
@@ -40,27 +37,6 @@ export class Letter {
 
     isEqual(c: string): boolean {
         return this.char.toLowerCase() === c.toLowerCase();
-    }
-
-    getStyle(isActive = false): LetterStyle {
-        if (isActive) {
-            return { ...this.styles.default, ...this.styles.active };
-        }
-
-        switch (this.state_) {
-            case LetterState.mistake:
-                return {
-                    ...this.styles.default,
-                    ...this.styles.mistake,
-                };
-            case LetterState.success:
-                return {
-                    ...this.styles.default,
-                    ...this.styles.success,
-                };
-            default:
-                return this.styles.default;
-        }
     }
 
     get state() {

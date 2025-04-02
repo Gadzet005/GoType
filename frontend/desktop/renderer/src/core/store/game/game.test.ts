@@ -5,8 +5,8 @@ import { Level } from "./level";
 
 describe("Game Tests", () => {
     it("game unit", () => {
-        const sentence1 = createDummySentence("foo", 0, 4, 1, 1);
-        const sentence2 = createDummySentence("bar", 1, 3, 1, 1);
+        const sentence1 = createDummySentence("foo", 0, 4, 0.25, 0.25);
+        const sentence2 = createDummySentence("bar", 1, 4, 0.25, 0.25);
         const sentence3 = createDummySentence("p", 9, 1, 0, 0);
         const level = createDummyLevel([sentence1, sentence2, sentence3], 10);
 

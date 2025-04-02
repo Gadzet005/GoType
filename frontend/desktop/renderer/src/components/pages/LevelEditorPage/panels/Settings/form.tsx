@@ -24,7 +24,6 @@ export const SettingsForm = () => {
   const draft = useEditorContext();
 
   const handleSubmit = async (values: SettingsFormValues) => {
-    console.log(values);
     const updateInfo: DraftUpdate.Args = {
       id: draft.id,
       name: values.name,
