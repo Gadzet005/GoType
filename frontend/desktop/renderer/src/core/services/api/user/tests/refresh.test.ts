@@ -5,7 +5,7 @@ import { GlobalAppContext } from "@/core/store/appContext";
 import { AppContext } from "@/core/types/base/app";
 import { refresh } from "../refresh";
 import { Refresh } from "@/core/types/api/user";
-import { UserDummy } from "@tests/dummy/user";
+import { UserDummy } from "@tests/creation/user";
 
 describe("Refresh tests", () => {
     let ctx: AppContext;

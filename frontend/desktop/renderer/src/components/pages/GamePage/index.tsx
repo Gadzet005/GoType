@@ -47,7 +47,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   };
 
   const handleRestart = () => {
-    gameRunner.init();
+    gameRunner.reset();
     gameRunner.start();
     audioPlayer.stop();
     audioPlayer.play();
@@ -62,8 +62,8 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   };
 
   useHotkeys("esc", handleTogglePause);
-  useHotkeys(game.level.language.alphabet.split(""), handleKeyDown, [
-    game.level.language.alphabet,
+  useHotkeys(level.language.alphabet.split(""), handleKeyDown, [
+    level.language.alphabet,
   ]);
 
   React.useEffect(() => {
@@ -77,7 +77,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   }, [level.audio.url]);
 
   React.useEffect(() => {
-    gameRunner.init();
+    gameRunner.reset();
     gameRunner.start();
     return () => {
       gameRunner.pause();
@@ -136,7 +136,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
                   height: 15,
                   borderRadius: 10,
                 }}
-                value={game.getProgress()}
+                value={game.getProgress() * 100}
               />
             </Box>
             <Box

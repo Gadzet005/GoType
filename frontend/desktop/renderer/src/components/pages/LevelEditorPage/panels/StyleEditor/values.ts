@@ -1,4 +1,4 @@
-import { StyleClass } from "@desktop-common/draft/style";
+import { NamedSentenceStyleClass } from "@desktop-common/draft/style";
 
 export interface StyleFormValues {
     name: string;
@@ -23,46 +23,44 @@ export interface StyleFormValues {
     };
 }
 
-export function toValues(styleClass: StyleClass): StyleFormValues {
+export function toValues(styleClass: NamedSentenceStyleClass): StyleFormValues {
     return {
         name: styleClass.name,
-        padding: styleClass.style.padding,
-        bgcolor: styleClass.style.bgcolor ?? null,
-        rotation: styleClass.style.rotation,
-        borderRadius: styleClass.style.borderRadius,
-        introDurationPercent: styleClass.style.introDurationRatio * 100,
-        outroDurationPercent: styleClass.style.outroDurationRatio * 100,
-        font: styleClass.style.font,
-        fontSize: styleClass.style.fontSize,
-        bold: styleClass.style.bold,
+        padding: styleClass.padding,
+        bgcolor: styleClass.bgcolor ?? null,
+        rotation: styleClass.rotation,
+        borderRadius: styleClass.borderRadius,
+        introDurationPercent: styleClass.introDurationRatio * 100,
+        outroDurationPercent: styleClass.outroDurationRatio * 100,
+        font: styleClass.font,
+        fontSize: styleClass.fontSize,
+        bold: styleClass.bold,
         colors: {
-            default: styleClass.style.colors.default,
-            active: styleClass.style.colors.active,
-            mistake: styleClass.style.colors.mistake,
-            success: styleClass.style.colors.success,
+            default: styleClass.colors.default,
+            active: styleClass.colors.active,
+            mistake: styleClass.colors.mistake,
+            success: styleClass.colors.success,
         },
     };
 }
 
-export function fromValues(values: StyleFormValues): StyleClass {
+export function fromValues(values: StyleFormValues): NamedSentenceStyleClass {
     return {
         name: values.name,
-        style: {
-            padding: values.padding,
-            bgcolor: values.bgcolor ?? undefined,
-            rotation: values.rotation,
-            borderRadius: values.borderRadius,
-            font: values.font,
-            fontSize: values.fontSize,
-            bold: values.bold,
-            introDurationRatio: values.introDurationPercent / 100,
-            outroDurationRatio: values.outroDurationPercent / 100,
-            colors: {
-                default: values.colors.default,
-                active: values.colors.active,
-                mistake: values.colors.mistake,
-                success: values.colors.success,
-            },
+        padding: values.padding,
+        bgcolor: values.bgcolor ?? undefined,
+        rotation: values.rotation,
+        borderRadius: values.borderRadius,
+        font: values.font,
+        fontSize: values.fontSize,
+        bold: values.bold,
+        introDurationRatio: values.introDurationPercent / 100,
+        outroDurationRatio: values.outroDurationPercent / 100,
+        colors: {
+            default: values.colors.default,
+            active: values.colors.active,
+            mistake: values.colors.mistake,
+            success: values.colors.success,
         },
     };
 }

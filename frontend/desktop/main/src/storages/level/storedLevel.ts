@@ -2,7 +2,7 @@ import { AssetType } from "@/consts";
 import { getLevelUrl } from "@/utils/url";
 import { Asset } from "@desktop-common/asset";
 import { LevelInfo } from "@desktop-common/level";
-import { SentenceInfo } from "@desktop-common/level/sentence";
+import { StyledSentenceInfo } from "@desktop-common/level/sentence";
 
 export interface StoredLevelInfo {
     id: number;
@@ -21,7 +21,7 @@ export interface StoredLevelInfo {
         brightness: number;
     };
     audioExt: string;
-    sentences: SentenceInfo[];
+    sentences: StyledSentenceInfo[];
 }
 
 function fromStoredAsset(levelId: number, type: AssetType, ext: string): Asset {

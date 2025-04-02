@@ -1,6 +1,6 @@
 import "@tests/base/apiMock";
 
-import { UserDummy } from "@tests/dummy/user";
+import { UserDummy } from "@tests/creation/user";
 import { GlobalAppContext } from "./appContext";
 import { AxiosHeaders, AxiosRequestConfig } from "axios";
 import { AppContext } from "../types/base/app";

@@ -1,12 +1,15 @@
 import { NamedAsset } from "@desktop-common/asset";
 import { DraftInfo } from "@desktop-common/draft";
 import { DraftSentenceInfo } from "@desktop-common/draft/sentence";
-import { StyleClass } from "@desktop-common/draft/style";
+import {
+    NamedSentenceStyleClass,
+    SentenceStyleClass,
+} from "@desktop-common/draft/style";
 import { action, computed, makeAutoObservable, observable } from "mobx";
 
 export class Draft {
     private info!: Omit<DraftInfo, "styleClasses">;
-    private styleClasses_ = new Map<string, StyleClass>();
+    private styleClasses_ = new Map<string, SentenceStyleClass>();
 
     constructor(info: DraftInfo) {
         makeAutoObservable(this, {
@@ -42,15 +45,15 @@ export class Draft {
         this.info.name = name;
     }
 
-    addStyleClass(styleClass: StyleClass): boolean {
-        if (this.styleClasses_.has(styleClass.name)) {
+    addStyleClass(name: string, styleClass: SentenceStyleClass): boolean {
+        if (this.styleClasses_.has(name)) {
             return false;
         }
-        this.styleClasses_.set(styleClass.name, styleClass);
+        this.styleClasses_.set(name, styleClass);
         return true;
     }
 
-    setStyleClass(name: string, styleClass: StyleClass) {
+    setStyleClass(name: string, styleClass: SentenceStyleClass) {
         this.styleClasses_.set(name, styleClass);
     }
 
@@ -90,7 +93,10 @@ export class Draft {
         return this.info.sentences;
     }
 
-    get styleClasses(): StyleClass[] {
-        return Array.from(this.styleClasses_.values());
+    get styleClasses(): NamedSentenceStyleClass[] {
+        return Array.from(this.styleClasses_, ([key, value]) => ({
+            name: key,
+            ...value,
+        }));
     }
 }

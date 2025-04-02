@@ -1,4 +1,4 @@
-import { SentenceStyle } from "@desktop-common/level/style";
+import { SentenceStyleClass } from "@desktop-common/draft/style";
 
 // 60 fps
 export const tickTime = 16.6;
@@ -9,7 +9,7 @@ export namespace Score {
 }
 
 export namespace Defaults {
-    export const sentenceStyle: SentenceStyle = {
+    export const sentenceStyleClass: SentenceStyleClass = {
         padding: 0,
         borderRadius: 3,
         rotation: 0,

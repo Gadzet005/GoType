@@ -1,9 +1,9 @@
 import { ElectronAPIMock } from "@tests/base/electronApiMock";
-import { createDummyLevel } from "@tests/dummy/level";
+import { createLevel } from "@tests/creation/level";
 import { getLevel } from "../getLevel";
 
 describe("Get level test", () => {
-    const dummyLevel = createDummyLevel([]);
+    const dummyLevel = createLevel([]);
 
     beforeEach(() => {
         vi.restoreAllMocks();

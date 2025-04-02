@@ -4,7 +4,7 @@ import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
 import { LevelInfo } from "@desktop-common/level";
 import { saveLevel } from "@/core/services/electron/level/saveLevel";
-import { createSentenceStyle } from "@/core/utils/create";
+import { createSentenceStyle } from "@tests/creation/style";
 
 const level: LevelInfo = {
   id: 3,
@@ -38,32 +38,38 @@ const level: LevelInfo = {
     {
       content: "Can you even see what you're fighting for?",
       showTime: 0,
-      duration: 10000,
+      activeDuration: 8000,
+      introDuration: 1000,
+      outroDuration: 1000,
       style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
+        coord: { x: 5, y: 5 },
       }),
-      coord: { x: 5, y: 5 },
     },
     {
       content: "Bloodlust and a holy war",
       showTime: 8000,
-      duration: 7000,
+      activeDuration: 5600,
+      introDuration: 700,
+      outroDuration: 700,
       style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
+        coord: { x: 50, y: 50 },
       }),
-      coord: { x: 50, y: 50 },
     },
     {
       content: "Listen up, hear the patriots shout",
       showTime: 17000,
-      duration: 8000,
+      activeDuration: 6400,
+      introDuration: 800,
+      outroDuration: 800,
       style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
+        coord: { x: 10, y: 90 },
       }),
-      coord: { x: 10, y: 90 },
     },
   ],
 };

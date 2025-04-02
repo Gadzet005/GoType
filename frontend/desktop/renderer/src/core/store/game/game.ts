@@ -1,14 +1,10 @@
 import { action, makeObservable, observable, computed } from "mobx";
 import { GameStatistics } from "./statistics";
-import { Level } from "./level";
-import { GameField, MoveCursorResult } from "./field";
-import { EventStorage } from "./events/storage";
-import {
-    SentenceActiveEvent,
-    SentenceHideEvent,
-    SentenceIntroEvent,
-    SentenceOutroEvent,
-} from "./events/sentenceEvents";
+import { GameField } from "./core/field";
+import { Cursor, InputResult } from "./core/cursor";
+import { StyledSentenceInfo } from "@desktop-common/level/sentence";
+import { Language } from "@/core/utils/language";
+import { requireTrue } from "@/core/utils/panic";
 
 enum GameStatus {
     idle,
@@ -17,27 +13,35 @@ enum GameStatus {
     finished,
 }
 
-export class Game {
-    readonly events = new EventStorage();
-    readonly statistics: GameStatistics;
-    readonly level: Level;
+export interface GameInfo {
+    sentences: StyledSentenceInfo[];
+    language: Language;
+    duration: number;
+}
 
-    private field_: GameField;
+export class Game {
+    readonly statistics: GameStatistics;
+    readonly duration: number;
+
+    private readonly field: GameField;
+    private readonly cursor: Cursor;
     private status = GameStatus.idle;
     private time_: number = 0;
 
-    constructor(level: Level) {
+    constructor(info: GameInfo) {
+        requireTrue(info.duration > 0, "duration must be greater than 0");
+
         makeObservable(this, {
             statistics: observable,
             // @ts-expect-error: private observable
             time_: observable,
-            field_: observable,
+            field: observable,
+            cursor: observable,
             status: observable,
 
-            field: computed,
             time: computed,
 
-            init: action,
+            reset: action,
             start: action,
             step: action,
             pause: action,
@@ -45,41 +49,23 @@ export class Game {
             finish: action,
         });
 
-        this.level = level;
-        this.field_ = new GameField(this.level.sentences, this.level.language);
-        this.statistics = new GameStatistics(this.level.language);
-        this.init();
+        this.field = new GameField(info.sentences);
+        this.cursor = new Cursor(this.field.sentences, info.language);
+        this.statistics = new GameStatistics(info.language);
+        this.duration = info.duration;
     }
 
-    /** set initial game state */
-    init() {
+    reset() {
+        this.field.reset();
+        this.cursor.reset();
         this.statistics.reset();
-        this.time_ = 0;
         this.status = GameStatus.idle;
-
-        this.events.clear();
-        this.field_ = new GameField(this.level.sentences, this.level.language);
-
-        this.field_.sentences.forEach((sentence) => {
-            this.events.addEvent(sentence.introTime, new SentenceIntroEvent());
-            this.events.addEvent(
-                sentence.activeTime,
-                new SentenceActiveEvent()
-            );
-            this.events.addEvent(sentence.outroTime, new SentenceOutroEvent());
-            this.events.addEvent(sentence.hideTime, new SentenceHideEvent());
-        });
+        this.time_ = 0;
     }
 
     step(time: number) {
         this.time_ = time;
-
-        const events = this.events.getEventsBefore(time);
-        events?.forEach((event) => {
-            event.run(this.field);
-        });
-
-        if (time >= this.level.duration) {
+        if (time >= this.duration) {
             this.finish();
         }
     }
@@ -108,23 +94,25 @@ export class Game {
         return this.status === GameStatus.finished;
     }
 
-    /** progress in percent */
+    /** progress from 0 to 1 */
     getProgress() {
-        if (this.level.duration === 0) {
-            return 100;
-        }
-        return Math.min(1, this.time_ / this.level.duration) * 100;
+        return Math.min(1, this.time_ / this.duration);
+    }
+
+    getVisibleSentences() {
+        return this.field.getVisibleSentences(this.time);
+    }
+
+    getCursorPosition() {
+        return this.cursor.getPosition(this.time);
     }
 
     input(letter: string): void {
-        const result = this.field.moveCursor(letter);
-        if (result === MoveCursorResult.ignore) {
+        const result = this.cursor.input(this.time_, letter);
+        if (result === InputResult.ignore) {
             return;
         }
-        this.statistics.addInputResult(
-            letter,
-            result === MoveCursorResult.correct
-        );
+        this.statistics.addInputResult(letter, result === InputResult.correct);
     }
 
     /**
@@ -133,9 +121,5 @@ export class Game {
      */
     get time() {
         return this.time_;
-    }
-
-    get field() {
-        return this.field_;
     }
 }

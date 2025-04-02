@@ -1,10 +1,10 @@
 import { DraftInfo } from "@desktop-common/draft";
 import { DraftSentenceInfo } from "@desktop-common/draft/sentence";
-import { StyleClass } from "@desktop-common/draft/style";
+import { NamedSentenceStyleClass } from "@desktop-common/draft/style";
 
-export function createDummyLevelDraft(
+export function createLevelDraft(
     sentences: DraftSentenceInfo[] = [],
-    styleClasses: StyleClass[] = []
+    styleClasses: NamedSentenceStyleClass[] = []
 ): DraftInfo {
     return {
         id: 1,

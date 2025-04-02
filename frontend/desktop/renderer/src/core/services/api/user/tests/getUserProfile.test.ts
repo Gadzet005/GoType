@@ -6,7 +6,7 @@ import { AppContext } from "@/core/types/base/app";
 import { ApiError } from "@/core/config/api.config";
 import { getUserProfile } from "../getUserProfile";
 import { Dummy } from "./dummy";
-import { UserDummy } from "@tests/dummy/user";
+import { UserDummy } from "@tests/creation/user";
 
 describe("LoadUserProfile tests", () => {
     let ctx: AppContext;

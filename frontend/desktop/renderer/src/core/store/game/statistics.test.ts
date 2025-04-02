@@ -3,10 +3,10 @@ import { Language } from "@/core/utils/language";
 import { Score } from "@/core/config/game.config";
 
 describe("GameStatistics tests", () => {
-    const lang = Language.default();
+    const englishLang = Language.byCode("eng")!;
 
     it("reset", () => {
-        const statistics = new GameStatistics(lang);
+        const statistics = new GameStatistics(englishLang);
         statistics.addInputResult("a", true);
         statistics.addInputResult("b", false);
         statistics.reset();
@@ -20,7 +20,7 @@ describe("GameStatistics tests", () => {
     });
 
     it("addInputResult", () => {
-        const statistics = new GameStatistics(lang);
+        const statistics = new GameStatistics(englishLang);
         const input = [
             ["a", true],
             ["b", false],
@@ -40,7 +40,7 @@ describe("GameStatistics tests", () => {
     });
 
     it("total", () => {
-        const statistics = new GameStatistics(lang);
+        const statistics = new GameStatistics(englishLang);
         const input = [
             ["a", true],
             ["b", false],
@@ -62,7 +62,7 @@ describe("GameStatistics tests", () => {
     });
 
     it("ratio", () => {
-        const statistics = new GameStatistics(lang);
+        const statistics = new GameStatistics(englishLang);
         const input = [
             ["a", true],
             ["a", true],
@@ -92,7 +92,7 @@ describe("GameStatistics tests", () => {
     });
 
     it("combo", () => {
-        const statistics = new GameStatistics(lang);
+        const statistics = new GameStatistics(englishLang);
         const input = [
             ["a", true],
             ["c", true],

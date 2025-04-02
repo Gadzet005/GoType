@@ -1,5 +1,5 @@
 import { DraftSentenceInfo } from "./sentence";
-import { StyleClass } from "./style";
+import { NamedSentenceStyleClass } from "./style";
 import { NamedAsset } from "../asset";
 
 /**
@@ -12,7 +12,7 @@ export interface DraftInfo {
     audio: NamedAsset | null;
     background: NamedAsset | null;
     sentences: DraftSentenceInfo[];
-    styleClasses: StyleClass[];
+    styleClasses: NamedSentenceStyleClass[];
 }
 
 export type DraftAssetType = "audio" | "background";

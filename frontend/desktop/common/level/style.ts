@@ -15,10 +15,16 @@ export interface SentenceStyle {
     borderRadius: number;
     bgcolor?: string;
 
-    /** from 0 to 1 */
-    introDurationRatio: number;
-    /** from 0 to 1 */
-    outroDurationRatio: number;
-
     colors: SentenceColors;
+
+    /**
+     * The coordinates of the sentence's position on the screen,
+     * expressed in percentages.
+     * (0%, 0%) represents the top left corner,
+     * (100%, 100%) represents the bottom right corner.
+     */
+    coord: {
+        x: number;
+        y: number;
+    };
 }

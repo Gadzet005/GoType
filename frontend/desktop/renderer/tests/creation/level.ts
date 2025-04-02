@@ -1,8 +1,8 @@
 import { LevelInfo } from "@desktop-common/level";
-import { SentenceInfo } from "@desktop-common/level/sentence";
+import { StyledSentenceInfo } from "@desktop-common/level/sentence";
 
-export function createDummyLevel(
-    sentences: SentenceInfo[] = [],
+export function createLevel(
+    sentences: StyledSentenceInfo[] = [],
     duration: number = 10
 ): LevelInfo {
     return {

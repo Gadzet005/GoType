@@ -1,4 +1,4 @@
-import { SentenceInfo } from "./sentence";
+import { StyledSentenceInfo } from "./sentence";
 import { Asset } from "../asset";
 
 export interface LevelInfo {
@@ -18,5 +18,5 @@ export interface LevelInfo {
         asset: Asset;
         brightness: number;
     };
-    sentences: SentenceInfo[];
+    sentences: StyledSentenceInfo[];
 }

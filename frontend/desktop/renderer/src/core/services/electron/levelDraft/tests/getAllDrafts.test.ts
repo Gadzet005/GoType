@@ -1,9 +1,9 @@
 import { ElectronAPIMock } from "@tests/base/electronApiMock";
 import { getAllDrafts } from "../getAllDrafts";
-import { createDummyLevelDraft } from "@tests/dummy/levelDraft";
+import { createLevelDraft } from "@tests/creation/levelDraft";
 
 describe("Get all drafts test", () => {
-    const dummyDraft = createDummyLevelDraft();
+    const dummyDraft = createLevelDraft();
 
     beforeEach(() => {
         vi.restoreAllMocks();

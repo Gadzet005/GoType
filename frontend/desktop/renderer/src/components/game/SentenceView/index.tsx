@@ -1,14 +1,79 @@
 import { ProgressBar } from "@/components/common/ProgressBar";
-import { Sentence, SentenceState } from "@/core/store/game/field/sentence";
+import { FieldSentence } from "@/core/store/game/core/fieldSentence";
+import { Letter, LetterState } from "@/core/store/game/core/letter";
+import { SentenceState } from "@/core/store/game/core/sentence";
+import { SentenceColors } from "@desktop-common/level/style";
 import { Box } from "@mui/material";
-import { animated, useSpring, useTrail } from "@react-spring/web";
-import { when } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { useIsPaused } from "../pause";
 import { LetterView } from "./LetterView";
-import { Letter, LetterState } from "@/core/store/game/field/letter";
-import { SentenceColors } from "@desktop-common/level/style";
+
+interface SentenceProgress {
+  state: SentenceState;
+  intro: number;
+  active: number;
+  outro: number;
+}
+
+function getProgress(start: number, duration: number, now: number): number {
+  if (duration === 0) {
+    return 1;
+  }
+  return Math.min(Math.max(0, now - start) / duration, 1);
+}
+
+function getSentenceProgress(
+  sentence: FieldSentence,
+  time: number
+): SentenceProgress {
+  const intro = getProgress(sentence.introTime, sentence.introDuration, time);
+  const active = getProgress(
+    sentence.activeTime,
+    sentence.activeDuration,
+    time
+  );
+  const outro = getProgress(sentence.outroTime, sentence.outroDuration, time);
+  return {
+    state: sentence.getState(time),
+    intro,
+    active,
+    outro,
+  };
+}
+
+interface AnimationState {
+  opacity: number;
+  letterOpacity: (idx: number) => number;
+}
+
+function getAnimationState(
+  progress: SentenceProgress,
+  sentenceLength: number
+): AnimationState {
+  function getOpacity() {
+    switch (progress.state) {
+      case SentenceState.intro:
+        return progress.intro;
+      case SentenceState.outro:
+        return 1 - progress.outro;
+      default:
+        return 1;
+    }
+  }
+
+  function getLetterOpacity(idx: number) {
+    switch (progress.state) {
+      case SentenceState.intro:
+        return Number(idx < sentenceLength * progress.intro);
+      case SentenceState.outro:
+        return 1 - Number(idx < sentenceLength * progress.outro);
+      default:
+        return 1;
+    }
+  }
+
+  return { opacity: getOpacity(), letterOpacity: getLetterOpacity };
+}
 
 function getLetterColor(
   letter: Letter,
@@ -28,122 +93,61 @@ function getLetterColor(
   }
 }
 
-const AnimatedBox = animated(Box);
-
 interface SentenceViewProps {
-  sentence: Sentence;
+  sentence: FieldSentence;
   cursor: number | undefined;
-  progress: number;
+  sentenceTime: number;
 }
 
 export const SentenceView: React.FC<SentenceViewProps> = observer(
-  ({ sentence, cursor, progress }) => {
-    const isPaused = useIsPaused();
-
-    const [animationProps, animationAPI] = useSpring(
-      { from: { opacity: 0 } },
-      []
-    );
-    const [letterTrails, letterTrailsAPI] = useTrail(
-      sentence.length,
-      {
-        from: { opacity: 0 },
-      },
-      []
-    );
-
-    React.useEffect(() => {
-      const introDuration = sentence.introDuration;
-      const outroDuration = sentence.outroDuration;
-      const introLetterDuration = Math.max(50, introDuration / sentence.length);
-      const outroLetterDuration = Math.max(30, outroDuration / sentence.length);
-
-      animationAPI.start({
-        to: { opacity: 1 },
-        config: { duration: introDuration },
-      });
-      letterTrailsAPI.start({
-        to: { opacity: 1 },
-        config: { duration: introLetterDuration },
-      });
-
-      when(
-        () => sentence.state == SentenceState.outro,
-        () => {
-          animationAPI.start({
-            to: { opacity: 0 },
-            config: { duration: outroDuration },
-          });
-          letterTrailsAPI.start({
-            to: { opacity: 0 },
-            config: { duration: outroLetterDuration },
-          });
-        }
-      );
-
-      return () => {
-        animationAPI.stop();
-        letterTrailsAPI.stop();
-      };
-    }, [sentence, animationAPI, letterTrailsAPI]);
-
-    React.useEffect(() => {
-      if (isPaused) {
-        animationAPI.pause();
-        letterTrailsAPI.pause();
-      } else {
-        animationAPI.resume();
-        letterTrailsAPI.resume();
-      }
-    }, [isPaused, animationAPI, letterTrailsAPI]);
+  ({ sentence, cursor, sentenceTime }) => {
+    const time = sentence.introTime + sentenceTime;
+    const progress = getSentenceProgress(sentence, time);
+    const animationState = getAnimationState(progress, sentence.length);
 
     const letterViews = React.useMemo(
       () =>
-        sentence.getLetters().map((letter, i) => {
+        sentence.letters.map((letter, i) => {
           const color = getLetterColor(
             letter,
             sentence.style.colors,
             i == cursor
           );
           return (
-            <AnimatedBox
+            <LetterView
               key={i}
-              // @ts-expect-error: valid prop
-              component="span"
-              style={letterTrails[i]}
-            >
-              <LetterView
-                letter={letter.char}
-                color={color}
-                fontSize={sentence.style.fontSize}
-                font={sentence.style.font}
-                bold={sentence.style.bold}
-              />
-            </AnimatedBox>
+              letter={letter.char}
+              color={color}
+              fontSize={sentence.style.fontSize}
+              font={sentence.style.font}
+              bold={sentence.style.bold}
+              opacity={animationState.letterOpacity(i)}
+            />
           );
         }),
-      [sentence, letterTrails, cursor]
+      [sentence, cursor, animationState]
     );
 
     return (
-      <AnimatedBox
+      <Box
         sx={{
           p: sentence.style.padding,
           bgcolor: sentence.style.bgcolor,
           borderRadius: sentence.style.borderRadius,
           rotate: `${sentence.style.rotation}deg`,
+          opacity: animationState.opacity,
+          transition: "opacity 500ms easy-in-out",
         }}
-        style={{ ...animationProps }}
       >
         <Box>{letterViews}</Box>
         <ProgressBar
-          value={progress}
+          value={progress.active * 100}
           sx={{
             borderRadius: 5,
             height: 7,
           }}
         />
-      </AnimatedBox>
+      </Box>
     );
   }
 );

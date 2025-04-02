@@ -1,5 +1,6 @@
 import { LevelInfo } from "@desktop-common/level";
 import { Language } from "@/core/utils/language";
+import { requireTrue } from "@/core/utils/panic";
 
 export class Level {
     private readonly info: LevelInfo;
@@ -7,8 +8,13 @@ export class Level {
 
     constructor(levelData: LevelInfo) {
         this.info = levelData;
-        this.language =
-            Language.byCode(levelData.languageCode) ?? Language.default();
+
+        const lang = Language.byCode(levelData.languageCode);
+        requireTrue(
+            lang !== null,
+            `Unknown language code=${levelData.languageCode}`
+        );
+        this.language = lang!;
     }
 
     get id() {

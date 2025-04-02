@@ -1,4 +1,4 @@
-import { StyleClass } from "@desktop-common/draft/style";
+import { NamedSentenceStyleClass } from "@desktop-common/draft/style";
 import {
   Box,
   IconButton,
@@ -11,7 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import React from "react";
 
 interface StyleClassItemProps {
-  styleClass: StyleClass;
+  styleClass: NamedSentenceStyleClass;
   deleleSelf: () => void;
   editSelf: () => void;
 }

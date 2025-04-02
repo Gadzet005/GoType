@@ -1,5 +1,4 @@
 import { Constraints, Defaults } from "@/core/config/game.config";
-import { StyleClass } from "@desktop-common/draft/style";
 import { fromValues, StyleFormValues, toValues } from "./values";
 import {
   Button,
@@ -13,6 +12,7 @@ import React from "react";
 import { useEditorContext } from "../../context";
 import { StyleFormFields } from "./StyleFormFields";
 import * as yup from "yup";
+import { NamedSentenceStyleClass } from "@desktop-common/draft/style";
 
 const requiredMsg = "Обязательное поле";
 
@@ -72,7 +72,7 @@ interface StyleFormProps {
   open: boolean;
   onClose?: () => void;
   onUpdate?: () => void | Promise<void>;
-  initial?: StyleClass;
+  initial?: NamedSentenceStyleClass;
 }
 
 export const StyleFormDialog: React.FC<StyleFormProps> = ({
@@ -85,7 +85,7 @@ export const StyleFormDialog: React.FC<StyleFormProps> = ({
 
   const styleClass = initial ?? {
     name: "Новый стиль",
-    style: Defaults.sentenceStyle,
+    ...Defaults.sentenceStyleClass,
   };
 
   const handleSave = async (
@@ -98,7 +98,8 @@ export const StyleFormDialog: React.FC<StyleFormProps> = ({
       draft.setStyleClass(styleClass.name, fromValues(values));
     } else {
       // new style class
-      const r = draft.addStyleClass(fromValues(values));
+      const styleClass = fromValues(values);
+      const r = draft.addStyleClass(styleClass.name, styleClass);
       if (!r) {
         setFieldError("name", "Стиль с таким именем уже существует");
         return;

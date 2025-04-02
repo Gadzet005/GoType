@@ -14,15 +14,15 @@ export class GameRunner {
 
     private stop() {
         if (this.stepTimeout) {
-            clearInterval(this.stepTimeout);
+            clearTimeout(this.stepTimeout);
         }
         this.stepTimeout = null;
         this.lastStepTime = null;
     }
 
-    init() {
+    reset() {
         this.stop();
-        this.game.init();
+        this.game.reset();
         this.timePassed = 0;
     }
 

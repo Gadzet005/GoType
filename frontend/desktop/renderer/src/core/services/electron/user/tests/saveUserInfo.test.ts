@@ -1,6 +1,6 @@
 import { ElectronAPIMock } from "@tests/base/electronApiMock";
 import { saveUserInfo } from "../saveUserInfo";
-import { UserDummy } from "@tests/dummy/user";
+import { UserDummy } from "@tests/creation/user";
 
 describe("Save user info tests", () => {
     beforeEach(() => {

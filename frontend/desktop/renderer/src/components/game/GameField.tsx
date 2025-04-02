@@ -4,11 +4,10 @@ import { observer } from "mobx-react";
 import React from "react";
 import useMeasure from "react-use-measure";
 import ResizeObserver from "resize-observer-polyfill";
-import { PauseContext } from "./pause";
 import { SentenceView } from "./SentenceView";
 import { SentenceContainer } from "./SentenceView/container";
-import { Cursor } from "@/core/store/game/field";
-import { Sentence } from "@/core/store/game/field/sentence";
+import { CursorPosition } from "@/core/store/game/core/cursor";
+import { Sentence } from "@/core/store/game/core/sentence";
 
 interface GameFieldProps {
   width: number | string;
@@ -17,18 +16,17 @@ interface GameFieldProps {
 }
 
 function getSentenceCursor(
-  cursor: Cursor | null,
+  cursor: CursorPosition | null,
   idx: number
 ): number | undefined {
-  return cursor && cursor.sentence == idx ? cursor.position : undefined;
+  return cursor && cursor.sentence == idx ? cursor.letter : undefined;
 }
 
-function getSentenceProgress(time: number, sentence: Sentence) {
-  const v = Math.min(
-    Math.max(0, time - sentence.activeTime) / sentence.activeDuration,
-    1
+function getSentenceTime(sentence: Sentence, time: number): number {
+  return Math.min(
+    sentence.totalDuration,
+    Math.max(0, time - sentence.introTime)
   );
-  return Math.round(v * 1000) / 10;
 }
 
 export const GameField: React.FC<GameFieldProps> = observer(
@@ -37,23 +35,25 @@ export const GameField: React.FC<GameFieldProps> = observer(
 
     const SentenceViews = React.useMemo(
       () =>
-        game.field.getVisibleSentences().map((sentence) => {
-          const cursor = game.field.getCursor();
-          const sentenceCursor = getSentenceCursor(cursor, sentence.idx);
-          const progress = getSentenceProgress(game.time, sentence);
+        game.getVisibleSentences().map((sentence) => {
+          const sentenceCursor = getSentenceCursor(
+            game.getCursorPosition(),
+            sentence.idx
+          );
+          const sentenceTime = getSentenceTime(sentence, game.time);
 
           return (
             <SentenceContainer
               key={sentence.idx}
-              x={sentence.coord.x}
-              y={sentence.coord.y}
+              x={sentence.style.coord.x}
+              y={sentence.style.coord.y}
               fieldHeight={bounds.height}
               fieldWidth={bounds.width}
             >
               <SentenceView
                 sentence={sentence}
                 cursor={sentenceCursor}
-                progress={progress}
+                sentenceTime={sentenceTime}
               />
             </SentenceContainer>
           );
@@ -69,9 +69,7 @@ export const GameField: React.FC<GameFieldProps> = observer(
         height={height}
         width={width}
       >
-        <PauseContext.Provider value={game.isPaused()}>
-          {SentenceViews}
-        </PauseContext.Provider>
+        {SentenceViews}
       </Box>
     );
   }

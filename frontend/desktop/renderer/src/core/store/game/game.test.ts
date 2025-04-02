@@ -1,60 +1,80 @@
-import { createDummyLevel } from "@tests/dummy/level";
-import { createDummySentence } from "@tests/dummy/sentence";
+import { Language } from "@/core/utils/language";
 import { Game } from "./game";
-import { Level } from "./level";
+import { createSentenceStyle } from "@tests/creation/style";
 
 describe("Game Tests", () => {
-    it("game unit", () => {
-        const sentence1 = createDummySentence("foo", 0, 4, 0.25, 0.25);
-        const sentence2 = createDummySentence("bar", 1, 4, 0.25, 0.25);
-        const sentence3 = createDummySentence("p", 9, 1, 0, 0);
-        const level = createDummyLevel([sentence1, sentence2, sentence3], 10);
+    const englishLang = Language.byCode("eng")!;
 
-        const game = new Game(new Level(level));
+    it("game unit", () => {
+        const game = new Game({
+            duration: 10,
+            language: englishLang,
+            sentences: [
+                {
+                    content: "foo",
+                    showTime: 0,
+                    introDuration: 1,
+                    activeDuration: 2,
+                    outroDuration: 1,
+                    style: createSentenceStyle(),
+                },
+                {
+                    content: "bar",
+                    showTime: 2,
+                    introDuration: 0,
+                    activeDuration: 3,
+                    outroDuration: 1,
+                    style: createSentenceStyle(),
+                },
+                {
+                    content: "baz",
+                    showTime: 8,
+                    introDuration: 1,
+                    activeDuration: 1,
+                    outroDuration: 0,
+                    style: createSentenceStyle(),
+                },
+            ],
+        });
 
         expect(game.isRunning()).toBeFalsy();
 
         game.start();
+        game.input("f");
         expect(game.isRunning()).toBeTruthy();
         expect(game.isFinished()).toBeFalsy();
         expect(game.getProgress()).toBe(0);
-
-        game.input("f");
         expect(game.statistics.totalLetters).toBe(0);
 
-        // step 1
         game.step(1);
-        expect(game.time).toBe(1);
-        expect(game.field.getVisibleSentences()).lengthOf(2);
-
-        // step 2
-        game.step(2);
-        expect(game.time).toBe(2);
-        expect(game.field.getVisibleSentences()).lengthOf(2);
-
         game.input("f");
         game.input("o");
-        game.input("a");
-        game.input("!");
+        game.input("o");
         game.input("b");
+        expect(game.getVisibleSentences()).lengthOf(1);
+        expect(game.statistics.totalLetters).toBe(3);
 
-        expect(game.statistics.totalLetters).toBe(4);
+        game.step(2);
+        game.input("b");
+        game.input("a");
+        game.input("r");
+        game.input("b");
+        expect(game.getVisibleSentences()).lengthOf(2);
+        expect(game.statistics.totalLetters).toBe(6);
 
-        // steps 3-5
-        game.step(5);
-        expect(game.time).toBe(5);
-        expect(game.field.getVisibleSentences()).lengthOf(0);
+        game.step(4);
+        expect(game.getVisibleSentences()).lengthOf(1);
 
-        // steps 6-9
-        game.step(9);
-        expect(game.time).toBe(9);
-        expect(game.field.getVisibleSentences()).lengthOf(1);
+        game.step(6);
+        expect(game.getVisibleSentences()).lengthOf(0);
 
-        // step 10
+        game.step(8);
+        expect(game.getVisibleSentences()).lengthOf(1);
+
         game.step(10);
-        expect(game.time).toBe(10);
-        expect(game.field.getVisibleSentences()).lengthOf(0);
-        expect(game.getProgress()).toBe(100);
+        expect(game.isRunning()).toBeFalsy();
         expect(game.isFinished()).toBeTruthy();
+        expect(game.getProgress()).toBe(1);
+        expect(game.getVisibleSentences()).lengthOf(0);
     });
 });

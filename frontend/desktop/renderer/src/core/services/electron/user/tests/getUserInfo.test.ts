@@ -1,6 +1,6 @@
 import { ElectronAPIMock } from "@tests/base/electronApiMock";
 import { getUserInfo } from "../getUserInfo";
-import { UserDummy } from "@tests/dummy/user";
+import { UserDummy } from "@tests/creation/user";
 
 describe("Get user info tests", () => {
     beforeEach(() => {

@@ -20,6 +20,7 @@ export class Letter {
 
             mistake: action,
             success: action,
+            reset: action,
 
             state: computed,
         });
@@ -33,6 +34,10 @@ export class Letter {
 
     success() {
         this.state_ = LetterState.success;
+    }
+
+    reset() {
+        this.state_ = LetterState.default;
     }
 
     isEqual(c: string): boolean {
