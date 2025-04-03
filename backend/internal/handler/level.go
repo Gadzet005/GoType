@@ -3,10 +3,19 @@ package handler
 import (
 	gotype "github.com/Gadzet005/GoType/backend"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
+	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
 )
+
+type Level struct {
+	service service.Level
+}
+
+func NewLevel(service service.Level) *Level {
+	return &Level{service: service}
+}
 
 // @Summary Create level
 // @Tags level
@@ -23,7 +32,7 @@ import (
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /level/create-level [post]
-func (h *Handler) CreateLevel(c *gin.Context) {
+func (h *Level) CreateLevel(c *gin.Context) {
 	levelFile, err := c.FormFile("level")
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
@@ -48,7 +57,7 @@ func (h *Handler) CreateLevel(c *gin.Context) {
 		return
 	}
 
-	levelId, err := h.services.Level.CreateLevel(userId.(int), levelFile, infoFile, previewFile)
+	levelId, err := h.service.CreateLevel(userId.(int), levelFile, infoFile, previewFile)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -73,7 +82,7 @@ func (h *Handler) CreateLevel(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /level/download-level [get]
-func (h *Handler) GetLevel(c *gin.Context) {
+func (h *Level) GetLevel(c *gin.Context) {
 	var levInfo level.GetLevelInfoStruct
 
 	err := c.BindJSON(&levInfo)
@@ -83,7 +92,7 @@ func (h *Handler) GetLevel(c *gin.Context) {
 		return
 	}
 
-	filePath, err := h.services.Level.CheckLevelExists(levInfo)
+	filePath, err := h.service.CheckLevelExists(levInfo)
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrEntityNotFound)
@@ -107,7 +116,7 @@ func (h *Handler) GetLevel(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /level/get-level-info [get]
-func (h *Handler) GetLevelInfoById(c *gin.Context) {
+func (h *Level) GetLevelInfoById(c *gin.Context) {
 	var levId level.GetLevelInfoStruct
 
 	err := c.BindJSON(&levId)
@@ -117,21 +126,21 @@ func (h *Handler) GetLevelInfoById(c *gin.Context) {
 		return
 	}
 
-	levelInfo, err := h.services.Level.GetLevelById(levId.Id)
+	levelInfo, err := h.service.GetLevelById(levId.Id)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
 	}
 
-	levelStats, err := h.services.Level.GetLevelStats(levId.Id)
+	levelStats, err := h.service.GetLevelStats(levId.Id)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
 	}
 
-	levelUserTop, err := h.services.Level.GetLevelUserTop(levId.Id)
+	levelUserTop, err := h.service.GetLevelUserTop(levId.Id)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -160,7 +169,7 @@ func (h *Handler) GetLevelInfoById(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /level/update-level [post]
-func (h *Handler) UpdateLevel(c *gin.Context) {
+func (h *Level) UpdateLevel(c *gin.Context) {
 	levelFile, err := c.FormFile("level")
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
@@ -185,7 +194,7 @@ func (h *Handler) UpdateLevel(c *gin.Context) {
 		return
 	}
 
-	levelId, err := h.services.Level.UpdateLevel(userId.(int), levelFile, infoFile, previewFile)
+	levelId, err := h.service.UpdateLevel(userId.(int), levelFile, infoFile, previewFile)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -210,7 +219,7 @@ func (h *Handler) UpdateLevel(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /level/get-level-list [get]
-func (h *Handler) GetLevelList(c *gin.Context) {
+func (h *Level) GetLevelList(c *gin.Context) {
 	var fetchParams level.FetchLevelStruct
 	err := c.BindJSON(&fetchParams)
 
@@ -219,7 +228,7 @@ func (h *Handler) GetLevelList(c *gin.Context) {
 		return
 	}
 
-	levelList, err := h.services.Level.GetLevelList(fetchParams)
+	levelList, err := h.service.GetLevelList(fetchParams)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())

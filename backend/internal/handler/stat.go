@@ -4,10 +4,19 @@ import (
 	gotype "github.com/Gadzet005/GoType/backend"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
+	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
+
+type Stat struct {
+	service service.Stats
+}
+
+func NewStat(service service.Stats) *Stat {
+	return &Stat{service: service}
+}
 
 // @Summary Get User Statistics
 // @Tags stats
@@ -22,7 +31,7 @@ import (
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /stats/get-user-stats [get]
-func (h *Handler) GetUserStats(c *gin.Context) {
+func (h *Stat) GetUserStats(c *gin.Context) {
 	var input user.UserID
 
 	if err := c.BindJSON(&input); err != nil {
@@ -31,7 +40,7 @@ func (h *Handler) GetUserStats(c *gin.Context) {
 		return
 	}
 
-	userStats, err := h.services.Stats.GetUserStats(input.Id)
+	userStats, err := h.service.GetUserStats(input.Id)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -56,7 +65,7 @@ func (h *Handler) GetUserStats(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /stats/get-users-top [get]
-func (h *Handler) GetUsersTop(c *gin.Context) {
+func (h *Stat) GetUsersTop(c *gin.Context) {
 	var input statistics.StatSortFilterParamsJSON
 
 	if err := c.BindJSON(&input); err != nil {
@@ -77,7 +86,7 @@ func (h *Handler) GetUsersTop(c *gin.Context) {
 		Pattern:  input.CategoryParams.Pattern,
 	}
 
-	usersTop, err := h.services.Stats.GetUsersTop(inpReal)
+	usersTop, err := h.service.GetUsersTop(inpReal)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())

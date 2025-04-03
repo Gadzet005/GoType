@@ -3,9 +3,18 @@ package handler
 import (
 	gotype "github.com/Gadzet005/GoType/backend"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
+	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
+
+type Auth struct {
+	service service.Authorization
+}
+
+func NewAuth(service service.Authorization) *Auth {
+	return &Auth{service: service}
+}
 
 // @Summary Register
 // @Tags auth
@@ -19,14 +28,14 @@ import (
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server; "
 // @Failure default {object} errorResponse
 // @Router /auth/register [post]
-func (h *Handler) register(c *gin.Context) {
+func (h *Auth) register(c *gin.Context) {
 	var input user.User
 	if err := c.BindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
-	accessToken, refreshToken, err := h.services.Authorization.CreateUser(input)
+	accessToken, refreshToken, err := h.service.CreateUser(input)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
@@ -50,7 +59,7 @@ func (h *Handler) register(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server; "
 // @Failure default {object} errorResponse
 // @Router /auth/login [post]
-func (h *Handler) login(c *gin.Context) {
+func (h *Auth) login(c *gin.Context) {
 	var input user.User
 
 	if err := c.BindJSON(&input); err != nil {
@@ -58,7 +67,7 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
-	refreshToken, accessToken, err := h.services.Authorization.GenerateToken(input.Name, input.Password)
+	refreshToken, accessToken, err := h.service.GenerateToken(input.Name, input.Password)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
@@ -83,7 +92,7 @@ func (h *Handler) login(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server; "
 // @Failure default {object} errorResponse
 // @Router /auth/refresh [post]
-func (h *Handler) refresh(c *gin.Context) {
+func (h *Auth) refresh(c *gin.Context) {
 	var input user.RefreshStruct
 
 	if err := c.BindJSON(&input); err != nil {
@@ -91,7 +100,7 @@ func (h *Handler) refresh(c *gin.Context) {
 		return
 	}
 
-	refreshToken, accessToken, err := h.services.Authorization.GenerateTokenByToken(input.AccessToken, input.RefreshToken)
+	refreshToken, accessToken, err := h.service.GenerateTokenByToken(input.AccessToken, input.RefreshToken)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return

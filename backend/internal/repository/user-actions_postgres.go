@@ -36,8 +36,9 @@ func (s *UserActionsPostgres) DropRefreshToken(id int, newTime time.Time) (int, 
 	return retId, nil
 }
 
-func (s *UserActionsPostgres) GetUserById(id int) (string, int, time.Time, string, string, error) {
-	var name, banReason, avatarPath string
+func (s *UserActionsPostgres) GetUserById(id int) (string, int, time.Time, string, sql.NullString, error) {
+	var name, banReason string
+	var avatarPath sql.NullString
 	var banTime time.Time
 	var access int
 
@@ -48,10 +49,10 @@ func (s *UserActionsPostgres) GetUserById(id int) (string, int, time.Time, strin
 	if err := row.Scan(&name, &access, &banTime, &banReason, &avatarPath); err != nil {
 		logrus.Fatalf("Error getting user by id: %s", err.Error())
 		if errors.Is(err, sql.ErrNoRows) {
-			return "", -1, banTime, banReason, "", errors.New(gotype.ErrUserNotFound)
+			return "", -1, banTime, banReason, sql.NullString{String: ""}, errors.New(gotype.ErrUserNotFound)
 		}
 
-		return "", -1, time.Now(), "", "", errors.New(gotype.ErrInternal)
+		return "", -1, time.Now(), "", sql.NullString{String: ""}, errors.New(gotype.ErrInternal)
 	}
 
 	return name, access, banTime, banReason, avatarPath, nil

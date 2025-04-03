@@ -10,13 +10,79 @@ import (
 	"github.com/swaggo/gin-swagger"
 )
 
-type Handler struct {
-	services *service.Service
+type AuthorizationHandler interface {
+	register(c *gin.Context)
+	login(c *gin.Context)
+	refresh(c *gin.Context)
 }
 
-func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+type UserActionsHandler interface {
+	logout(c *gin.Context)
+	getUserInfo(c *gin.Context)
+	WriteUserComplaint(c *gin.Context)
+	WriteLevelComplaint(c *gin.Context)
+	changeAvatar(c *gin.Context)
 }
+
+type StatsHandler interface {
+	GetUserStats(c *gin.Context)
+	GetUsersTop(c *gin.Context)
+}
+
+type AdminHandler interface {
+	BanUser(c *gin.Context)
+	UnbanUser(c *gin.Context)
+	BanLevel(c *gin.Context)
+	UnbanLevel(c *gin.Context)
+	ChangeUserAccess(c *gin.Context)
+	getUserComplaints(c *gin.Context)
+	getLevelComplaints(c *gin.Context)
+	processUserComplaint(c *gin.Context)
+	processLevelComplaint(c *gin.Context)
+	getUsers(c *gin.Context)
+}
+
+type SinglePlayerHandler interface {
+	SendResults(c *gin.Context)
+}
+
+type LevelHandler interface {
+	CreateLevel(c *gin.Context)
+	GetLevel(c *gin.Context)
+	GetLevelInfoById(c *gin.Context)
+	UpdateLevel(c *gin.Context)
+	GetLevelList(c *gin.Context)
+}
+
+type Handler struct {
+	Authorization    AuthorizationHandler
+	UserActions      UserActionsHandler
+	Admin            AdminHandler
+	Level            LevelHandler
+	Stats            StatsHandler
+	SinglePlayerGame SinglePlayerHandler
+	services         *service.Service
+}
+
+//type Handler struct {
+//	services *service.Service
+//}
+
+func NewHandler(services *service.Service) *Handler {
+	return &Handler{
+		Authorization:    NewAuth(services.Authorization),
+		UserActions:      NewUserActions(services.UserActions),
+		Admin:            NewAdmin(services.Admin),
+		Level:            NewLevel(services.Level),
+		Stats:            NewStat(services.Stats),
+		SinglePlayerGame: NewSinglePlayer(services.SinglePlayerGame),
+		services:         services,
+	}
+}
+
+//func NewHandler(services *service.Service) *Handler {
+//	return &Handler{services: services}
+//}
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
@@ -35,61 +101,54 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	auth := router.Group("/auth")
 	{
-		auth.POST("/register", h.register)
-		auth.POST("/login", h.login)
-		auth.POST("/refresh", h.refresh)
+		auth.POST("/register", h.Authorization.register)
+		auth.POST("/login", h.Authorization.login)
+		auth.POST("/refresh", h.Authorization.refresh)
 	}
 
 	userActions := router.Group("/user-actions", h.UserIdentity)
 	{
-		userActions.POST("/logout", h.logout)
-		userActions.GET("/get-user-info", h.getUserInfo)
-		userActions.POST("/write-user-complaint", h.WriteUserComplaint)
-		userActions.POST("/write-level-complaint", h.WriteLevelComplaint)
-		userActions.POST("/change-avatar", h.changeAvatar)
+		userActions.POST("/logout", h.UserActions.logout)
+		userActions.GET("/get-user-info", h.UserActions.getUserInfo)
+		userActions.POST("/write-user-complaint", h.UserActions.WriteUserComplaint)
+		userActions.POST("/write-level-complaint", h.UserActions.WriteLevelComplaint)
+		userActions.POST("/change-avatar", h.UserActions.changeAvatar)
 	}
 
 	stats := router.Group("/stats", h.UserIdentity)
 	{
-		stats.GET("/get-user-stats", h.GetUserStats)
-		stats.GET("/get-users-top", h.GetUsersTop)
+		stats.GET("/get-user-stats", h.Stats.GetUserStats)
+		stats.GET("/get-users-top", h.Stats.GetUsersTop)
 	}
 
 	admin := router.Group("/admin", h.UserIdentity)
 	{
-		admin.POST("/ban-user", h.BanUser)
-		admin.POST("/unban-user", h.UnbanUser)
-		admin.POST("/ban-level", h.BanLevel)
-		admin.POST("/unban-level")
-		admin.POST("/change-user-access", h.ChangeUserAccess)
-		admin.GET("/get-user-complaints", h.getUserComplaints)
-		admin.GET("/get-level-complaints", h.getLevelComplaints)
-		admin.POST("/process-user-complaint", h.processUserComplaint)
-		admin.POST("/process-level-complaint", h.processLevelComplaint)
-		admin.GET("/get-users", h.getUsers)
+		admin.POST("/ban-user", h.Admin.BanUser)
+		admin.POST("/unban-user", h.Admin.UnbanUser)
+		admin.POST("/ban-level", h.Admin.BanLevel)
+		admin.POST("/change-user-access", h.Admin.ChangeUserAccess)
+		admin.GET("/get-user-complaints", h.Admin.getUserComplaints)
+		admin.GET("/get-level-complaints", h.Admin.getLevelComplaints)
+		admin.POST("/process-user-complaint", h.Admin.processUserComplaint)
+		admin.POST("/process-level-complaint", h.Admin.processLevelComplaint)
+		admin.GET("/get-users", h.Admin.getUsers)
 	}
 
 	level := router.Group("/level", h.UserIdentity)
 	{
-		level.POST("/create-level", h.CreateLevel)
-		level.GET("/download-level", h.GetLevel)
-		level.GET("/get-level-info", h.GetLevelInfoById)
-		level.POST("/update-level", h.UpdateLevel)
-		level.GET("/get-level-list", h.GetLevelList)
+		level.POST("/create-level", h.Level.CreateLevel)
+		level.GET("/download-level", h.Level.GetLevel)
+		level.GET("/get-level-info", h.Level.GetLevelInfoById)
+		level.POST("/update-level", h.Level.UpdateLevel)
+		level.GET("/get-level-list", h.Level.GetLevelList)
 	}
-
-	//multGame := router.Group("/mult-game")
-	//{
-	//
-	//}
 
 	singleGame := router.Group("/single-game", h.UserIdentity)
 	{
-		singleGame.POST("/send-results", h.SendResults)
+		singleGame.POST("/send-results", h.SinglePlayerGame.SendResults)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	//router.Run(":8080")
 
 	return router
 }

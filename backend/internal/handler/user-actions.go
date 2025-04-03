@@ -5,10 +5,19 @@ import (
 	gotype "github.com/Gadzet005/GoType/backend"
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
+	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/slices"
 	"net/http"
 )
+
+type UserActions struct {
+	service service.UserActions
+}
+
+func NewUserActions(service service.UserActions) *UserActions {
+	return &UserActions{service: service}
+}
 
 // @Summary Logout
 // @Tags user-actions
@@ -22,7 +31,7 @@ import (
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/logout [post]
-func (h *Handler) logout(c *gin.Context) {
+func (h *UserActions) logout(c *gin.Context) {
 	curId, exists := c.Get("id")
 
 	if !exists {
@@ -30,7 +39,7 @@ func (h *Handler) logout(c *gin.Context) {
 		return
 	}
 
-	err := h.services.UserActions.DropRefreshToken(curId.(int))
+	err := h.service.DropRefreshToken(curId.(int))
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -52,7 +61,7 @@ func (h *Handler) logout(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/get-user-info [get]
-func (h *Handler) getUserInfo(c *gin.Context) {
+func (h *UserActions) getUserInfo(c *gin.Context) {
 	curId, exists := c.Get("id")
 
 	if !exists {
@@ -60,7 +69,7 @@ func (h *Handler) getUserInfo(c *gin.Context) {
 		return
 	}
 
-	username, access, banTime, banReason, avatarPath, err := h.services.UserActions.GetUserById(curId.(int))
+	username, access, banTime, banReason, avatarPath, err := h.service.GetUserById(curId.(int))
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -91,7 +100,7 @@ func (h *Handler) getUserInfo(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/write-user-complaint [post]
-func (h *Handler) WriteUserComplaint(c *gin.Context) {
+func (h *UserActions) WriteUserComplaint(c *gin.Context) {
 	var input complaints.UserComplaint
 
 	if err := c.BindJSON(&input); err != nil {
@@ -104,7 +113,7 @@ func (h *Handler) WriteUserComplaint(c *gin.Context) {
 		return
 	}
 
-	err := h.services.UserActions.CreateUserComplaint(input)
+	err := h.service.CreateUserComplaint(input)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
@@ -126,7 +135,7 @@ func (h *Handler) WriteUserComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/write-level-complaint [post]
-func (h *Handler) WriteLevelComplaint(c *gin.Context) {
+func (h *UserActions) WriteLevelComplaint(c *gin.Context) {
 	var input complaints.LevelComplaint
 
 	if err := c.BindJSON(&input); err != nil {
@@ -139,7 +148,7 @@ func (h *Handler) WriteLevelComplaint(c *gin.Context) {
 		return
 	}
 
-	err := h.services.UserActions.CreateLevelComplaint(input)
+	err := h.service.CreateLevelComplaint(input)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
@@ -161,7 +170,7 @@ func (h *Handler) WriteLevelComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/change-avatar [post]
-func (h *Handler) changeAvatar(c *gin.Context) {
+func (h *UserActions) changeAvatar(c *gin.Context) {
 	userId, ok := c.Get(userIdCtx)
 	if !ok {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrAccessToken)
@@ -176,7 +185,7 @@ func (h *Handler) changeAvatar(c *gin.Context) {
 
 	avatarFile, err := c.FormFile("avatar")
 	if errors.Is(err, http.ErrMissingFile) {
-		err = h.services.UserActions.UpdateAvatar(intUserId, nil)
+		err = h.service.UpdateAvatar(intUserId, nil)
 
 		if err != nil {
 			NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -186,7 +195,7 @@ func (h *Handler) changeAvatar(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	} else {
-		err = h.services.UserActions.UpdateAvatar(intUserId, avatarFile)
+		err = h.service.UpdateAvatar(intUserId, avatarFile)
 
 		if err != nil {
 			NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())

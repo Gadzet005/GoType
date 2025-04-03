@@ -6,10 +6,19 @@ import (
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	useraccess "github.com/Gadzet005/GoType/backend/internal/domain/UserAccess"
+	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
+
+type Admin struct {
+	service service.Admin
+}
+
+func NewAdmin(service service.Admin) *Admin {
+	return &Admin{service: service}
+}
 
 // @Summary Ban user
 // @Tags admin
@@ -24,7 +33,7 @@ import (
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/ban-user [post]
-func (h *Handler) BanUser(c *gin.Context) {
+func (h *Admin) BanUser(c *gin.Context) {
 	var input bans.UserBan
 	curAccess, exists := c.Get(userAccessCtx)
 
@@ -38,7 +47,7 @@ func (h *Handler) BanUser(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Admin.TryBanUser(curAccess.(int), input)
+	err := h.service.TryBanUser(curAccess.(int), input)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
@@ -60,7 +69,7 @@ func (h *Handler) BanUser(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/unban-user [post]
-func (h *Handler) UnbanUser(c *gin.Context) {
+func (h *Admin) UnbanUser(c *gin.Context) {
 	var input bans.UserUnban
 	curAccess, exists := c.Get(userAccessCtx)
 
@@ -74,7 +83,7 @@ func (h *Handler) UnbanUser(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Admin.TryUnbanUser(curAccess.(int), input)
+	err := h.service.TryUnbanUser(curAccess.(int), input)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
@@ -96,7 +105,7 @@ func (h *Handler) UnbanUser(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/ban-level [post]
-func (h *Handler) BanLevel(c *gin.Context) {
+func (h *Admin) BanLevel(c *gin.Context) {
 	var input bans.LevelBan
 	curAccess, exists := c.Get(userAccessCtx)
 
@@ -110,7 +119,7 @@ func (h *Handler) BanLevel(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Admin.TryBanLevel(curAccess.(int), input)
+	err := h.service.TryBanLevel(curAccess.(int), input)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
@@ -132,7 +141,7 @@ func (h *Handler) BanLevel(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/unban-level [post]
-func (h *Handler) UnbanLevel(c *gin.Context) {
+func (h *Admin) UnbanLevel(c *gin.Context) {
 	var input bans.LevelBan
 	curAccess, exists := c.Get(userAccessCtx)
 
@@ -146,7 +155,7 @@ func (h *Handler) UnbanLevel(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Admin.TryUnbanLevel(curAccess.(int), input)
+	err := h.service.TryUnbanLevel(curAccess.(int), input)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
@@ -168,7 +177,7 @@ func (h *Handler) UnbanLevel(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/change-user-access [post]
-func (h *Handler) ChangeUserAccess(c *gin.Context) {
+func (h *Admin) ChangeUserAccess(c *gin.Context) {
 	var input useraccess.ChangeUserAccess
 	curAccess, exists := c.Get(userAccessCtx)
 
@@ -182,7 +191,7 @@ func (h *Handler) ChangeUserAccess(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Admin.TryChangeAccessLevel(curAccess.(int), input)
+	err := h.service.TryChangeAccessLevel(curAccess.(int), input)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
@@ -203,7 +212,7 @@ func (h *Handler) ChangeUserAccess(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/get-user-complaints [get]
-func (h *Handler) getUserComplaints(c *gin.Context) {
+func (h *Admin) getUserComplaints(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
@@ -218,7 +227,7 @@ func (h *Handler) getUserComplaints(c *gin.Context) {
 		return
 	}
 
-	complaint, err := h.services.Admin.GetUserComplaints(curID.(int), curAccess.(int))
+	complaint, err := h.service.GetUserComplaints(curID.(int), curAccess.(int))
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -242,7 +251,7 @@ func (h *Handler) getUserComplaints(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/get-level-complaints [get]
-func (h *Handler) getLevelComplaints(c *gin.Context) {
+func (h *Admin) getLevelComplaints(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
@@ -257,7 +266,7 @@ func (h *Handler) getLevelComplaints(c *gin.Context) {
 		return
 	}
 
-	complaint, err := h.services.Admin.GetLevelComplaints(curID.(int), curAccess.(int))
+	complaint, err := h.service.GetLevelComplaints(curID.(int), curAccess.(int))
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -282,7 +291,7 @@ func (h *Handler) getLevelComplaints(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/process-user-complaint [POST]
-func (h *Handler) processUserComplaint(c *gin.Context) {
+func (h *Admin) processUserComplaint(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
@@ -305,7 +314,7 @@ func (h *Handler) processUserComplaint(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Admin.ProcessUserComplaint(curID.(int), curAccess.(int), input.Id)
+	err = h.service.ProcessUserComplaint(curID.(int), curAccess.(int), input.Id)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -328,7 +337,7 @@ func (h *Handler) processUserComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/process-level-complaint [POST]
-func (h *Handler) processLevelComplaint(c *gin.Context) {
+func (h *Admin) processLevelComplaint(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
@@ -351,7 +360,7 @@ func (h *Handler) processLevelComplaint(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Admin.ProcessLevelComplaint(curID.(int), curAccess.(int), input.Id)
+	err = h.service.ProcessLevelComplaint(curID.(int), curAccess.(int), input.Id)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -374,7 +383,7 @@ func (h *Handler) processLevelComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/get-users [get]
-func (h *Handler) getUsers(c *gin.Context) {
+func (h *Admin) getUsers(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
@@ -393,7 +402,7 @@ func (h *Handler) getUsers(c *gin.Context) {
 		return
 	}
 
-	users, err := h.services.Admin.GetUsers(curAccess.(int), input)
+	users, err := h.service.GetUsers(curAccess.(int), input)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())

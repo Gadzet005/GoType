@@ -25,7 +25,7 @@ func NewStatsPostgres(db *sqlx.DB, client *redis.Client) *StatsPostgres {
 func (sp *StatsPostgres) GetUserStats(id int) (statistics.PlayerStats, error) {
 	var statsDB statistics.PlayerStatsDB
 
-	var query = fmt.Sprintf("SELECT user_id,avatar_path,num_press_err_by_char_by_lang,num_level_relax,num_level_classic,num_games_mult,num_chars_classic,num_chars_relax,average_accuracy_classic,average_accuracy_relax,win_percentage,average_delay,num_classes_classic,sum_points,name as user_name FROM (SELECT *  FROM %s  WHERE user_id = $1) AS s JOIN (SELECT id , name  FROM %s WHERE id = $2) AS u ON s.user_id = u.id;", statsTable, usersTable)
+	var query = fmt.Sprintf("SELECT u.avatar_path, user_id,num_press_err_by_char_by_lang,num_level_relax,num_level_classic,num_games_mult,num_chars_classic,num_chars_relax,average_accuracy_classic,average_accuracy_relax,win_percentage,average_delay,num_classes_classic,sum_points,name as user_name FROM (SELECT *  FROM %s  WHERE user_id = $1) AS s JOIN (SELECT id, name, avatar_path  FROM %s WHERE id = $2) AS u ON s.user_id = u.id;", statsTable, usersTable)
 
 	if err := sp.db.Get(&statsDB, query, id, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -60,7 +60,7 @@ func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistic
 	var offset = cast.ToString(params["page_size"].(int) * (params["page_num"].(int) - 1))
 	query += fmt.Sprintf(" LIMIT %s OFFSET %s", limit, offset)
 
-	var wholeQuery = fmt.Sprintf("SELECT s.user_id, s.avatar_path, s.num_press_err_by_char_by_lang, s.num_level_relax, s.num_level_classic, s.num_games_mult, s.num_chars_classic, s.num_chars_relax, s.average_accuracy_classic, s.average_accuracy_relax, s.win_percentage, s.average_delay, s.num_classes_classic, s.sum_points, u.name as user_name FROM (SELECT user_id,num_press_err_by_char_by_lang,num_level_relax,num_level_classic,num_games_mult,num_chars_classic,num_chars_relax,average_accuracy_classic,average_accuracy_relax,win_percentage,average_delay,num_classes_classic,sum_points FROM %s) AS s JOIN %s AS u ON s.user_id = u.id", query, usersTable)
+	var wholeQuery = fmt.Sprintf("SELECT s.user_id, u.avatar_path, s.num_press_err_by_char_by_lang, s.num_level_relax, s.num_level_classic, s.num_games_mult, s.num_chars_classic, s.num_chars_relax, s.average_accuracy_classic, s.average_accuracy_relax, s.win_percentage, s.average_delay, s.num_classes_classic, s.sum_points, u.name as user_name FROM (SELECT user_id,num_press_err_by_char_by_lang,num_level_relax,num_level_classic,num_games_mult,num_chars_classic,num_chars_relax,average_accuracy_classic,average_accuracy_relax,win_percentage,average_delay,num_classes_classic,sum_points FROM %s) AS s JOIN %s AS u ON s.user_id = u.id", query, usersTable)
 
 	if err := sp.db.Select(&stats, wholeQuery); err != nil {
 		logrus.Printf(err.Error())

@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type UserInfo struct {
 	Id        int         `json:"-" db:"id"`
@@ -10,10 +13,10 @@ type UserInfo struct {
 }
 
 type GetUserInfoStruct struct {
-	Id         int       `json:"id"`
-	Name       string    `json:"username"`
-	Access     int       `json:"access"`
-	BanTime    time.Time `json:"ban_time"`
-	BanReason  string    `json:"ban_reason"`
-	AvatarPath string    `json:"avatar_path"`
+	Id         int            `json:"id"`
+	Name       string         `json:"username"`
+	Access     int            `json:"access"`
+	BanTime    time.Time      `json:"ban_time"`
+	BanReason  string         `json:"ban_reason"`
+	AvatarPath sql.NullString `json:"avatar_path"`
 }

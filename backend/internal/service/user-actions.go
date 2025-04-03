@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"errors"
 	gotype "github.com/Gadzet005/GoType/backend"
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
@@ -30,11 +31,11 @@ func (s *UserActionsService) DropRefreshToken(id int) error {
 	return nil
 }
 
-func (s *UserActionsService) GetUserById(id int) (string, int, time.Time, string, string, error) {
+func (s *UserActionsService) GetUserById(id int) (string, int, time.Time, string, sql.NullString, error) {
 	name, access, banTime, banReason, avatarPath, err := s.repo.GetUserById(id)
 
 	if err != nil {
-		return "", -1, time.Now(), "", "", err
+		return "", -1, time.Now(), "", sql.NullString{String: ""}, err
 	} //no such user
 
 	return name, access, banTime, banReason, avatarPath, nil

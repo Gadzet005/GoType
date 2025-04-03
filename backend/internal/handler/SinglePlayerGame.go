@@ -3,11 +3,20 @@ package handler
 import (
 	gotype "github.com/Gadzet005/GoType/backend"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
+	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"net/http"
 )
+
+type SinglePlayer struct {
+	service service.SinglePlayer
+}
+
+func NewSinglePlayer(service service.SinglePlayer) *SinglePlayer {
+	return &SinglePlayer{service: service}
+}
 
 // @Summary Send results of single player game
 // @Tags single-game
@@ -22,7 +31,7 @@ import (
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /single-game/send-results [POST]
-func (h *Handler) SendResults(c *gin.Context) {
+func (h *SinglePlayer) SendResults(c *gin.Context) {
 	var inputJSON statistics.LevelCompleteJSON
 	userId, ok := c.Get(userIdCtx)
 	if !ok {
@@ -38,7 +47,7 @@ func (h *Handler) SendResults(c *gin.Context) {
 
 	var input = ConvertLevelCompleteJSONToLevelComplete(inputJSON)
 
-	err := h.services.SinglePlayerGame.SendResults(userId.(int), input)
+	err := h.service.SendResults(userId.(int), input)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
