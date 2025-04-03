@@ -70,7 +70,6 @@ func (s *AuthPostgres) CreateUser(user user.User) (int, int, string, error) {
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
 			return -1, -1, "", errors.New(gotype.ErrUserExists)
 		}
-
 		return -1, -1, "", errors.New(gotype.ErrInternal)
 	}
 

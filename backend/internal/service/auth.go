@@ -51,11 +51,7 @@ func (s *AuthService) CreateSeniorAdmin(username string, password string) error 
 func (s *AuthService) CreateUser(user user.User) (string, string, error) {
 	user.Password = s.generatePasswordHash(user.Password)
 
-	rToken, err := s.NewRefreshToken()
-
-	if err != nil {
-		return "", "", errors.New(gotype.ErrInternal)
-	}
+	rToken := s.NewRefreshToken()
 
 	user.RefreshToken = rToken
 	user.ExpiresAt = time.Now().UTC().Add(refreshTokenTTL)
@@ -76,20 +72,17 @@ func (s *AuthService) CreateUser(user user.User) (string, string, error) {
 }
 
 func (s *AuthService) GenerateToken(username, password string) (string, string, error) {
-	user, err := s.repo.GetUser(username, s.generatePasswordHash(password))
+	curUser, err := s.repo.GetUser(username, s.generatePasswordHash(password))
 
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := s.NewRefreshToken()
+	refreshToken := s.NewRefreshToken()
 
-	if err != nil {
-		return "", "", errors.New(gotype.ErrInternal)
-	}
 	expiresAt := time.Now().UTC().Add(refreshTokenTTL)
 
-	id, access, refreshToken, err := s.repo.SetUserRefreshToken(int(user.Id), refreshToken, expiresAt)
+	id, access, refreshToken, err := s.repo.SetUserRefreshToken(curUser.Id, refreshToken, expiresAt)
 
 	if err != nil {
 		return "", "", err
@@ -121,11 +114,8 @@ func (s *AuthService) GenerateTokenByToken(accessToken, refreshToken string) (st
 		return "", "", errors.New(gotype.ErrRefreshToken)
 	}
 
-	newRefreshToken, err := s.NewRefreshToken()
+	newRefreshToken := s.NewRefreshToken()
 
-	if err != nil {
-		return "", "", errors.New(gotype.ErrInternal)
-	}
 	expiresAt := time.Now().UTC().Add(refreshTokenTTL)
 
 	retId, retAccess, newRefreshToken, err := s.repo.SetUserRefreshToken(int(user.Id), newRefreshToken, expiresAt)
@@ -156,13 +146,13 @@ func (s *AuthService) NewAccessToken(id, Access int) (string, error) {
 	return authToken.SignedString([]byte(signingKey))
 }
 
-func (s *AuthService) NewRefreshToken() (string, error) {
+func (s *AuthService) NewRefreshToken() string {
 
 	b := make([]rune, 32)
 	for i := range b {
 		b[i] = []rune(letterRunes)[rand.Intn(len(letterRunes))]
 	}
-	return string(b), nil
+	return string(b)
 }
 
 func (s *AuthService) Parse(accessToken string) (time.Time, int, int, error) {

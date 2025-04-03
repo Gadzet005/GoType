@@ -11,9 +11,9 @@ import (
 )
 
 type AuthorizationHandler interface {
-	register(c *gin.Context)
-	login(c *gin.Context)
-	refresh(c *gin.Context)
+	Register(c *gin.Context)
+	Login(c *gin.Context)
+	Refresh(c *gin.Context)
 }
 
 type UserActionsHandler interface {
@@ -101,9 +101,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	auth := router.Group("/auth")
 	{
-		auth.POST("/register", h.Authorization.register)
-		auth.POST("/login", h.Authorization.login)
-		auth.POST("/refresh", h.Authorization.refresh)
+		auth.POST("/register", h.Authorization.Register)
+		auth.POST("/login", h.Authorization.Login)
+		auth.POST("/refresh", h.Authorization.Refresh)
 	}
 
 	userActions := router.Group("/user-actions", h.UserIdentity)
