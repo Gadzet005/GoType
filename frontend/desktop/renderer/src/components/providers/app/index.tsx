@@ -1,10 +1,10 @@
 import { getUserInfo } from "@/core/services/electron/user/getUserInfo";
 import { GlobalAppContext } from "@/core/store/appContext";
 import { User } from "@/core/store/user";
-import { AppContext } from "@/core/types/base/app";
+import { AppContext as AppCtx } from "@/core/types/base/app";
 import { observer } from "mobx-react";
 import React from "react";
-import { AppCtx } from "./AppCtx";
+import { AppContext } from "./context";
 
 interface AppContextProviderProps {
   initialUser?: User;
@@ -17,9 +17,7 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = observer(
       initialUser = new User();
     }
 
-    const [context] = React.useState<AppContext>(
-      new GlobalAppContext(initialUser)
-    );
+    const [context] = React.useState<AppCtx>(new GlobalAppContext(initialUser));
 
     const loadUser = React.useCallback(async () => {
       const result = await getUserInfo();
@@ -36,6 +34,8 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = observer(
       }
     }, [context.user.isAuth, loadUser]);
 
-    return <AppCtx.Provider value={context}>{children}</AppCtx.Provider>;
+    return (
+      <AppContext.Provider value={context}>{children}</AppContext.Provider>
+    );
   }
 );

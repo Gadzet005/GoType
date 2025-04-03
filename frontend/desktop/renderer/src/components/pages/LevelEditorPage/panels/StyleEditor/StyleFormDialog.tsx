@@ -71,17 +71,15 @@ const validationSchema = yup.object({
 interface StyleFormProps {
   open: boolean;
   onClose?: () => void;
-  onUpdate?: () => void | Promise<void>;
   initial?: NamedSentenceStyleClass;
 }
 
 export const StyleFormDialog: React.FC<StyleFormProps> = ({
   open,
   onClose = () => {},
-  onUpdate = () => {},
   initial,
 }) => {
-  const draft = useEditorContext();
+  const { draft } = useEditorContext();
 
   const styleClass = initial ?? {
     name: "Новый стиль",
@@ -106,7 +104,6 @@ export const StyleFormDialog: React.FC<StyleFormProps> = ({
       }
     }
 
-    await Promise.resolve(onUpdate());
     onClose();
   };
 

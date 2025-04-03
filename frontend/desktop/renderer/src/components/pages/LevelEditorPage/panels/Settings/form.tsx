@@ -21,7 +21,7 @@ const validationSchema = yup.object().shape({
 });
 
 export const SettingsForm = () => {
-  const draft = useEditorContext();
+  const { draft } = useEditorContext();
 
   const handleSubmit = async (values: SettingsFormValues) => {
     const updateInfo: DraftUpdate.Args = {

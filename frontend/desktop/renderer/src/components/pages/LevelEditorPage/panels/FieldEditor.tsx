@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { CenterBox } from "@/components/common/CenterBox";
 
 export const FieldEditor = observer(() => {
-  const draft = useEditorContext();
+  const { draft } = useEditorContext();
 
   if (!draft.audio) {
     return (

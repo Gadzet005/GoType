@@ -1,6 +1,6 @@
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { DraftInfo } from "@desktop-common/draft";
+import { DraftInfo, DraftUpdate } from "@desktop-common/draft";
 import { Box, Tabs, Typography } from "@mui/material";
 import { observer } from "mobx-react";
 import React from "react";
@@ -13,6 +13,10 @@ import { EditorTabPanel } from "./utils/EditorTabPanel";
 import { truncateString } from "@/core/utils/string";
 import { EditorTab } from "./utils/EditorTab";
 import { StyleEditor } from "./panels/StyleEditor";
+import structuredClone from "@ungap/structured-clone";
+import { useSnackbar } from "@/core/hooks";
+import { updateDraft } from "@/core/services/electron/levelDraft/updateDraft";
+import { useHotkeys } from "react-hotkeys-hook";
 
 interface LevelEditorPageProps {
   draftData: DraftInfo;
@@ -21,11 +25,39 @@ interface LevelEditorPageProps {
 
 export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
   ({ draftData, initialTab = 0 }) => {
+    const { showSnackbar } = useSnackbar();
+
     const [curTab, setCurTab] = React.useState(initialTab);
     const draft = React.useMemo(() => new Draft(draftData), [draftData]);
 
+    const update = async (quite: boolean = false) => {
+      const updateInfo: DraftUpdate.Args = {
+        id: draft.id,
+        name: draft.name,
+        sentences: structuredClone(draft.sentences, { lossy: true }),
+        styleClasses: structuredClone(draft.styleClasses, { lossy: true }),
+      };
+
+      const result = await updateDraft(updateInfo);
+      if (result.ok) {
+        draft.init(result.payload);
+        if (!quite) {
+          showSnackbar("Изменения сохранены", "success");
+        }
+      } else {
+        showSnackbar("Ошибка при сохранении изменений", "error");
+      }
+    };
+
+    useHotkeys("ctrl+s", () => update(), []);
+
     return (
-      <EditorContext.Provider value={draft}>
+      <EditorContext.Provider
+        value={{
+          draft,
+          updateDraft: update,
+        }}
+      >
         <Box sx={{ height: "100%" }}>
           <Box
             sx={{
@@ -56,6 +88,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
               color="success"
               label="Сохранить и выйти"
               href={RoutePath.levelDraftList}
+              onClick={() => update(true)}
             />
           </Box>
 

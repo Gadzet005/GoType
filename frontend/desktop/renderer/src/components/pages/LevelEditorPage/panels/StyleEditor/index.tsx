@@ -6,29 +6,12 @@ import { useEditorContext } from "../../context";
 import { StyleClassItem } from "./StyleClassItem";
 import { NamedSentenceStyleClass } from "@desktop-common/draft/style";
 import { observer } from "mobx-react";
-import { DraftUpdate } from "@desktop-common/draft";
-import structuredClone from "@ungap/structured-clone";
-import { updateDraft } from "@/core/services/electron/levelDraft/updateDraft";
 
 export const StyleEditor = observer(() => {
-  const draft = useEditorContext();
+  const { draft } = useEditorContext();
   const [styleFormOpen, setStyleFormOpen] = React.useState(false);
   const [currentStyleClass, setCurrentStyleClass] =
     React.useState<NamedSentenceStyleClass | null>(null);
-
-  const update = async () => {
-    const updateInfo: DraftUpdate.Args = {
-      id: draft.id,
-      styleClasses: structuredClone(draft.styleClasses, { lossy: true }),
-    };
-
-    const result = await updateDraft(updateInfo);
-    if (result.ok) {
-      draft.init(result.payload);
-    } else {
-      console.error("Failed to update draft");
-    }
-  };
 
   const styleClasses = draft.styleClasses.map((styleClass) => (
     <StyleClassItem
@@ -36,7 +19,6 @@ export const StyleEditor = observer(() => {
       styleClass={styleClass}
       deleleSelf={async () => {
         draft.removeStyleClass(styleClass.name);
-        await update();
       }}
       editSelf={() => {
         setCurrentStyleClass(styleClass);
@@ -57,7 +39,6 @@ export const StyleEditor = observer(() => {
       <StyleFormDialog
         open={styleFormOpen}
         onClose={() => setStyleFormOpen(false)}
-        onUpdate={update}
         initial={currentStyleClass ?? undefined}
       />
       <Stack spacing={2}>

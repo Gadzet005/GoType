@@ -1,5 +1,7 @@
-import { AppCtx } from "@/components/providers/app/AppCtx";
-import React from "react";
 import { IUser } from "../types/base/user";
+import { useAppContext } from "./appContext";
 
-export const useUser = (): IUser => React.useContext(AppCtx).user;
+export function useUser(): IUser {
+    const context = useAppContext();
+    return context!.user;
+}
