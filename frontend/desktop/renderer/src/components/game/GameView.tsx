@@ -1,5 +1,5 @@
 import { Background } from "@/components/common/Background";
-import { GameField } from "@/components/game/GameField";
+import { GameFieldView } from "@/components/game/GameFieldView";
 import { Game } from "@/core/store/game/game";
 import { Asset } from "@desktop-common/asset";
 import { Box } from "@mui/material";
@@ -98,7 +98,7 @@ export const GameView: React.FC<GameViewProps> = observer(
           brightness={background.brightness}
           onLoad={() => setLoadCount((v) => v + 1)}
         />
-        <GameField game={game} />
+        <GameFieldView game={game} />
       </Box>
     );
   }

@@ -6,7 +6,7 @@ import {
 import React from "react";
 
 export interface ButtonProps extends MUIButtonProps {
-  params?: object;
+  params?: Record<string, unknown>;
 }
 
 export const Button: React.FC<ButtonProps> = (props) => {

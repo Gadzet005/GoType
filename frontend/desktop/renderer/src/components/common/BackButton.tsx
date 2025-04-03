@@ -5,7 +5,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 interface BackButtonProps extends Omit<ButtonProps, "children"> {
   href: string;
-  params?: object;
+  params?: Record<string, unknown>;
   label?: string;
 }
 

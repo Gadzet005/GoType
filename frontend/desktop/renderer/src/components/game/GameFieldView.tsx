@@ -27,7 +27,7 @@ function getSentenceTime(sentence: Sentence, time: number): number {
   );
 }
 
-export const GameField: React.FC<GameFieldProps> = observer(({ game }) => {
+export const GameFieldView: React.FC<GameFieldProps> = observer(({ game }) => {
   const [ref, bounds] = useMeasure({ polyfill: ResizeObserver });
 
   const SentenceViews = React.useMemo(

@@ -63,9 +63,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
     );
     return () => {
       disposer();
-      if (game.isRunning() || game.isPaused()) {
-        gameRunner.finish();
-      }
+      gameRunner.finish();
     };
   }, [game, level, gameRunner, navigate]);
 

@@ -8,26 +8,37 @@ interface AppNavigationProps {
 
 export const AppNavigation: React.FC<AppNavigationProps> = ({ routes }) => {
   const [path, setPath] = React.useState<string>(DEFAULT_PATH);
-  const [params, setParams] = React.useState<object>({});
+  const [params, setParams] = React.useState<Record<string, unknown>>({});
 
   const navigate = React.useCallback(
-    (path: string, params?: object) => {
-      const pageGetter = routes.get(path);
-      if (pageGetter) {
-        setPath(path);
-        setParams(params ?? {});
-      } else {
+    (newPath: string, newParams?: Record<string, unknown>) => {
+      if (!routes.has(newPath)) {
+        console.warn(`Route ${newPath} not found, redirecting to default`);
         setPath(DEFAULT_PATH);
-        setParams([]);
+        setParams({});
+        return;
       }
+      setPath(newPath);
+      setParams(newParams ?? {});
     },
     [routes]
   );
 
-  const PageComponent =
-    routes.get(path) || routes.get(DEFAULT_PATH) || (() => null);
+  const PageComponent = React.useMemo(() => {
+    const component = routes.get(path) ?? routes.get(DEFAULT_PATH);
+    return (
+      component ??
+      (() => {
+        console.error("No route component found");
+        return null;
+      })
+    );
+  }, [path, routes]);
 
-  const page = <PageComponent {...params} />;
+  const page = React.useMemo(
+    () => <PageComponent {...params} />,
+    [PageComponent, params]
+  );
 
   const navContext = React.useMemo(
     () => ({ navigate, path, params }),

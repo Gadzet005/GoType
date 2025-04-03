@@ -79,7 +79,9 @@ export class Game {
     }
 
     finish() {
-        this.status = GameStatus.finished;
+        if (this.status !== GameStatus.idle) {
+            this.status = GameStatus.finished;
+        }
     }
 
     pause() {
