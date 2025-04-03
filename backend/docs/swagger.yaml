@@ -1,12 +1,12 @@
 definitions:
-  entities.CategoryParams:
+  domain.CategoryParams:
     properties:
       category:
         type: integer
       pattern:
         type: string
     type: object
-  entities.ChangeUserAccess:
+  domain.ChangeUserAccess:
     properties:
       id:
         type: integer
@@ -16,21 +16,21 @@ definitions:
     - id
     - new_access
     type: object
-  entities.ComplaintID:
+  domain.ComplaintID:
     properties:
       id:
         type: integer
     required:
     - id
     type: object
-  entities.FetchLevelStruct:
+  domain.FetchLevelStruct:
     properties:
       filter_params:
-        $ref: '#/definitions/entities.LevelFilterParams'
+        $ref: '#/definitions/domain.LevelFilterParams'
       page_info:
-        $ref: '#/definitions/entities.PageInfo'
+        $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo'
       sort_params:
-        $ref: '#/definitions/entities.LevelSortParams'
+        $ref: '#/definitions/domain.LevelSortParams'
       tags:
         items:
           type: string
@@ -41,26 +41,39 @@ definitions:
     - sort_params
     - tags
     type: object
-  entities.GetLevelInfoStruct:
+  domain.GetLevelInfoStruct:
     properties:
       id:
         type: integer
     required:
     - id
     type: object
-  entities.GetUserStatsRes:
+  domain.GetUserInfoStruct:
+    properties:
+      access:
+        type: integer
+      ban_reason:
+        type: string
+      ban_time:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+  domain.GetUserStatsRes:
     properties:
       user_stats:
-        $ref: '#/definitions/entities.PlayerStats'
+        $ref: '#/definitions/domain.PlayerStats'
     type: object
-  entities.GetUsersTop:
+  domain.GetUsersTop:
     properties:
       users:
         items:
-          $ref: '#/definitions/entities.PlayerStats'
+          $ref: '#/definitions/domain.PlayerStats'
         type: array
     type: object
-  entities.Level:
+  domain.Level:
     properties:
       author:
         type: integer
@@ -100,14 +113,14 @@ definitions:
     - tags
     - type
     type: object
-  entities.LevelBan:
+  domain.LevelBan:
     properties:
       id:
         type: integer
     required:
     - id
     type: object
-  entities.LevelComplaint:
+  domain.LevelComplaint:
     properties:
       author_id:
         type: integer
@@ -123,14 +136,14 @@ definitions:
     - message
     - reason
     type: object
-  entities.LevelComplaints:
+  domain.LevelComplaints:
     properties:
       level_complaints:
         items:
-          $ref: '#/definitions/entities.LevelComplaint'
+          $ref: '#/definitions/domain.LevelComplaint'
         type: array
     type: object
-  entities.LevelComplete:
+  domain.LevelComplete:
     properties:
       average_velocity:
         type: number
@@ -161,7 +174,7 @@ definitions:
     - player_id
     - points
     type: object
-  entities.LevelFilterParams:
+  domain.LevelFilterParams:
     properties:
       difficulty:
         type: integer
@@ -170,36 +183,26 @@ definitions:
       level_name:
         type: string
     type: object
-  entities.LevelInfo:
+  domain.LevelInfo:
     properties:
       level_info:
-        $ref: '#/definitions/entities.Level'
+        $ref: '#/definitions/domain.Level'
     type: object
-  entities.LevelSortParams:
+  domain.LevelSortParams:
     properties:
       date:
         type: string
       popularity:
         type: string
     type: object
-  entities.LevelsList:
+  domain.LevelsList:
     properties:
       levels:
         items:
-          $ref: '#/definitions/entities.Level'
+          $ref: '#/definitions/domain.Level'
         type: array
     type: object
-  entities.PageInfo:
-    properties:
-      offset:
-        type: integer
-      page_size:
-        type: integer
-    required:
-    - offset
-    - page_size
-    type: object
-  entities.PlayerStats:
+  domain.PlayerStats:
     properties:
       average_accuracy_classic:
         type: number
@@ -242,18 +245,25 @@ definitions:
     required:
     - num_press_err_by_char_by_lang
     type: object
-  entities.StatSortFilterParams:
+  domain.RefreshStruct:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  domain.StatSortFilterParams:
     properties:
       category_params:
-        $ref: '#/definitions/entities.CategoryParams'
+        $ref: '#/definitions/domain.CategoryParams'
       page_info:
-        $ref: '#/definitions/entities.PageInfo'
+        $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo'
       points:
         type: string
     required:
     - page_info
     type: object
-  entities.User:
+  domain.User:
     properties:
       name:
         type: string
@@ -264,7 +274,7 @@ definitions:
     - name
     - password
     type: object
-  entities.UserBan:
+  domain.UserBan:
     properties:
       ban_reason:
         type: string
@@ -277,7 +287,7 @@ definitions:
     - ban_time
     - id
     type: object
-  entities.UserComplaint:
+  domain.UserComplaint:
     properties:
       author_id:
         type: integer
@@ -293,21 +303,21 @@ definitions:
     - reason
     - user_id
     type: object
-  entities.UserComplaints:
+  domain.UserComplaints:
     properties:
       user_complaints:
         items:
-          $ref: '#/definitions/entities.UserComplaint'
+          $ref: '#/definitions/domain.UserComplaint'
         type: array
     type: object
-  entities.UserID:
+  domain.UserID:
     properties:
       id:
         type: integer
     required:
     - id
     type: object
-  entities.UserSearchParams:
+  domain.UserSearchParams:
     properties:
       is_banned:
         type: boolean
@@ -323,43 +333,43 @@ definitions:
     - offset
     - page_size
     type: object
-  entities.UserUnban:
+  domain.UserUnban:
     properties:
       id:
         type: integer
     required:
     - id
     type: object
-  entities.Users:
+  domain.Users:
     properties:
       users:
         items:
-          $ref: '#/definitions/entities.User'
+          $ref: '#/definitions/domain.User'
         type: array
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo:
+    properties:
+      offset:
+        type: integer
+      page_size:
+        type: integer
+    required:
+    - offset
+    - page_size
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo:
+    properties:
+      offset:
+        type: integer
+      page_size:
+        type: integer
+    required:
+    - offset
+    - page_size
     type: object
   handler.errorResponse:
     properties:
       message:
-        type: string
-    type: object
-  handler.getUserInfoStruct:
-    properties:
-      access:
-        type: integer
-      ban_reason:
-        type: string
-      ban_time:
-        type: string
-      id:
-        type: integer
-      username:
-        type: string
-    type: object
-  handler.refreshStruct:
-    properties:
-      access_token:
-        type: string
-      refresh_token:
         type: string
     type: object
 host: localhost:8000
@@ -381,7 +391,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.LevelBan'
+          $ref: '#/definitions/domain.LevelBan'
       produces:
       - application/json
       responses:
@@ -422,7 +432,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.UserBan'
+          $ref: '#/definitions/domain.UserBan'
       produces:
       - application/json
       responses:
@@ -465,7 +475,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.ChangeUserAccess'
+          $ref: '#/definitions/domain.ChangeUserAccess'
       produces:
       - application/json
       responses:
@@ -506,7 +516,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.LevelComplaints'
+            $ref: '#/definitions/domain.LevelComplaints'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token;'
@@ -541,7 +551,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.UserComplaints'
+            $ref: '#/definitions/domain.UserComplaints'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token;'
@@ -576,14 +586,14 @@ paths:
         name: user_search_params
         required: true
         schema:
-          $ref: '#/definitions/entities.UserSearchParams'
+          $ref: '#/definitions/domain.UserSearchParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.Users'
+            $ref: '#/definitions/domain.Users'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token;'
@@ -618,7 +628,7 @@ paths:
         name: complaint_id
         required: true
         schema:
-          $ref: '#/definitions/entities.ComplaintID'
+          $ref: '#/definitions/domain.ComplaintID'
       produces:
       - application/json
       responses:
@@ -659,7 +669,7 @@ paths:
         name: complaint_id
         required: true
         schema:
-          $ref: '#/definitions/entities.ComplaintID'
+          $ref: '#/definitions/domain.ComplaintID'
       produces:
       - application/json
       responses:
@@ -699,7 +709,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.LevelBan'
+          $ref: '#/definitions/domain.LevelBan'
       produces:
       - application/json
       responses:
@@ -740,7 +750,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.UserUnban'
+          $ref: '#/definitions/domain.UserUnban'
       produces:
       - application/json
       responses:
@@ -780,14 +790,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.User'
+          $ref: '#/definitions/domain.User'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.refreshStruct'
+            $ref: '#/definitions/domain.RefreshStruct'
         "400":
           description: 'Possible messages: ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_NO_SUCH_USER - User with such name and password does not
@@ -818,14 +828,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handler.refreshStruct'
+          $ref: '#/definitions/domain.RefreshStruct'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.refreshStruct'
+            $ref: '#/definitions/domain.RefreshStruct'
         "400":
           description: 'Possible messages: ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_NO_SUCH_USER - User with id as in access token does not
@@ -860,14 +870,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.User'
+          $ref: '#/definitions/domain.User'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.refreshStruct'
+            $ref: '#/definitions/domain.RefreshStruct'
         "400":
           description: 'Possible messages: ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_USER_EXISTS - User with such name already exists;'
@@ -912,7 +922,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.GetLevelInfoStruct'
+            $ref: '#/definitions/domain.GetLevelInfoStruct'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
@@ -947,7 +957,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.GetLevelInfoStruct'
+          $ref: '#/definitions/domain.GetLevelInfoStruct'
       produces:
       - application/octet-stream
       responses:
@@ -988,14 +998,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.GetLevelInfoStruct'
+          $ref: '#/definitions/domain.GetLevelInfoStruct'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.LevelInfo'
+            $ref: '#/definitions/domain.LevelInfo'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
@@ -1029,14 +1039,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.FetchLevelStruct'
+          $ref: '#/definitions/domain.FetchLevelStruct'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.LevelsList'
+            $ref: '#/definitions/domain.LevelsList'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
@@ -1086,7 +1096,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.GetLevelInfoStruct'
+            $ref: '#/definitions/domain.GetLevelInfoStruct'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
@@ -1121,7 +1131,7 @@ paths:
         name: complaint_id
         required: true
         schema:
-          $ref: '#/definitions/entities.LevelComplete'
+          $ref: '#/definitions/domain.LevelComplete'
       produces:
       - application/json
       responses:
@@ -1161,14 +1171,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.UserID'
+          $ref: '#/definitions/domain.UserID'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.GetUserStatsRes'
+            $ref: '#/definitions/domain.GetUserStatsRes'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with
@@ -1202,14 +1212,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.StatSortFilterParams'
+          $ref: '#/definitions/domain.StatSortFilterParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.GetUsersTop'
+            $ref: '#/definitions/domain.GetUsersTop'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with
@@ -1231,6 +1241,45 @@ paths:
       summary: Get Users Top
       tags:
       - stats
+  /user-actions/change-avatar:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Change avatar. In case of empty request sets default avatar.
+      operationId: change-avatar
+      parameters:
+      - description: File with new avatar image
+        in: formData
+        name: avatar
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
+            input files (e.g. wrong name, not "avatar");'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Change Avatar
+      tags:
+      - user-actions
   /user-actions/get-user-info:
     get:
       consumes:
@@ -1243,7 +1292,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.getUserInfoStruct'
+            $ref: '#/definitions/domain.GetUserInfoStruct'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - There is no id
             in token payload/Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER
@@ -1310,7 +1359,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.LevelComplaint'
+          $ref: '#/definitions/domain.LevelComplaint'
       produces:
       - application/json
       responses:
@@ -1350,7 +1399,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.UserComplaint'
+          $ref: '#/definitions/domain.UserComplaint'
       produces:
       - application/json
       responses:

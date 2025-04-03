@@ -36,7 +36,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelBan"
+                            "$ref": "#/definitions/domain.LevelBan"
                         }
                     }
                 ],
@@ -92,7 +92,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserBan"
+                            "$ref": "#/definitions/domain.UserBan"
                         }
                     }
                 ],
@@ -148,7 +148,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.ChangeUserAccess"
+                            "$ref": "#/definitions/domain.ChangeUserAccess"
                         }
                     }
                 ],
@@ -201,7 +201,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelComplaints"
+                            "$ref": "#/definitions/domain.LevelComplaints"
                         }
                     },
                     "400": {
@@ -249,7 +249,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.UserComplaints"
+                            "$ref": "#/definitions/domain.UserComplaints"
                         }
                     },
                     "400": {
@@ -300,7 +300,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserSearchParams"
+                            "$ref": "#/definitions/domain.UserSearchParams"
                         }
                     }
                 ],
@@ -308,7 +308,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.Users"
+                            "$ref": "#/definitions/domain.Users"
                         }
                     },
                     "400": {
@@ -359,7 +359,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.ComplaintID"
+                            "$ref": "#/definitions/domain.ComplaintID"
                         }
                     }
                 ],
@@ -415,7 +415,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.ComplaintID"
+                            "$ref": "#/definitions/domain.ComplaintID"
                         }
                     }
                 ],
@@ -471,7 +471,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelBan"
+                            "$ref": "#/definitions/domain.LevelBan"
                         }
                     }
                 ],
@@ -527,7 +527,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserUnban"
+                            "$ref": "#/definitions/domain.UserUnban"
                         }
                     }
                 ],
@@ -583,7 +583,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.User"
+                            "$ref": "#/definitions/domain.User"
                         }
                     }
                 ],
@@ -591,7 +591,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/domain.RefreshStruct"
                         }
                     },
                     "400": {
@@ -636,7 +636,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/domain.RefreshStruct"
                         }
                     }
                 ],
@@ -644,7 +644,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/domain.RefreshStruct"
                         }
                     },
                     "400": {
@@ -695,7 +695,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.User"
+                            "$ref": "#/definitions/domain.User"
                         }
                     }
                 ],
@@ -703,7 +703,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/domain.RefreshStruct"
                         }
                     },
                     "400": {
@@ -768,7 +768,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.GetLevelInfoStruct"
+                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
                         }
                     },
                     "400": {
@@ -819,7 +819,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.GetLevelInfoStruct"
+                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
                         }
                     }
                 ],
@@ -878,7 +878,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.GetLevelInfoStruct"
+                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
                         }
                     }
                 ],
@@ -886,7 +886,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelInfo"
+                            "$ref": "#/definitions/domain.LevelInfo"
                         }
                     },
                     "400": {
@@ -937,7 +937,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.FetchLevelStruct"
+                            "$ref": "#/definitions/domain.FetchLevelStruct"
                         }
                     }
                 ],
@@ -945,7 +945,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelsList"
+                            "$ref": "#/definitions/domain.LevelsList"
                         }
                     },
                     "400": {
@@ -1016,7 +1016,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.GetLevelInfoStruct"
+                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
                         }
                     },
                     "400": {
@@ -1067,7 +1067,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelComplete"
+                            "$ref": "#/definitions/domain.LevelComplete"
                         }
                     }
                 ],
@@ -1123,7 +1123,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserID"
+                            "$ref": "#/definitions/domain.UserID"
                         }
                     }
                 ],
@@ -1131,7 +1131,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.GetUserStatsRes"
+                            "$ref": "#/definitions/domain.GetUserStatsRes"
                         }
                     },
                     "400": {
@@ -1182,7 +1182,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.StatSortFilterParams"
+                            "$ref": "#/definitions/domain.StatSortFilterParams"
                         }
                     }
                 ],
@@ -1190,7 +1190,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.GetUsersTop"
+                            "$ref": "#/definitions/domain.GetUsersTop"
                         }
                     },
                     "400": {
@@ -1201,6 +1201,60 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-actions/change-avatar": {
+            "post": {
+                "description": "Change avatar. In case of empty request sets default avatar.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-actions"
+                ],
+                "summary": "Change Avatar",
+                "operationId": "change-avatar",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File with new avatar image",
+                        "name": "avatar",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input files (e.g. wrong name, not \"avatar\");",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
                         "schema": {
                             "$ref": "#/definitions/handler.errorResponse"
                         }
@@ -1238,7 +1292,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.getUserInfoStruct"
+                            "$ref": "#/definitions/domain.GetUserInfoStruct"
                         }
                     },
                     "400": {
@@ -1334,7 +1388,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelComplaint"
+                            "$ref": "#/definitions/domain.LevelComplaint"
                         }
                     }
                 ],
@@ -1390,7 +1444,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserComplaint"
+                            "$ref": "#/definitions/domain.UserComplaint"
                         }
                     }
                 ],
@@ -1427,7 +1481,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "entities.CategoryParams": {
+        "domain.CategoryParams": {
             "type": "object",
             "properties": {
                 "category": {
@@ -1438,7 +1492,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.ChangeUserAccess": {
+        "domain.ChangeUserAccess": {
             "type": "object",
             "required": [
                 "id",
@@ -1453,7 +1507,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.ComplaintID": {
+        "domain.ComplaintID": {
             "type": "object",
             "required": [
                 "id"
@@ -1464,7 +1518,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.FetchLevelStruct": {
+        "domain.FetchLevelStruct": {
             "type": "object",
             "required": [
                 "filter_params",
@@ -1474,13 +1528,13 @@ const docTemplate = `{
             ],
             "properties": {
                 "filter_params": {
-                    "$ref": "#/definitions/entities.LevelFilterParams"
+                    "$ref": "#/definitions/domain.LevelFilterParams"
                 },
                 "page_info": {
-                    "$ref": "#/definitions/entities.PageInfo"
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo"
                 },
                 "sort_params": {
-                    "$ref": "#/definitions/entities.LevelSortParams"
+                    "$ref": "#/definitions/domain.LevelSortParams"
                 },
                 "tags": {
                     "type": "array",
@@ -1490,7 +1544,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.GetLevelInfoStruct": {
+        "domain.GetLevelInfoStruct": {
             "type": "object",
             "required": [
                 "id"
@@ -1501,26 +1555,46 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.GetUserStatsRes": {
+        "domain.GetUserInfoStruct": {
             "type": "object",
             "properties": {
-                "user_stats": {
-                    "$ref": "#/definitions/entities.PlayerStats"
+                "access": {
+                    "type": "integer"
+                },
+                "ban_reason": {
+                    "type": "string"
+                },
+                "ban_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },
-        "entities.GetUsersTop": {
+        "domain.GetUserStatsRes": {
+            "type": "object",
+            "properties": {
+                "user_stats": {
+                    "$ref": "#/definitions/domain.PlayerStats"
+                }
+            }
+        },
+        "domain.GetUsersTop": {
             "type": "object",
             "properties": {
                 "users": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entities.PlayerStats"
+                        "$ref": "#/definitions/domain.PlayerStats"
                     }
                 }
             }
         },
-        "entities.Level": {
+        "domain.Level": {
             "type": "object",
             "required": [
                 "author",
@@ -1576,7 +1650,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.LevelBan": {
+        "domain.LevelBan": {
             "type": "object",
             "required": [
                 "id"
@@ -1587,7 +1661,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.LevelComplaint": {
+        "domain.LevelComplaint": {
             "type": "object",
             "required": [
                 "author_id",
@@ -1610,18 +1684,18 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.LevelComplaints": {
+        "domain.LevelComplaints": {
             "type": "object",
             "properties": {
                 "level_complaints": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entities.LevelComplaint"
+                        "$ref": "#/definitions/domain.LevelComplaint"
                     }
                 }
             }
         },
-        "entities.LevelComplete": {
+        "domain.LevelComplete": {
             "type": "object",
             "required": [
                 "average_velocity",
@@ -1663,7 +1737,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.LevelFilterParams": {
+        "domain.LevelFilterParams": {
             "type": "object",
             "properties": {
                 "difficulty": {
@@ -1677,15 +1751,15 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.LevelInfo": {
+        "domain.LevelInfo": {
             "type": "object",
             "properties": {
                 "level_info": {
-                    "$ref": "#/definitions/entities.Level"
+                    "$ref": "#/definitions/domain.Level"
                 }
             }
         },
-        "entities.LevelSortParams": {
+        "domain.LevelSortParams": {
             "type": "object",
             "properties": {
                 "date": {
@@ -1696,33 +1770,18 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.LevelsList": {
+        "domain.LevelsList": {
             "type": "object",
             "properties": {
                 "levels": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entities.Level"
+                        "$ref": "#/definitions/domain.Level"
                     }
                 }
             }
         },
-        "entities.PageInfo": {
-            "type": "object",
-            "required": [
-                "offset",
-                "page_size"
-            ],
-            "properties": {
-                "offset": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entities.PlayerStats": {
+        "domain.PlayerStats": {
             "type": "object",
             "required": [
                 "num_press_err_by_char_by_lang"
@@ -1785,24 +1844,35 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.StatSortFilterParams": {
+        "domain.RefreshStruct": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StatSortFilterParams": {
             "type": "object",
             "required": [
                 "page_info"
             ],
             "properties": {
                 "category_params": {
-                    "$ref": "#/definitions/entities.CategoryParams"
+                    "$ref": "#/definitions/domain.CategoryParams"
                 },
                 "page_info": {
-                    "$ref": "#/definitions/entities.PageInfo"
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo"
                 },
                 "points": {
                     "type": "string"
                 }
             }
         },
-        "entities.User": {
+        "domain.User": {
             "type": "object",
             "required": [
                 "name",
@@ -1818,7 +1888,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.UserBan": {
+        "domain.UserBan": {
             "type": "object",
             "required": [
                 "ban_reason",
@@ -1837,7 +1907,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.UserComplaint": {
+        "domain.UserComplaint": {
             "type": "object",
             "required": [
                 "author_id",
@@ -1860,18 +1930,18 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.UserComplaints": {
+        "domain.UserComplaints": {
             "type": "object",
             "properties": {
                 "user_complaints": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entities.UserComplaint"
+                        "$ref": "#/definitions/domain.UserComplaint"
                     }
                 }
             }
         },
-        "entities.UserID": {
+        "domain.UserID": {
             "type": "object",
             "required": [
                 "id"
@@ -1882,7 +1952,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.UserSearchParams": {
+        "domain.UserSearchParams": {
             "type": "object",
             "required": [
                 "is_banned",
@@ -1905,7 +1975,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.UserUnban": {
+        "domain.UserUnban": {
             "type": "object",
             "required": [
                 "id"
@@ -1916,14 +1986,44 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.Users": {
+        "domain.Users": {
             "type": "object",
             "properties": {
                 "users": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entities.User"
+                        "$ref": "#/definitions/domain.User"
                     }
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo": {
+            "type": "object",
+            "required": [
+                "offset",
+                "page_size"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo": {
+            "type": "object",
+            "required": [
+                "offset",
+                "page_size"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
                 }
             }
         },
@@ -1931,37 +2031,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.getUserInfoStruct": {
-            "type": "object",
-            "properties": {
-                "access": {
-                    "type": "integer"
-                },
-                "ban_reason": {
-                    "type": "string"
-                },
-                "ban_time": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.refreshStruct": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "refresh_token": {
                     "type": "string"
                 }
             }
