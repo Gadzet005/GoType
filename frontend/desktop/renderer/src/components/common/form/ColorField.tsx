@@ -20,7 +20,7 @@ interface ColorPickerFieldProps extends FieldProps {
 export const ColorField: React.FC<ColorPickerFieldProps> = ({
   field,
   form,
-  label = "Цвет",
+  label = "",
   disabled = false,
   fullWidth = false,
 }) => {

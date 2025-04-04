@@ -7,6 +7,7 @@ import { Button, Stack } from "@mui/material";
 import { AllowedAssetExtensions } from "@/core/config/asset.config";
 import { DraftUpdate } from "@desktop-common/draft";
 import { updateDraft } from "@/core/services/electron/levelDraft/updateDraft";
+import { useSnackbar } from "@/core/hooks";
 
 interface SettingsFormValues {
   name?: string;
@@ -21,6 +22,7 @@ const validationSchema = yup.object().shape({
 });
 
 export const SettingsForm = () => {
+  const snackbar = useSnackbar();
   const { draft } = useEditorContext();
 
   const handleSubmit = async (values: SettingsFormValues) => {
@@ -36,8 +38,9 @@ export const SettingsForm = () => {
       draft.setName(result.payload.name);
       draft.setAudio(result.payload.audio);
       draft.setBackground(result.payload.background);
+      snackbar.show("Изменения сохранены", "success");
     } else {
-      console.error("Failed to update draft");
+      snackbar.show("Ошибка при сохранении изменений", "error");
     }
   };
 

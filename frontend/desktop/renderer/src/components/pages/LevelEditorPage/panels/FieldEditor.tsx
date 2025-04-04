@@ -6,11 +6,11 @@ import { CenterBox } from "@/components/common/CenterBox";
 export const FieldEditor = observer(() => {
   const { draft } = useEditorContext();
 
-  if (!draft.audio) {
+  if (!draft.audio || !draft.background) {
     return (
       <CenterBox>
         <Typography variant="h5">
-          Загрузите аудио файл, чтобы страница стала доступна
+          Загрузите аудио файл и фон, чтобы страница стала доступна
         </Typography>
       </CenterBox>
     );

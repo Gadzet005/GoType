@@ -1,4 +1,4 @@
-import { availableFonts } from "@/core/config/game.config";
+import { availableFonts, Constraints } from "@/core/config/game.config";
 import {
   FormControl,
   FormControlLabel,
@@ -9,6 +9,7 @@ import {
 import { Select, Switch, TextField } from "formik-mui";
 import { Field } from "formik";
 import { ColorField } from "@/components/common/form/ColorField";
+import { NumberField } from "@/components/common/form/NumberField";
 import { OptionalField } from "@/components/common/form/OptionalField";
 
 interface LetterStyleRecord {
@@ -45,36 +46,42 @@ export const StyleFormFields = () => {
       <Stack direction="row" spacing={1}>
         <Field
           name="padding"
-          component={TextField}
+          component={NumberField}
           label="Внутренний отступ"
           type="number"
           fullWidth
+          min={0}
+          max={Constraints.maxPadding}
+          onlyInt
         />
         <Field
           name="borderRadius"
-          component={TextField}
+          component={NumberField}
           label="Закругление"
           type="number"
           fullWidth
+          min={0}
+          max={Constraints.maxBorderRadius}
+          onlyInt
         />
         <Field
           name="rotation"
-          component={TextField}
+          component={NumberField}
           label="Поворот (градусы)"
           type="number"
           fullWidth
-        />
-        <Field
-          component={OptionalField}
-          name="bgcolor"
-          defaultValue="#ffffff"
-          subFieldComponent={ColorField}
-          subFieldProps={{
-            label: "Цвет фона",
-            fullWidth: true,
-          }}
+          min={0}
+          max={360}
         />
       </Stack>
+      <Field
+        component={OptionalField}
+        name="bgcolor"
+        defaultValue="#ffffff"
+        label="Цвет фона"
+        disabledText="Прозрачный"
+        subFieldComponent={ColorField}
+      />
 
       <Typography variant="h6">Шрифт</Typography>
 
@@ -90,10 +97,13 @@ export const StyleFormFields = () => {
         </FormControl>
         <Field
           name="fontSize"
-          component={TextField}
+          component={NumberField}
           label="Размер"
           type="number"
           fullWidth
+          min={Constraints.minFontSize}
+          max={Constraints.maxFontSize}
+          onlyInt
         />
         <FormControl
           sx={{
@@ -127,17 +137,21 @@ export const StyleFormFields = () => {
       <Stack direction="row" spacing={1}>
         <Field
           name="introDurationPercent"
-          component={TextField}
+          component={NumberField}
           label="Длительность вступления (%)"
           type="number"
           fullWidth
+          min={0}
+          max={Constraints.maxIntroDurationPercent}
         />
         <Field
           name="outroDurationPercent"
-          component={TextField}
+          component={NumberField}
           label="Длительность выхода (%)"
           type="number"
           fullWidth
+          min={0}
+          max={Constraints.maxOutroDurationPercent}
         />
       </Stack>
     </Stack>

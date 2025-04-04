@@ -7,6 +7,7 @@ interface BackButtonProps extends Omit<ButtonProps, "children"> {
   href: string;
   params?: Record<string, unknown>;
   label?: string;
+  onBack?: () => void;
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({
@@ -14,10 +15,14 @@ export const BackButton: React.FC<BackButtonProps> = ({
   startIcon = <ArrowBackIcon />,
   color = "error",
   label = "Назад",
+  onBack = () => {},
   ...other
 }) => {
   const navigate = useNavigate();
-  useHotkeys("esc", () => navigate(other.href, other.params));
+  useHotkeys("esc", () => {
+    onBack();
+    navigate(other.href, other.params);
+  });
 
   return (
     <Button
@@ -25,6 +30,7 @@ export const BackButton: React.FC<BackButtonProps> = ({
       variant={variant}
       startIcon={startIcon}
       color={color}
+      onClick={() => onBack()}
       {...other}
     >
       {label}

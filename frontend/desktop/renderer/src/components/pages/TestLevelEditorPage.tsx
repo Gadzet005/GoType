@@ -44,6 +44,7 @@ const level: LevelInfo = {
       style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
+        borderRadius: 3,
         coord: { x: 5, y: 5 },
       }),
     },
@@ -56,6 +57,7 @@ const level: LevelInfo = {
       style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
+        borderRadius: 3,
         coord: { x: 50, y: 50 },
       }),
     },
@@ -68,6 +70,7 @@ const level: LevelInfo = {
       style: createSentenceStyle({
         bgcolor: "lightgrey",
         padding: 1,
+        borderRadius: 3,
         coord: { x: 10, y: 90 },
       }),
     },

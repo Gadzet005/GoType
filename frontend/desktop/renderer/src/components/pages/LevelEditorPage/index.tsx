@@ -1,55 +1,84 @@
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { DraftInfo, DraftUpdate } from "@desktop-common/draft";
-import { Box, Tabs, Typography } from "@mui/material";
-import { observer } from "mobx-react";
-import React from "react";
-import { EditorContext } from "./context";
-import { Draft } from "./draft";
-import { FieldEditor } from "./panels/FieldEditor";
-import { Settings } from "./panels/Settings";
-import { TextEditor } from "./panels/TextEditor";
-import { EditorTabPanel } from "./utils/EditorTabPanel";
-import { truncateString } from "@/core/utils/string";
-import { EditorTab } from "./utils/EditorTab";
-import { StyleEditor } from "./panels/StyleEditor";
-import structuredClone from "@ungap/structured-clone";
 import { useSnackbar } from "@/core/hooks";
 import { updateDraft } from "@/core/services/electron/levelDraft/updateDraft";
+import { truncateString } from "@/core/utils/string";
+import { DraftUpdate } from "@desktop-common/draft";
+import { Box, Tabs, Typography } from "@mui/material";
+import structuredClone from "@ungap/structured-clone";
+import { observer } from "mobx-react";
+import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { EditorContext } from "./context";
+import { Draft } from "./store/draft";
+import { FieldEditor } from "./panels/FieldEditor";
+import { Settings } from "./panels/Settings";
+import { StyleEditor } from "./panels/StyleEditor";
+import { TextEditor } from "./panels/TextEditor";
+import { EditorTab } from "./utils/EditorTab";
+import { EditorTabPanel } from "./utils/EditorTabPanel";
+import { getDraft } from "@/core/services/electron/levelDraft/getDraft";
 
 interface LevelEditorPageProps {
-  draftData: DraftInfo;
+  draftId: number;
   initialTab?: number;
 }
 
 export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
-  ({ draftData, initialTab = 0 }) => {
-    const { showSnackbar } = useSnackbar();
+  ({ draftId, initialTab = 0 }) => {
+    const snakbar = useSnackbar();
 
     const [curTab, setCurTab] = React.useState(initialTab);
-    const draft = React.useMemo(() => new Draft(draftData), [draftData]);
+    const [draft, setDraft] = React.useState<Draft | null>(null);
 
-    const update = async (quite: boolean = false) => {
-      const updateInfo: DraftUpdate.Args = {
-        id: draft.id,
-        name: draft.name,
-        sentences: structuredClone(draft.sentences, { lossy: true }),
-        styleClasses: structuredClone(draft.styleClasses, { lossy: true }),
+    const update = React.useCallback(
+      async (quite: boolean = false) => {
+        if (!draft) {
+          return;
+        }
+
+        const updateInfo: DraftUpdate.Args = {
+          id: draft.id,
+          name: draft.name,
+          sentences: draft.sentences.map((s) => s.toDraftSentenceInfo()),
+          styleClasses: structuredClone(draft.styleClasses.getAll(), {
+            lossy: true,
+          }),
+        };
+
+        const result = await updateDraft(updateInfo);
+        if (result.ok) {
+          setDraft(new Draft(result.payload));
+          if (!quite) {
+            snakbar.show("Изменения сохранены", "success");
+          }
+        } else {
+          snakbar.show("Ошибка при сохранении изменений", "error");
+        }
+      },
+      [draft, snakbar]
+    );
+
+    useHotkeys("ctrl+s", () => update(), [update]);
+
+    React.useEffect(() => {
+      const loadDraft = async () => {
+        const result = await getDraft(draftId);
+        if (result.ok) {
+          setDraft(new Draft(result.payload));
+        } else {
+          snakbar.show("Ошибка при загрузке черновика", "error");
+          console.error(result.error);
+        }
       };
 
-      const result = await updateDraft(updateInfo);
-      if (result.ok) {
-        draft.init(result.payload);
-        if (!quite) {
-          showSnackbar("Изменения сохранены", "success");
-        }
-      } else {
-        showSnackbar("Ошибка при сохранении изменений", "error");
-      }
-    };
+      loadDraft();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draftId]);
 
-    useHotkeys("ctrl+s", () => update(), []);
+    if (!draft) {
+      return null;
+    }
 
     return (
       <EditorContext.Provider
@@ -88,7 +117,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
               color="success"
               label="Сохранить и выйти"
               href={RoutePath.levelDraftList}
-              onClick={() => update(true)}
+              onBack={() => update(true)}
             />
           </Box>
 

@@ -23,7 +23,7 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     autoHideDuration: 5000,
   });
 
-  const showSnackbar = (
+  const show = (
     message: string,
     severity: AlertColor = "info",
     autoHideDuration: number = 5000
@@ -39,7 +39,7 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
   };
 
   return (
-    <SnackbarContext.Provider value={{ showSnackbar }}>
+    <SnackbarContext.Provider value={{ show }}>
       {children}
       <Snackbar
         open={snackbar.open}

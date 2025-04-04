@@ -5,7 +5,7 @@ export interface DraftSentenceInfo {
         y: number;
     };
 
-    showTime?: number;
-    duration?: number;
-    styleClass?: string;
+    showTime: number | null;
+    duration: number | null;
+    styleClass: string | null;
 }

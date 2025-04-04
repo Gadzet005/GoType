@@ -1,4 +1,4 @@
-import { Constraints, Defaults } from "@/core/config/game.config";
+import { Defaults } from "@/core/config/game.config";
 import { fromValues, StyleFormValues, toValues } from "./values";
 import {
   Button,
@@ -14,58 +14,11 @@ import { StyleFormFields } from "./StyleFormFields";
 import * as yup from "yup";
 import { NamedSentenceStyleClass } from "@desktop-common/draft/style";
 
-const requiredMsg = "Обязательное поле";
-
-const minMsg = (min: number) => {
-  return `Минимальное значение: ${min}`;
-};
-
-const maxMsg = (max: number) => {
-  return `Максимальное значение: ${max}`;
-};
-
 const validationSchema = yup.object({
-  name: yup.string().required(requiredMsg).max(20, "Слишком большое название"),
-  padding: yup
-    .number()
-    .required(requiredMsg)
-    .min(0, minMsg(0))
-    .max(Constraints.maxPadding, maxMsg(Constraints.maxPadding))
-    .integer(),
-  borderRadius: yup
-    .number()
-    .required(requiredMsg)
-    .min(0, minMsg(0))
-    .max(Constraints.maxBorderRadius, maxMsg(Constraints.maxBorderRadius))
-    .integer(),
-  rotation: yup
-    .number()
-    .required(requiredMsg)
-    .min(0, minMsg(0))
-    .max(360, maxMsg(360))
-    .integer(),
-  fontSize: yup
-    .number()
-    .required(requiredMsg)
-    .min(Constraints.minFontSize, minMsg(Constraints.minFontSize))
-    .max(Constraints.maxFontSize, maxMsg(Constraints.maxFontSize))
-    .integer(),
-  introDurationPercent: yup
-    .number()
-    .required(requiredMsg)
-    .min(0, minMsg(0))
-    .max(
-      Constraints.maxIntroDurationPercent,
-      maxMsg(Constraints.maxIntroDurationPercent)
-    ),
-  outroDurationPercent: yup
-    .number()
-    .required(requiredMsg)
-    .min(0, minMsg(0))
-    .max(
-      Constraints.maxOutroDurationPercent,
-      maxMsg(Constraints.maxOutroDurationPercent)
-    ),
+  name: yup
+    .string()
+    .required("Обязательное поле")
+    .max(20, "Слишком большое название"),
 });
 
 interface StyleFormProps {
@@ -90,14 +43,11 @@ export const StyleFormDialog: React.FC<StyleFormProps> = ({
     values: StyleFormValues,
     setFieldError: (field: string, message: string | undefined) => void
   ) => {
+    const styleClass = fromValues(values);
     if (initial) {
-      // already have style class
-      draft.removeStyleClass(initial.name);
-      draft.setStyleClass(styleClass.name, fromValues(values));
+      draft.styleClasses.update(styleClass.name, styleClass);
     } else {
-      // new style class
-      const styleClass = fromValues(values);
-      const r = draft.addStyleClass(styleClass.name, styleClass);
+      const r = draft.styleClasses.add(styleClass.name, styleClass);
       if (!r) {
         setFieldError("name", "Стиль с таким именем уже существует");
         return;
@@ -122,7 +72,7 @@ export const StyleFormDialog: React.FC<StyleFormProps> = ({
           <DialogContent>
             <StyleFormFields />
           </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 3 }}>
+          <DialogActions sx={{ p: 2 }}>
             <Button onClick={onClose} color="primary" variant="outlined">
               Закрыть
             </Button>

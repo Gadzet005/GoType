@@ -11,7 +11,7 @@ export namespace Score {
 export namespace Defaults {
     export const sentenceStyleClass: SentenceStyleClass = {
         padding: 0,
-        borderRadius: 3,
+        borderRadius: 0,
         rotation: 0,
         font: "Onest",
         fontSize: 50,

@@ -1,6 +1,6 @@
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { useAppContext, useNavigate } from "@/core/hooks";
+import { useAppContext, useNavigate, useSnackbar } from "@/core/hooks";
 import { getAllDrafts } from "@/core/services/electron/levelDraft/getAllDrafts";
 import { DraftInfo } from "@desktop-common/draft";
 import AddIcon from "@mui/icons-material/AddCircleOutlineRounded";
@@ -11,6 +11,7 @@ import { createDraft } from "@/core/services/electron/levelDraft/createDraft";
 import { removeDraft } from "@/core/services/electron/levelDraft/removeDraft";
 
 export const LevelDraftListPage = () => {
+  const snackbar = useSnackbar();
   const ctx = useAppContext();
   const navigate = useNavigate();
 
@@ -23,24 +24,23 @@ export const LevelDraftListPage = () => {
       if (result.ok) {
         setDrafts(result.payload);
       } else {
-        console.error("Failed to load drafts:", result.error);
+        snackbar.show("Ошибка при загрузке черновиков", "error");
+        console.error(result.error);
       }
     };
 
     loadDrafts().then(() => setIsLoading(false));
-  }, [ctx]);
+  }, [ctx, snackbar]);
 
-  const createNewDraft = async () => {
+  const createNewDraft = React.useCallback(async () => {
     const result = await createDraft();
     if (result.ok) {
-      navigate(RoutePath.levelEditor, {
-        draftData: result.payload,
-        initialTab: 2,
-      });
+      navigate(RoutePath.levelEditor, { draftId: result.payload.id });
     } else {
-      console.error("Failed to create new draft:", result.error);
+      snackbar.show("Ошибка при создании нового черновика", "error");
+      console.error(result.error);
     }
-  };
+  }, [navigate, snackbar]);
 
   const deleteDraft = React.useCallback(
     async (draftId: number) => {
@@ -48,10 +48,11 @@ export const LevelDraftListPage = () => {
       if (result.ok) {
         setDrafts((list) => list.filter((draft) => draft.id !== draftId));
       } else {
-        console.error("Failed to delete draft:", result.error);
+        snackbar.show("Ошибка при удалении черновика", "error");
+        console.error(result.error);
       }
     },
-    [setDrafts]
+    [snackbar]
   );
 
   const list = React.useMemo(

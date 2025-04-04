@@ -30,7 +30,7 @@ export const DraftListItem: React.FC<DraftListItemProps> = ({
   }).format(draft.updateTime);
 
   const handleEdit = () => {
-    navigate(RoutePath.levelEditor, { draftData: draft });
+    navigate(RoutePath.levelEditor, { draftId: draft.id });
   };
 
   return (

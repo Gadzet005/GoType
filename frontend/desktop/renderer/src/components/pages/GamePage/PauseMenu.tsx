@@ -31,6 +31,7 @@ const PauseMenu: React.FC<PauseMenuProps> = ({
       open={open}
       onClose={onClose}
       slotProps={{
+        // @ts-expect-error: it's ok
         paper: {
           sx: {
             borderRadius: 4,

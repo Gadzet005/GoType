@@ -1,5 +1,5 @@
 import React from "react";
-import { Draft } from "./draft";
+import { Draft } from "./store/draft";
 import { requireTrue } from "@/core/utils/panic";
 
 export interface EditorContextValue {

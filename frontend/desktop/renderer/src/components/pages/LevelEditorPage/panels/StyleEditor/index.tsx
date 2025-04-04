@@ -1,4 +1,4 @@
-import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { Button, Container, Stack, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import React from "react";
 import { StyleFormDialog } from "./StyleFormDialog";
@@ -13,12 +13,12 @@ export const StyleEditor = observer(() => {
   const [currentStyleClass, setCurrentStyleClass] =
     React.useState<NamedSentenceStyleClass | null>(null);
 
-  const styleClasses = draft.styleClasses.map((styleClass) => (
+  const styleClasses = draft.styleClasses.getAll().map((styleClass) => (
     <StyleClassItem
       key={styleClass.name}
       styleClass={styleClass}
-      deleleSelf={async () => {
-        draft.removeStyleClass(styleClass.name);
+      deleleSelf={() => {
+        draft.styleClasses.remove(styleClass.name);
       }}
       editSelf={() => {
         setCurrentStyleClass(styleClass);
@@ -28,35 +28,27 @@ export const StyleEditor = observer(() => {
   ));
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 5,
-      }}
-    >
+    <Stack sx={{ alignItems: "center" }} spacing={2}>
       <StyleFormDialog
         open={styleFormOpen}
         onClose={() => setStyleFormOpen(false)}
         initial={currentStyleClass ?? undefined}
       />
-      <Stack spacing={2}>
-        <Typography variant="h4">Внешний вид текста</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => {
-            setCurrentStyleClass(null);
-            setStyleFormOpen(true);
-          }}
-        >
-          Добавить стиль
-        </Button>
-      </Stack>
-      <Container maxWidth="sm">
+      <Typography variant="h4">Внешний вид текста</Typography>
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        size="large"
+        onClick={() => {
+          setCurrentStyleClass(null);
+          setStyleFormOpen(true);
+        }}
+      >
+        Добавить стиль
+      </Button>
+      <Container sx={{ pt: 3 }} maxWidth="sm">
         <Stack spacing={2}>{styleClasses}</Stack>
       </Container>
-    </Box>
+    </Stack>
   );
 });
