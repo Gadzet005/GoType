@@ -30,9 +30,9 @@ export const AdminApi = {
     await $authHost.post('/admin/change-user-access', data);
   },
 
-  getLevelComplaints: async (): Promise<LevelComplaint[]> => {
+  getLevelComplaints: async (): Promise<{ level_complaints: LevelComplaint[] }> => {
     const { data } = await $authHost.get('/admin/get-level-complaints');
-    return data.level_complaints;
+    return data;
   },
 
   getUserComplaints: async (): Promise<UserComplaint[]> => {
@@ -47,6 +47,7 @@ export const AdminApi = {
   processUserComplaint: async (data: ComplaintID): Promise<void> => {
     await $authHost.post('/admin/process-user-complaint', data);
   },
+  
 
   getUsers: async (params: {
     name?: string;

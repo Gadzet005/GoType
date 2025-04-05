@@ -116,3 +116,11 @@ export interface LevelBan {
     levels: Level[];
     total_pages: number;
   }
+
+  export interface LevelComplaint {
+    level_id: number;
+    author_id: number;
+    reason: string;
+    message: string;
+    created_at: string;
+  }

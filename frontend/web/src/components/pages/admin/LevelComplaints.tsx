@@ -1,19 +1,29 @@
 // components/admin/LevelComplaints.tsx
-import React, { useEffect, useState } from 'react';
-import { AdminService } from '@/api/admin.service';
-import { LevelComplaint } from '@/api/types';
+import { useEffect, useState } from 'react';
+import { 
+  CircularProgress, 
+  Alert, 
+  List, 
+  ListItem, 
+  ListItemText, 
+  Typography 
+} from '@mui/material';
+import { AdminApi } from '@/api/adminApi';
+import { LevelComplaint } from '@/api/models';
 
 export const LevelComplaints = () => {
   const [complaints, setComplaints] = useState<LevelComplaint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const loadComplaints = async () => {
       try {
-        const data = await AdminService.getLevelComplaints();
-        setComplaints(data);
-      } catch (error) {
-        console.error('Failed to load complaints:', error);
+        const data = await AdminApi.getLevelComplaints();
+        setComplaints(data.level_complaints || []);
+      } catch (err) {
+        setError('Не удалось загрузить жалобы');
+        console.error('Ошибка загрузки жалоб:', err);
       } finally {
         setLoading(false);
       }
@@ -22,16 +32,42 @@ export const LevelComplaints = () => {
     loadComplaints();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <CircularProgress sx={{ display: 'block', mt: 4, mx: 'auto' }} />;
+  }
+
+  if (error) {
+    return <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>;
+  }
 
   return (
     <div>
-      {complaints.map(complaint => (
-        <div key={complaint.level_id}>
-          <h3>{complaint.reason}</h3>
-          <p>{complaint.message}</p>
-        </div>
-      ))}
+      <Typography variant="h4" gutterBottom>
+        Жалобы на уровни
+      </Typography>
+      
+      <List>
+        {complaints.map((complaint) => (
+          <ListItem key={complaint.level_id} divider>
+            <ListItemText
+              primary={`Причина: ${complaint.reason}`}
+              secondary={
+                <>
+                  <Typography component="span" display="block">
+                    Уровень ID: {complaint.level_id}
+                  </Typography>
+                  <Typography component="span" display="block">
+                    Сообщение: {complaint.message}
+                  </Typography>
+                  <Typography component="span" display="block" color="text.secondary">
+                    Автор жалобы ID: {complaint.author_id}
+                  </Typography>
+                </>
+              }
+            />
+          </ListItem>
+        ))}
+      </List>
     </div>
   );
 };
