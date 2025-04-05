@@ -1,4 +1,3 @@
-// services/user/loadUserProfile.ts
 import { User } from "@/store/user";
 import axios from 'axios';
 
@@ -9,7 +8,7 @@ export class loadUserProfileService {
     try {
       const response = await axios.get('/api/user/profile', {
         headers: {
-          Authorization: `Bearer ${this.user.accessToken}`
+          Authorization: `Bearer ${this.user.tokens?.accessToken}`
         }
       });
       

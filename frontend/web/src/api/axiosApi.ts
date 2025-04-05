@@ -4,13 +4,13 @@ import axios, {
     AxiosResponse,
     InternalAxiosRequestConfig
   } from 'axios';
-  
+  console.log(import.meta.env.VITE_SERVER_BASE_URL);
   export const $host: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_SERVER_BASE_URL,
+    baseURL: import.meta.env.VITE_SERVER_BASE_URL  || 'http://localhost:8080',
   });
   
   export const $authHost: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_SERVER_BASE_URL,
+    baseURL: import.meta.env.VITE_SERVER_BASE_URL  || 'http://localhost:8080',
   });
   
   const authInterceptor = (

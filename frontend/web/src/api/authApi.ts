@@ -8,9 +8,15 @@ export const AuthApi = {
     return data;
   },
 
-  register: async (userData: User): Promise<RefreshStruct> => {
-    const { data } = await $host.post('/auth/register', userData);
-    localStorage.setItem('token', data.access_token);
+  register: async (userData: { 
+    name: string; 
+    password: string 
+  }): Promise<RefreshStruct> => {
+    const { data } = await $host.post('/auth/register', userData, { // Исправленный путь
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
     return data;
   },
 
