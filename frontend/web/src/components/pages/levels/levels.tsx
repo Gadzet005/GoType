@@ -17,21 +17,10 @@ import {
   TextField,
   Box
 } from '@mui/material';
-import { LevelService } from '@/api/level';
+import { LevelApi } from '@/api/levelApi';
 import { RoutePath } from '@/config/routes/path';
 import { Link as RouterLink } from 'react-router-dom';
-
-interface Level {
-  id: number;
-  name: string;
-  author_name: string;
-  difficulty: number;
-  language: string;
-  preview_path: string;
-  tags: string[];
-  type: string;
-  duration: number;
-}
+import { Level, LevelFilterParams, LevelSortParams, PageInfo } from '@/api/models';
 
 export const Levels = () => {
   const [levels, setLevels] = useState<Level[]>([]);
@@ -42,7 +31,8 @@ export const Levels = () => {
     difficulty: 0,
     language: '',
     tags: [] as string[],
-    search: ''
+    search: '',
+    sort: 'popularity'
   });
 
   const PAGE_SIZE = 12;
@@ -50,27 +40,27 @@ export const Levels = () => {
   useEffect(() => {
     const fetchLevels = async () => {
       try {
-        const response = await LevelService.getLevels({
+        const data = await LevelApi.getLevelList({
           filter_params: {
-            difficulty: filters.difficulty,
-            language: filters.language,
-            level_name: filters.search
+            difficulty: -1,
+            language: "eng",
+            level_name: ""
+          },
+          sort_params: {
+            popularity: 'asc',
+            date: 'asc'
           },
           page_info: {
             offset: (page - 1) * PAGE_SIZE,
             page_size: PAGE_SIZE
           },
-          tags: filters.tags
+          tags: []
         });
-
-        setLevels(response.levels);
+        setLevels(data.levels);
       } catch (err) {
         setError('Ошибка загрузки уровней');
-      } finally {
-        setLoading(false);
       }
     };
-
     fetchLevels();
   }, [page, filters]);
 
@@ -90,6 +80,18 @@ export const Levels = () => {
       </Typography>
 
       <Box sx={{ mb: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel>Сортировка</InputLabel>
+          <Select
+            value={filters.sort}
+            onChange={(e) => handleFilterChange('sort', e.target.value)}
+            label="Сортировка"
+          >
+            <MenuItem value="popularity">По популярности</MenuItem>
+            <MenuItem value="date">По дате</MenuItem>
+          </Select>
+        </FormControl>
+
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Сложность</InputLabel>
           <Select
@@ -112,8 +114,8 @@ export const Levels = () => {
             label="Язык"
           >
             <MenuItem value="">Все</MenuItem>
-            <MenuItem value="en">Английский</MenuItem>
-            <MenuItem value="ru">Русский</MenuItem>
+            <MenuItem value="eng">Английский</MenuItem>
+            <MenuItem value="rus">Русский</MenuItem>
           </Select>
         </FormControl>
 

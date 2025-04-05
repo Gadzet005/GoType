@@ -1,38 +1,21 @@
-import { ApiRoutes } from "@/config/api.config";
-import { UserService } from "@/services/base/userService";
-import { UserProfile } from "@/store/user";
-import { Result, commonApiErrorResult, success } from "@/services/utils/result";
+// services/user/loadUserProfile.ts
+import { User } from "@/store/user";
+import axios from 'axios';
 
-type LoadResult = Result<UserProfile, string>;
-interface BackendReponse {
-    id: number;
-    username: string;
-    access: number;
-    ban_reason: string;
-    ban_time: string;
-}
+export class loadUserProfileService {
+  constructor(private user: User) {}
 
-export class loadUserProfileService extends UserService {
-    override async execute(): Promise<LoadResult> {
-        try {
-            const response = await this.authApi.get(
-                ApiRoutes.UserActions.GET_USER_INFO
-            );
-            const data: BackendReponse = response.data;
-
-            this.user.setProfile({
-                id: data.id,
-                name: data.username,
-                accessLevel: data.access,
-                banInfo: {
-                    reason: data.ban_reason,
-                    expiresAt: Date.parse(data.ban_time),
-                },
-            });
-
-            return success();
-        } catch (error: any) {
-            return commonApiErrorResult(error);
+  async execute() {
+    try {
+      const response = await axios.get('/api/user/profile', {
+        headers: {
+          Authorization: `Bearer ${this.user.accessToken}`
         }
+      });
+      
+      return { ok: true, data: response.data };
+    } catch (error) {
+      return { ok: false, error };
     }
+  }
 }

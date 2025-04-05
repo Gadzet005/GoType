@@ -11,10 +11,10 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import { UserStats } from '@/types';
-import { StatsService } from '@/services/stats';
+import { UserApi } from '@/api/userApi'; 
+import { PlayerStats } from '@/api/models'; 
 
-const RatingTable = ({ data }: { data: UserStats[] }) => {
+const RatingTable = ({ data }: { data: PlayerStats[] }) => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="rating table">
@@ -50,24 +50,24 @@ const RatingTable = ({ data }: { data: UserStats[] }) => {
 export const Rating = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [users, setUsers] = useState<UserStats[]>([]);
+  const [users, setUsers] = useState<PlayerStats[]>([]);
 
   useEffect(() => {
     const fetchRating = async () => {
       try {
-        const response = await StatsService.getUsersTop({
+        const data = await UserApi.getUsersTop({
           category_params: {
             category: 0,
-            pattern: ''
+            pattern: 'asc'
           },
           page_info: {
             offset: 0,
             page_size: 10
           },
-          points: 'desc'
+          points: 'asc'
         });
         
-        setUsers(response.users);
+        setUsers(data);
       } catch (err) {
         setError('Не удалось загрузить рейтинг');
       } finally {

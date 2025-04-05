@@ -19,5 +19,6 @@ export enum ApiError {
     unexpected = "UNEXPECTED",
     userExists = "ERR_USER_EXISTS",
     invalidInput = "ERR_INVALID_INPUT",
+    wrongToken = "ERR_ACCESS_TOKEN_WRONG",
     noSuchUser = "ERR_NO_SUCH_USER",
 }
