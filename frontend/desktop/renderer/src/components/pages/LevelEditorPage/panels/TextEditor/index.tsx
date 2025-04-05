@@ -8,13 +8,29 @@ import { LoadTextDialog } from "./LoadTextDialog";
 import { SentenceList } from "./SentenceList";
 import { DraftSentence } from "../../store/draftSentence";
 import { EditTimingDialog } from "./EditTimingDialog";
+import { useAudioPlayer } from "react-use-audio-player";
 
 export const TextEditor = observer(() => {
   const { draft } = useEditorContext();
+  const audioPlayer = useAudioPlayer();
 
   const [loadTextDialogOpen, setLoadTextDialogOpen] = React.useState(false);
   const [selectedSentence, setSelectedSentence] =
     React.useState<DraftSentence | null>(null);
+
+  React.useEffect(() => {
+    if (!draft.audio) {
+      return;
+    }
+
+    audioPlayer.load(draft.audio.url, {
+      autoplay: false,
+      loop: false,
+      format: draft.audio.ext,
+    });
+    return () => audioPlayer.cleanup();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft.audio]);
 
   if (!draft.audio) {
     return (
@@ -32,19 +48,21 @@ export const TextEditor = observer(() => {
         open={loadTextDialogOpen}
         onClose={() => setLoadTextDialogOpen(false)}
       />
-      <EditTimingDialog
-        open={selectedSentence !== null}
-        onClose={() => setSelectedSentence(null)}
-        audio={draft.audio}
-        content={selectedSentence?.content ?? ""}
-        showTime={selectedSentence?.showTime ?? null}
-        duration={selectedSentence?.duration ?? null}
-        onSave={(showTime: number | null, duration: number | null) => {
-          selectedSentence?.setShowTime(showTime);
-          selectedSentence?.setDuration(duration);
-          setSelectedSentence(null);
-        }}
-      />
+      {selectedSentence !== null && audioPlayer.isReady && (
+        <EditTimingDialog
+          open
+          onClose={() => setSelectedSentence(null)}
+          player={audioPlayer}
+          content={selectedSentence.content}
+          showTime={selectedSentence.showTime}
+          duration={selectedSentence.duration}
+          onSave={(showTime: number | null, duration: number | null) => {
+            selectedSentence.setShowTime(showTime);
+            selectedSentence.setDuration(duration);
+            setSelectedSentence(null);
+          }}
+        />
+      )}
       <Typography variant="h4">Текст и время</Typography>
       <Button
         variant="contained"

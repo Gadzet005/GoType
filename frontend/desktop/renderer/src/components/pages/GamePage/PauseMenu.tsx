@@ -30,13 +30,10 @@ const PauseMenu: React.FC<PauseMenuProps> = ({
     <Dialog
       open={open}
       onClose={onClose}
-      slotProps={{
-        // @ts-expect-error: it's ok
-        paper: {
-          sx: {
-            borderRadius: 4,
-            bgcolor: "black",
-          },
+      sx={{
+        "& .MuiPaper-root": {
+          borderRadius: 4,
+          bgcolor: "black",
         },
       }}
     >
