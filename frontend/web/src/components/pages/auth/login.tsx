@@ -87,18 +87,19 @@ export const Login = () => {
               }}
             />
             
-            <Grid container alignItems="flex-end">
-              <Grid item sx={{ mr: 1, my: 0.5 }}>
-                <LockOutlined sx={{ color: 'action.active' }} />
-              </Grid>
-              <Grid item xs>
-                <PasswordField
-                  name="password"
-                  label="Пароль"
-                  
-                />
-              </Grid>
-            </Grid>
+            <Grid container alignItems="flex-end" sx={{ width: '100%' }}>
+  <Grid item sx={{ mr: 1, my: 0.5 }}>
+    <LockOutlined sx={{ color: 'action.active' }} />
+  </Grid>
+  <Grid item xs sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%' }}>
+      <PasswordField
+        name="password"
+        label="Пароль"
+      />
+    </Box>
+  </Grid>
+</Grid>
 
             <Button
               variant="contained"

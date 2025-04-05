@@ -4,6 +4,7 @@ import axios, {
     AxiosResponse,
     InternalAxiosRequestConfig
   } from 'axios';
+  import { RoutePath } from '@/config/routes/path';
   console.log(import.meta.env.VITE_SERVER_BASE_URL);
   export const $host: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_SERVER_BASE_URL  || 'http://localhost:8080',
@@ -29,3 +30,14 @@ import axios, {
   declare module 'axios' {
     interface AxiosResponse<T = any> extends Promise<T> {}
   }
+
+  $authHost.interceptors.response.use(
+    response => response,
+    error => {
+      if (error.config.url !== '/user-actions/logout' && error.response?.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = RoutePath.login;
+      }
+      return Promise.reject(error);
+    }
+  );

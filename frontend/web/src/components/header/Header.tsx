@@ -33,23 +33,25 @@ export const Header = () => {
 
   const handleLogout = async () => {
     try {
-      await UserApi.logout();
+      // 1. Сохраняем токен перед удалением
+      const token = localStorage.getItem('token');
+      
+      // 2. Удаляем токен сразу
       localStorage.removeItem('token');
       setIsAuthenticated(false);
-      navigate(RoutePath.login, { replace: true });
-      window.location.reload();
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      console.error('Logout error:', axiosError.response?.data);
       
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          localStorage.removeItem('token');
-          navigate(RoutePath.login);
-        }
-      } else {
-        console.error('Unexpected error:', error);
+      // 3. Отправляем запрос на сервер с явным указанием токена
+      if (token) {
+        await UserApi.logout(token); // Передаем токен явно
       }
+      
+      // 4. Перенаправляем пользователя
+      navigate(RoutePath.login, { replace: true });
+      
+    } catch (error) {
+      console.error('Logout error:', error);
+      // 5. Гарантированное перенаправление даже при ошибке
+      navigate(RoutePath.login);
     }
   };
 

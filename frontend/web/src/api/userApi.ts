@@ -18,13 +18,16 @@ export const UserApi = {
     });
   },
 
-  logout: async (): Promise<void> => {
-    try {
-      await $authHost.post('/user-actions/logout');
-    } catch (error) {
-      console.error('Logout API error:', error);
-      throw error; 
-    }
+  logout: async (token: string): Promise<void> => {
+    await $authHost.post(
+      '/user-actions/logout',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
   },
 
   writeLevelComplaint: async (data: {
