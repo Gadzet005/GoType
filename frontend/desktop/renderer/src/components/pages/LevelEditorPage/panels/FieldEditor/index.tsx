@@ -2,9 +2,36 @@ import { Box, Typography } from "@mui/material";
 import { useEditorContext } from "../../context";
 import { observer } from "mobx-react";
 import { CenterBox } from "@/components/common/CenterBox";
+import { GameView } from "@/components/game/GameView";
+import { Draft } from "../../store/draft";
+import React from "react";
+import { Game } from "@/core/store/game";
+import { useAudioPlayer } from "react-use-audio-player";
+
+function draftSentences(draft: Draft) {
+  return draft.sentences
+    .map((sentence) => sentence.toSentenceData())
+    .filter((sentence) => sentence !== null);
+}
 
 export const FieldEditor = observer(() => {
+  const audioPlayer = useAudioPlayer();
   const { draft } = useEditorContext();
+
+  const [game, setGame] = React.useState<Game | null>();
+
+  React.useEffect(() => {
+    if (!audioPlayer.isReady) {
+      return;
+    }
+    setGame(
+      new Game({
+        sentences: draftSentences(draft),
+        language: draft.language,
+        duration: audioPlayer.duration,
+      })
+    );
+  }, [audioPlayer.duration, audioPlayer.isReady, draft]);
 
   if (!draft.audio || !draft.background) {
     return (
@@ -16,6 +43,10 @@ export const FieldEditor = observer(() => {
     );
   }
 
+  if (!game) {
+    return null;
+  }
+
   return (
     <Box
       sx={{
@@ -25,7 +56,14 @@ export const FieldEditor = observer(() => {
         justifyContent: "center",
       }}
     >
-      Field Editor
+      <GameView
+        game={game}
+        audio={draft.audio}
+        background={{
+          asset: draft.background.asset!,
+          brightness: draft.background.brightness,
+        }}
+      />
     </Box>
   );
 });

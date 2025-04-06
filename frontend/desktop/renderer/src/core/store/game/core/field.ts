@@ -1,17 +1,17 @@
-import { StyledSentenceInfo } from "@desktop-common/level/sentence";
+import { SentenceData } from "@desktop-common/level/sentence";
 import { FieldSentence } from "./fieldSentence";
 import { action, observable, makeObservable } from "mobx";
 
 export class GameField {
     readonly sentences: FieldSentence[];
 
-    constructor(info: StyledSentenceInfo[]) {
+    constructor(data: SentenceData[]) {
         makeObservable(this, {
             sentences: observable.shallow,
             reset: action,
         });
 
-        this.sentences = info.map((s, idx) => new FieldSentence(idx, s));
+        this.sentences = data.map((s, idx) => new FieldSentence(idx, s));
     }
 
     reset() {

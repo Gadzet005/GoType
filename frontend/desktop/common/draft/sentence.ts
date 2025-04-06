@@ -1,4 +1,4 @@
-export interface DraftSentenceInfo {
+export interface DraftSentenceData {
     content: string;
     coord: {
         x: number;
@@ -7,5 +7,5 @@ export interface DraftSentenceInfo {
 
     showTime: number | null;
     duration: number | null;
-    styleClass: string | null;
+    styleClassName: string | null;
 }

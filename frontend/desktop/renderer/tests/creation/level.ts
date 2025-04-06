@@ -1,10 +1,10 @@
-import { LevelInfo } from "@desktop-common/level";
-import { StyledSentenceInfo } from "@desktop-common/level/sentence";
+import { LevelData } from "@desktop-common/level";
+import { SentenceData } from "@desktop-common/level/sentence";
 
 export function createLevel(
-    sentences: StyledSentenceInfo[] = [],
+    sentences: SentenceData[] = [],
     duration: number = 10
-): LevelInfo {
+): LevelData {
     return {
         id: 1,
         name: "dummy",

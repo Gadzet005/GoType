@@ -9,8 +9,8 @@ import { availableLanguages } from "@/core/config/lang.config";
 
 interface SettingsFormValues {
   name: string;
-  audio?: string | null;
-  background?: string | null;
+  audio: string | null;
+  background: string | null;
   lang: string;
 }
 
@@ -27,14 +27,19 @@ export const SettingsForm = () => {
     draft.setName(values.name);
     draft.setLanguage(values.lang);
     await updateDraft({
-      newAudioFile: values.audio,
-      newBackgroundFile: values.background,
+      newAudioFile: values.audio ?? undefined,
+      newBackgroundFile: values.background ?? undefined,
     });
   };
 
   return (
     <Formik
-      initialValues={{ name: draft.name, lang: draft.language.code }}
+      initialValues={{
+        name: draft.name,
+        lang: draft.language.code,
+        background: null,
+        audio: null,
+      }}
       validationSchema={validationSchema}
       onSubmit={async (values: SettingsFormValues, { setSubmitting }) => {
         await handleSubmit(values);
@@ -54,17 +59,15 @@ export const SettingsForm = () => {
             </Field>
             <Field
               name="audio"
-              label="Аудио"
+              label="Загрузить аудио файл"
               component={FileField}
               extensions={AllowedAssetExtensions.AUDIO}
-              initialFileName={draft.audio?.name}
             />
             <Field
               name="background"
-              label="Фоновое изображение"
+              label="Загрузить фоновое изображение"
               component={FileField}
               extensions={AllowedAssetExtensions.BACKGROUND}
-              initialFileName={draft.background?.name}
             />
             <Button
               type="submit"

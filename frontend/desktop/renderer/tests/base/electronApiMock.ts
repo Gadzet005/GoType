@@ -18,6 +18,7 @@ export namespace ElectronAPIMock {
         updateDraft: vi.fn(),
         removeDraft: vi.fn(),
         getAllDrafts: vi.fn(),
+        showDraftDir: vi.fn(),
     };
 
     export const App = {

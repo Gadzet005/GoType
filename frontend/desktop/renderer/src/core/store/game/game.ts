@@ -2,7 +2,7 @@ import { action, makeObservable, observable, computed } from "mobx";
 import { GameStatistics } from "./statistics";
 import { GameField } from "./core/field";
 import { Cursor, InputResult } from "./core/cursor";
-import { StyledSentenceInfo } from "@desktop-common/level/sentence";
+import { SentenceData } from "@desktop-common/level/sentence";
 import { Language } from "@/core/utils/language";
 import { requireTrue } from "@/core/utils/panic";
 
@@ -14,7 +14,7 @@ enum GameStatus {
 }
 
 export interface GameInfo {
-    sentences: StyledSentenceInfo[];
+    sentences: SentenceData[];
     language: Language;
     duration: number;
 }

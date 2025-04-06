@@ -1,7 +1,8 @@
 import { app, dialog, ipcMain } from "electron";
-import { FileInfo } from "@desktop-common/file";
+import { FileMeta } from "@desktop-common/file";
 import jetpack from "fs-jetpack";
 import path from "path";
+import { getExt } from "@/utils/path";
 
 export function initAppAPIHandlers() {
     ipcMain.handle("quit-app", async () => {
@@ -22,16 +23,17 @@ export function initAppAPIHandlers() {
                 )
             );
 
-            const rawFileInfoList: (FileInfo | null)[] = fileStats.map(
+            const rawFileInfoList: (FileMeta | null)[] = fileStats.map(
                 (stat, index) => {
                     if (!stat) {
                         return null;
                     }
                     const absPath = result.filePaths[index];
+
                     return {
                         path: absPath,
                         name: path.basename(absPath),
-                        ext: path.extname(absPath).slice(1),
+                        ext: getExt(absPath),
                         size: stat.size,
                     };
                 }

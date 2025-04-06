@@ -10,11 +10,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "@/core/hooks";
 import { RoutePath } from "@/core/config/routes/path";
 import React from "react";
-import { DraftInfo } from "@desktop-common/draft";
+import { DraftData } from "@desktop-common/draft";
 import { truncateString } from "@/core/utils/string";
 
 interface DraftListItemProps {
-  draft: DraftInfo;
+  draft: DraftData;
   deleleSelf: () => void;
 }
 

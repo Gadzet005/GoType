@@ -7,17 +7,15 @@ import CloseIcon from "@mui/icons-material/Close";
 interface FileFieldProps extends FieldProps {
   extensions?: string[];
   label?: string;
-  initialFileName?: string;
 }
 
 export const FileField: React.FC<FileFieldProps> = ({
   field,
   form,
   extensions = [],
-  label = "Файл",
-  initialFileName = "",
+  label = "",
 }) => {
-  const [fileName, setFileName] = useState<string>(initialFileName);
+  const [fileName, setFileName] = useState<string>("");
 
   const handleUploadFile = async () => {
     const result = await openOneFileDialog(extensions);

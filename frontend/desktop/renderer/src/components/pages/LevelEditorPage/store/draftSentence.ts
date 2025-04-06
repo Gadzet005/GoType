@@ -1,9 +1,9 @@
-import { DraftSentenceInfo } from "@desktop-common/draft/sentence";
+import { DraftSentenceData } from "@desktop-common/draft/sentence";
 import { StyleClassStore } from "./styleClassStore";
-import { FieldSentence } from "@/core/store/game/core/fieldSentence";
 import { action, makeObservable, observable } from "mobx";
+import { SentenceData } from "@desktop-common/level/sentence";
 
-export interface DraftSentenceParams extends DraftSentenceInfo {
+export interface DraftSentenceParams extends DraftSentenceData {
     idx: number;
     styleClasses: StyleClassStore;
 }
@@ -23,7 +23,7 @@ export class DraftSentence {
     constructor(
         styleClasses: StyleClassStore,
         idx: number,
-        info: DraftSentenceInfo
+        data: DraftSentenceData
     ) {
         makeObservable(this, {
             // @ts-expect-error: private observable
@@ -39,41 +39,51 @@ export class DraftSentence {
         });
 
         this.idx = idx;
-        this.content = info.content;
-        this.coord_ = info.coord;
-        this.showTime_ = info.showTime;
-        this.duration_ = info.duration;
-        this.styleClassName_ = info.styleClass;
+        this.content = data.content;
+        this.coord_ = data.coord;
+        this.showTime_ = data.showTime;
+        this.duration_ = data.duration;
+        this.styleClassName_ = data.styleClassName;
         this.styleClasses = styleClasses;
     }
 
-    toFieldSentence(): FieldSentence {
-        const styleClass = this.getStyleClass();
-        const duration = this.duration ?? 0;
-        const introDuration = duration * styleClass.introDurationRatio;
-        const outroDuration = duration * styleClass.outroDurationRatio;
-        const activeDuration = duration - introDuration - outroDuration;
+    toSentenceData(): SentenceData | null {
+        if (!this.showTime || !this.duration) {
+            return null;
+        }
 
-        return new FieldSentence(this.idx, {
+        const styleClass = this.getStyleClass();
+        const introDuration = this.duration * styleClass.introDurationRatio;
+        const outroDuration = this.duration * styleClass.outroDurationRatio;
+        const activeDuration = this.duration - introDuration - outroDuration;
+
+        return {
             content: this.content,
-            showTime: this.showTime ?? 0,
+            showTime: this.showTime,
             introDuration,
             activeDuration,
             outroDuration,
             style: {
-                coord: this.coord_,
-                ...styleClass,
+                coord: this.coord,
+                bgcolor: styleClass.bgcolor,
+                padding: styleClass.padding,
+                rotation: styleClass.rotation,
+                borderRadius: styleClass.borderRadius,
+                font: styleClass.font,
+                fontSize: styleClass.fontSize,
+                bold: styleClass.bold,
+                colors: styleClass.colors,
             },
-        });
+        };
     }
 
-    toDraftSentenceInfo(): DraftSentenceInfo {
+    toDraftSentenceData(): DraftSentenceData {
         return {
             content: this.content,
             coord: this.coord_,
             showTime: this.showTime_,
             duration: this.duration_,
-            styleClass: this.styleClassName_,
+            styleClassName: this.styleClassName_,
         };
     }
 

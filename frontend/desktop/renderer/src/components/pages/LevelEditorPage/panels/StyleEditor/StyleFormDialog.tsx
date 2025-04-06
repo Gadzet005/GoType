@@ -12,7 +12,7 @@ import React from "react";
 import { useEditorContext } from "../../context";
 import { StyleFormFields } from "./StyleFormFields";
 import * as yup from "yup";
-import { NamedSentenceStyleClass } from "@desktop-common/draft/style";
+import { StyleClassData } from "@desktop-common/draft/style";
 
 const validationSchema = yup.object({
   name: yup
@@ -24,7 +24,7 @@ const validationSchema = yup.object({
 interface StyleFormProps {
   open: boolean;
   onClose?: () => void;
-  initial?: NamedSentenceStyleClass;
+  initial?: StyleClassData;
 }
 
 export const StyleFormDialog: React.FC<StyleFormProps> = ({

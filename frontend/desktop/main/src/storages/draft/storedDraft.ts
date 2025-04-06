@@ -1,120 +1,135 @@
-import { DraftAssetType, DraftUpdate } from "@desktop-common/draft";
+import { DraftData, DraftUpdateData } from "@desktop-common/draft";
 import jetpack from "fs-jetpack";
 import { FSJetpack } from "fs-jetpack/types";
-import { defaultStoredDraftData, StoredDraftInfo } from "./storedDraftInfo";
+import { defaultStoredDraftData, StoredDraftData } from "./storedDraftData";
 import { logError } from "@/utils/common";
-import { cache, Cached } from "../../utils/cache";
 import path from "path";
-import { StoredNamedAsset } from "./storedAsset";
+import { AssetStorage } from "../assets/assetStorage";
+import { AssetType } from "@/consts";
+import { getExt } from "@/utils/path";
 
-type UpdateArgs = Omit<DraftUpdate.Args, "id">;
+type UpdateParams = Omit<DraftUpdateData, "id">;
 
 export class StoredDraft {
     static readonly DATA_FILE = "draft.json";
     private root: FSJetpack;
+    private data_: StoredDraftData | null = null;
+    private assets: AssetStorage;
 
     constructor(path: string) {
-        this.root = jetpack.dir(path);
+        this.root = jetpack.cwd(path);
+        this.assets = new AssetStorage(path);
     }
 
-    @cache({ argsConverter: (obj) => obj.root.path() })
-    async loadData(): Promise<StoredDraftInfo> {
-        return await this.root
-            .readAsync(StoredDraft.DATA_FILE, "json")
-            .catch(logError("Failed to read draft data from file"));
+    async loadData(): Promise<StoredDraftData> {
+        if (!this.data_) {
+            this.data_ = await this.root
+                .readAsync(StoredDraft.DATA_FILE, "json")
+                .catch(logError("Failed to read draft data from file"));
+        }
+        return this.data_!;
     }
 
-    async saveData(data: StoredDraftInfo) {
-        (this.loadData as Cached).clearCache(this.root.path());
+    async saveData(data: StoredDraftData) {
+        this.data_ = data;
         await this.root
             .writeAsync(StoredDraft.DATA_FILE, data)
             .catch(logError("Failed to write draft data to file"));
-    }
-
-    private async updateAsset(
-        type: DraftAssetType,
-        newAssetPath: string | null
-    ): Promise<StoredNamedAsset | null> {
-        await this.deleteAsset(type);
-        if (!newAssetPath) {
-            return null;
-        }
-
-        const fileName = path.basename(newAssetPath);
-        await jetpack
-            .copyAsync(newAssetPath, this.root.path(fileName))
-            .catch(logError(`Failed to copy asset file: ${newAssetPath}`));
-
-        const draftData = await this.loadData();
-        await this.saveData(draftData);
-
-        const splited = fileName.split(".");
-        if (splited.length < 2) {
-            throw Error(`Invalid file name: ${fileName}`);
-        }
-        return {
-            name: splited.slice(0, splited.length - 1).join("."),
-            ext: splited[splited.length - 1],
-        };
-    }
-
-    private async deleteAsset(type: DraftAssetType) {
-        const draftData = await this.loadData();
-        if (!draftData[type]) {
-            return;
-        }
-
-        const assetFileName = draftData[type].name + "." + draftData[type].ext;
-        await this.root
-            .removeAsync(assetFileName)
-            .catch(logError(`Failed to remove asset file: ${assetFileName}`));
     }
 
     async isInited() {
         return this.root.existsAsync(StoredDraft.DATA_FILE);
     }
 
-    async init(id: number): Promise<StoredDraftInfo> {
-        const storedData = defaultStoredDraftData(id);
-        await this.root
-            .writeAsync(StoredDraft.DATA_FILE, storedData)
-            .catch(logError("Failed to create draft info file"));
-        return storedData;
+    async init(id: number) {
+        await this.saveData(defaultStoredDraftData(id));
     }
 
-    async update(args: UpdateArgs) {
+    private async updateAsset(
+        type: AssetType,
+        newAssetPath: string,
+        old: string | null
+    ): Promise<string> {
+        if (old) {
+            await this.assets.remove(type + "." + old);
+        }
+
+        const ext = getExt(newAssetPath);
+        await this.assets.save(type + "." + ext, newAssetPath);
+
+        return ext;
+    }
+
+    async update(params: UpdateParams) {
+        const { audioPath, background, publication, ...other } = params;
         const data = await this.loadData();
 
-        if (args.name) {
-            data.name = args.name;
-        }
-        if (args.sentences) {
-            data.sentences = args.sentences;
-        }
-        if (args.styleClasses) {
-            data.styleClasses = args.styleClasses;
-        }
-        if (args.languageCode) {
-            data.languageCode = args.languageCode;
-        }
-        if (args.newAudioFile !== undefined) {
-            data.audio = await this.updateAsset("audio", args.newAudioFile);
-        }
-        if (args.newBackgroundFile !== undefined) {
-            data.background = await this.updateAsset(
-                "background",
-                args.newBackgroundFile
-            );
+        if (audioPath) {
+            data.audio = await this.updateAsset("audio", audioPath, data.audio);
         }
 
-        data.updateTime = Date.now();
+        if (background) {
+            const { path, ...other } = background;
+            data.background = {
+                ...data.background,
+                ...other,
+            };
 
-        await this.saveData(data);
+            if (path) {
+                data.background.asset = await this.updateAsset(
+                    "background",
+                    path,
+                    data.background.asset
+                );
+            }
+        }
+
+        if (publication) {
+            const { previewPath, ...other } = publication;
+            data.publication = { preview: null, ...data.publication, ...other };
+
+            if (previewPath) {
+                data.publication.preview = await this.updateAsset(
+                    "preview",
+                    previewPath,
+                    data.publication.preview
+                );
+            }
+        }
+
+        await this.saveData({ ...data, ...other, updateTime: Date.now() });
     }
 
     async remove() {
+        this.data_ = null;
         await this.root
             .removeAsync()
             .catch(logError("Failed to delete draft directory"));
+    }
+
+    async getDraftData(): Promise<DraftData> {
+        const data = await this.loadData();
+
+        const getAsset = (type: AssetType, ext: string | null) => {
+            const name = ext === null ? null : type + "." + ext;
+            return name === null ? null : this.assets.get(name);
+        };
+
+        return {
+            ...data,
+            audio: getAsset("audio", data.audio),
+            background: {
+                ...data.background,
+                asset: getAsset("background", data.background.asset),
+            },
+            publication: data.publication && {
+                ...data.publication,
+                preview: getAsset("preview", data.publication.preview),
+            },
+        };
+    }
+
+    path(): string {
+        return this.root.path();
     }
 }

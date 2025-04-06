@@ -1,14 +1,11 @@
 import { Defaults } from "@/core/config/game.config";
-import {
-    NamedSentenceStyleClass,
-    SentenceStyleClass,
-} from "@desktop-common/draft/style";
+import { NamedStyleClass, StyleClass } from "@/core/types/game";
 import { action, makeObservable, observable } from "mobx";
 
 export class StyleClassStore {
-    private readonly list: NamedSentenceStyleClass[];
+    private readonly list: NamedStyleClass[];
 
-    constructor(list: NamedSentenceStyleClass[] = []) {
+    constructor(list: NamedStyleClass[] = []) {
         makeObservable(this, {
             // @ts-expect-error: private observable
             list: observable,
@@ -19,7 +16,7 @@ export class StyleClassStore {
         this.list = list;
     }
 
-    add(name: string, styleClass: SentenceStyleClass): boolean {
+    add(name: string, styleClass: StyleClass): boolean {
         if (this.has(name)) {
             return false;
         }
@@ -30,7 +27,7 @@ export class StyleClassStore {
         return true;
     }
 
-    update(oldName: string, styleClass: NamedSentenceStyleClass): boolean {
+    update(oldName: string, styleClass: NamedStyleClass): boolean {
         for (let i = 0; i < this.list.length; i++) {
             if (this.list[i].name === oldName) {
                 this.list[i] = styleClass;
@@ -54,14 +51,14 @@ export class StyleClassStore {
         return this.list.some((styleClass) => styleClass.name === name);
     }
 
-    get(name: string): SentenceStyleClass {
+    get(name: string): StyleClass {
         return (
             this.list.find((styleClass) => styleClass.name === name) ??
             this.default()
         );
     }
 
-    getAll(): NamedSentenceStyleClass[] {
+    getAll(): NamedStyleClass[] {
         return this.list;
     }
 

@@ -7,7 +7,7 @@ export abstract class FileSystemStorage {
     protected mainStorage: MainStorage;
 
     constructor(mainStorage: MainStorage, path: string) {
-        this.root = jetpack.dir(path);
+        this.root = jetpack.cwd(path);
         this.mainStorage = mainStorage;
     }
 }

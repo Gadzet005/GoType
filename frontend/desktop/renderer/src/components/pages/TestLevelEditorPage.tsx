@@ -2,11 +2,11 @@ import { Box, Typography } from "@mui/material";
 import { Button } from "@/components/ui/Button";
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { LevelInfo } from "@desktop-common/level";
+import { LevelData } from "@desktop-common/level";
 import { saveLevel } from "@/core/services/electron/level/saveLevel";
 import { createSentenceStyle } from "@tests/creation/style";
 
-const level: LevelInfo = {
+const level: LevelData = {
   id: 3,
   name: "Walk on Water",
   description:

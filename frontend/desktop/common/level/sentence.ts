@@ -1,6 +1,6 @@
 import { SentenceStyle } from "./style";
 
-export interface SentenceInfo {
+export interface SentenceData {
     /** The textual content of the sentence. */
     content: string;
     /** The time at which the sentence should be shown. */
@@ -12,9 +12,6 @@ export interface SentenceInfo {
     activeDuration: number;
     /** Duration of disappearance state (for animation). */
     outroDuration: number;
-}
-
-export interface StyledSentenceInfo extends SentenceInfo {
     /** The style attributes applied to the sentence. */
     style: SentenceStyle;
 }

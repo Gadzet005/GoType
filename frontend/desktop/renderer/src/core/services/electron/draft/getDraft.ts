@@ -1,9 +1,9 @@
 import { failure, PromiseResult, success } from "@/core/types/result";
-import { DraftInfo } from "@desktop-common/draft";
+import { DraftData } from "@desktop-common/draft";
 
 export async function getDraft(
     draftId: number
-): PromiseResult<DraftInfo, void> {
+): PromiseResult<DraftData, void> {
     try {
         const result = await window.levelDraftAPI.getDraft(draftId);
         if (!result) {

@@ -1,5 +1,5 @@
-import { NamedAsset } from "@desktop-common/asset";
-import { DraftInfo } from "@desktop-common/draft";
+import { Asset } from "@desktop-common/asset";
+import { DraftData } from "@desktop-common/draft";
 import { action, computed, makeObservable, observable } from "mobx";
 import { DraftSentence } from "./draftSentence";
 import { StyleClassStore } from "./styleClassStore";
@@ -11,12 +11,15 @@ export class Draft {
     readonly styleClasses: StyleClassStore;
 
     private language_!: Language;
-    private audio_: NamedAsset | null;
-    private background_: NamedAsset | null;
+    private audio_: Asset | null;
+    private background_: {
+        asset: Asset | null;
+        brightness: number;
+    };
     private name_: string;
     private sentences_: DraftSentence[];
 
-    constructor(info: DraftInfo) {
+    constructor(data: DraftData) {
         makeObservable(this, {
             // @ts-expect-error: private observable
             sentences_: observable.shallow,
@@ -28,7 +31,8 @@ export class Draft {
             setSentencesByText: action,
             setName: action,
             setAudio: action,
-            setBackground: action,
+            setBackgroundAsset: action,
+            setBackgroundBrightness: action,
             setLanguage: action,
 
             sentences: computed,
@@ -38,17 +42,17 @@ export class Draft {
             language: computed,
         });
 
-        this.id = info.id;
-        this.name_ = info.name;
-        this.updateTime = info.updateTime;
-        this.audio_ = info.audio;
-        this.background_ = info.background;
-        this.styleClasses = new StyleClassStore(info.styleClasses);
-        this.sentences_ = info.sentences.map(
+        this.id = data.id;
+        this.name_ = data.name;
+        this.updateTime = data.updateTime;
+        this.audio_ = data.audio;
+        this.background_ = data.background;
+        this.styleClasses = new StyleClassStore(data.styleClasses);
+        this.sentences_ = data.sentences.map(
             (s, i) => new DraftSentence(this.styleClasses, i, s)
         );
 
-        if (!this.setLanguage(info.languageCode)) {
+        if (!this.setLanguage(data.languageCode)) {
             this.setLanguage("eng");
         }
     }
@@ -64,7 +68,7 @@ export class Draft {
                         coord: { x: 0, y: 0 },
                         showTime: null,
                         duration: null,
-                        styleClass: null,
+                        styleClassName: null,
                     })
             );
     }
@@ -73,12 +77,16 @@ export class Draft {
         this.name_ = name;
     }
 
-    setAudio(audio: NamedAsset | null) {
+    setAudio(audio: Asset | null) {
         this.audio_ = audio;
     }
 
-    setBackground(background: NamedAsset | null) {
-        this.background_ = background;
+    setBackgroundAsset(background: Asset | null) {
+        this.background_.asset = background;
+    }
+
+    setBackgroundBrightness(brightness: number) {
+        this.background_.brightness = brightness;
     }
 
     setLanguage(code: string): boolean {

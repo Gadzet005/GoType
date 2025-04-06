@@ -1,21 +1,21 @@
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
 import { useAppContext, useNavigate, useSnackbar } from "@/core/hooks";
-import { getAllDrafts } from "@/core/services/electron/levelDraft/getAllDrafts";
-import { DraftInfo } from "@desktop-common/draft";
+import { getAllDrafts } from "@/core/services/electron/draft/getAllDrafts";
+import { DraftData } from "@desktop-common/draft";
 import AddIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import { Box, Button, Container, Typography } from "@mui/material";
 import React from "react";
 import { DraftListItem } from "./item";
-import { createDraft } from "@/core/services/electron/levelDraft/createDraft";
-import { removeDraft } from "@/core/services/electron/levelDraft/removeDraft";
+import { createDraft } from "@/core/services/electron/draft/createDraft";
+import { removeDraft } from "@/core/services/electron/draft/removeDraft";
 
 export const LevelDraftListPage = () => {
   const snackbar = useSnackbar();
   const ctx = useAppContext();
   const navigate = useNavigate();
 
-  const [drafts, setDrafts] = React.useState<DraftInfo[]>([]);
+  const [drafts, setDrafts] = React.useState<DraftData[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -30,7 +30,8 @@ export const LevelDraftListPage = () => {
     };
 
     loadDrafts().then(() => setIsLoading(false));
-  }, [ctx, snackbar]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ctx]);
 
   const createNewDraft = React.useCallback(async () => {
     const result = await createDraft();

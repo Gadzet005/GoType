@@ -1,12 +1,12 @@
-import { LevelInfo } from "@desktop-common/level";
+import { LevelData } from "@desktop-common/level";
 import { Language } from "@/core/utils/language";
 import { requireTrue } from "@/core/utils/panic";
 
 export class Level {
-    private readonly info: LevelInfo;
+    private readonly info: LevelData;
     readonly language: Language;
 
-    constructor(levelInfo: LevelInfo) {
+    constructor(levelInfo: LevelData) {
         this.info = levelInfo;
 
         const lang = Language.byCode(levelInfo.languageCode);

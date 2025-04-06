@@ -4,14 +4,14 @@ import React from "react";
 import { StyleFormDialog } from "./StyleFormDialog";
 import { useEditorContext } from "../../context";
 import { StyleClassItem } from "./StyleClassItem";
-import { NamedSentenceStyleClass } from "@desktop-common/draft/style";
+import { StyleClassData } from "@desktop-common/draft/style";
 import { observer } from "mobx-react";
 
 export const StyleEditor = observer(() => {
   const { draft } = useEditorContext();
   const [styleFormOpen, setStyleFormOpen] = React.useState(false);
   const [currentStyleClass, setCurrentStyleClass] =
-    React.useState<NamedSentenceStyleClass | null>(null);
+    React.useState<StyleClassData | null>(null);
 
   const styleClasses = draft.styleClasses.getAll().map((styleClass) => (
     <StyleClassItem

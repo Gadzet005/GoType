@@ -52,4 +52,7 @@ contextBridge.exposeInMainWorld("levelDraftAPI", {
     removeDraft: async (draftId) => {
         await ipcRenderer.invoke("remove-draft", draftId);
     },
+    showDraftDir: async (draftId) => {
+        await ipcRenderer.invoke("show-draft-dir", draftId);
+    },
 });

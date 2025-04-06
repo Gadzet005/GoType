@@ -1,11 +1,11 @@
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
 import { useSnackbar } from "@/core/hooks";
-import { getDraft } from "@/core/services/electron/levelDraft/getDraft";
-import { updateDraft } from "@/core/services/electron/levelDraft/updateDraft";
+import { getDraft } from "@/core/services/electron/draft/getDraft";
+import { updateDraft } from "@/core/services/electron/draft/updateDraft";
 import { truncateString } from "@/core/utils/string";
-import { DraftUpdate } from "@desktop-common/draft";
-import { Box, Tabs, Typography } from "@mui/material";
+import { DraftUpdateData } from "@desktop-common/draft";
+import { Box, IconButton, Tabs, Typography } from "@mui/material";
 import structuredClone from "@ungap/structured-clone";
 import { observer } from "mobx-react";
 import React from "react";
@@ -18,6 +18,8 @@ import { TextEditor } from "./panels/TextEditor";
 import { Draft } from "./store/draft";
 import { EditorTab } from "./utils/EditorTab";
 import { EditorTabPanel } from "./utils/EditorTabPanel";
+import FolderIcon from "@mui/icons-material/Folder";
+import { openDraftDir } from "@/core/services/electron/draft/openDraftDir";
 
 interface LevelEditorPageProps {
   draftId: number;
@@ -37,16 +39,18 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
           return;
         }
 
-        const updateInfo: DraftUpdate.Args = {
+        const updateInfo: DraftUpdateData = {
           id: draft.id,
           name: draft.name,
-          sentences: draft.sentences.map((s) => s.toDraftSentenceInfo()),
+          sentences: draft.sentences.map((s) => s.toDraftSentenceData()),
           styleClasses: structuredClone(draft.styleClasses.getAll(), {
             lossy: true,
           }),
           languageCode: draft.language.code,
-          newAudioFile: options?.newAudioFile,
-          newBackgroundFile: options?.newBackgroundFile,
+          audioPath: options?.newAudioFile,
+          background: {
+            path: options?.newBackgroundFile,
+          },
         };
 
         const result = await updateDraft(updateInfo);
@@ -103,9 +107,18 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
               bgcolor: "background.paper",
             }}
           >
-            <Typography variant="h4">
-              {truncateString(draft.name, 20)}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <IconButton
+                onClick={() => {
+                  openDraftDir(draft.id);
+                }}
+              >
+                <FolderIcon fontSize="large" />
+              </IconButton>
+              <Typography variant="h4">
+                {truncateString(draft.name, 20)}
+              </Typography>
+            </Box>
             <Tabs
               value={curTab}
               onChange={(_: any, newTab: number) => setCurTab(newTab)}

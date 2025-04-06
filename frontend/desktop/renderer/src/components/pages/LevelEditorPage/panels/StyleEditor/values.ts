@@ -1,4 +1,4 @@
-import { NamedSentenceStyleClass } from "@desktop-common/draft/style";
+import { StyleClassData } from "@desktop-common/draft/style";
 
 export interface StyleFormValues {
     name: string;
@@ -23,7 +23,7 @@ export interface StyleFormValues {
     };
 }
 
-export function toValues(styleClass: NamedSentenceStyleClass): StyleFormValues {
+export function toValues(styleClass: StyleClassData): StyleFormValues {
     return {
         name: styleClass.name,
         padding: styleClass.padding,
@@ -44,7 +44,7 @@ export function toValues(styleClass: NamedSentenceStyleClass): StyleFormValues {
     };
 }
 
-export function fromValues(values: StyleFormValues): NamedSentenceStyleClass {
+export function fromValues(values: StyleFormValues): StyleClassData {
     return {
         name: values.name,
         padding: values.padding,

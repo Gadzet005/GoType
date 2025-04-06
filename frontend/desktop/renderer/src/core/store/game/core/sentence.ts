@@ -1,6 +1,6 @@
-import { SentenceInfo } from "@desktop-common/level/sentence";
 import { makeObservable, observable } from "mobx";
 import { Letter } from "./letter";
+import { CoreSentenceData } from "@/core/types/game";
 
 export enum SentenceState {
     initial,
@@ -17,18 +17,18 @@ export class Sentence {
     readonly activeDuration: number;
     readonly outroDuration: number;
 
-    constructor(info: SentenceInfo) {
+    constructor(data: CoreSentenceData) {
         makeObservable(this, {
             letters: observable.shallow,
         });
 
-        this.letters = info.content
+        this.letters = data.content
             .split("")
             .map((letter: string) => new Letter(letter));
-        this.showTime = info.showTime;
-        this.introDuration = info.introDuration;
-        this.activeDuration = info.activeDuration;
-        this.outroDuration = info.outroDuration;
+        this.showTime = data.showTime;
+        this.introDuration = data.introDuration;
+        this.activeDuration = data.activeDuration;
+        this.outroDuration = data.outroDuration;
     }
 
     getState(time: number): SentenceState {

@@ -1,10 +1,8 @@
-import { AssetType } from "@/consts";
-import { getLevelUrl } from "@/utils/url";
-import { Asset } from "@desktop-common/asset";
-import { LevelInfo } from "@desktop-common/level";
-import { StyledSentenceInfo } from "@desktop-common/level/sentence";
+import { LevelData } from "@desktop-common/level";
+import { SentenceData } from "@desktop-common/level/sentence";
+import { AssetStorage } from "../assets/assetStorage";
 
-export interface StoredLevelInfo {
+export interface StoredLevelData {
     id: number;
     name: string;
     description: string;
@@ -21,17 +19,10 @@ export interface StoredLevelInfo {
         brightness: number;
     };
     audioExt: string;
-    sentences: StyledSentenceInfo[];
+    sentences: SentenceData[];
 }
 
-function fromStoredAsset(levelId: number, type: AssetType, ext: string): Asset {
-    return {
-        ext: ext,
-        url: getLevelUrl(levelId, type, ext) ?? "",
-    };
-}
-
-export function toStored(level: LevelInfo): StoredLevelInfo {
+export function toStored(level: LevelData): StoredLevelData {
     return {
         id: level.id,
         name: level.name,
@@ -50,25 +41,17 @@ export function toStored(level: LevelInfo): StoredLevelInfo {
     };
 }
 
-export function fromStored(stored: StoredLevelInfo): LevelInfo {
+export function fromStored(
+    stored: StoredLevelData,
+    assets: AssetStorage
+): LevelData {
     return {
-        id: stored.id,
-        name: stored.name,
-        description: stored.description,
-        author: stored.author,
-        duration: stored.duration,
-        tags: stored.tags,
-        languageCode: stored.languageCode,
-        preview: fromStoredAsset(stored.id, "preview", stored.previewExt),
-        audio: fromStoredAsset(stored.id, "audio", stored.audioExt),
+        ...stored,
+        preview: assets.get("preview" + "." + stored.previewExt),
+        audio: assets.get("audio" + "." + stored.audioExt),
         background: {
-            asset: fromStoredAsset(
-                stored.id,
-                "background",
-                stored.background.ext
-            ),
-            brightness: stored.background.brightness,
+            ...stored.background,
+            asset: assets.get("background" + "." + stored.background.ext),
         },
-        sentences: stored.sentences,
     };
 }

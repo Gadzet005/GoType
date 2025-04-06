@@ -1,9 +1,9 @@
 import { failure, PromiseResult, success } from "@/core/types/result";
-import { FileInfo } from "@desktop-common/file";
+import { FileMeta } from "@desktop-common/file";
 
 export async function openOneFileDialog(
     extensions?: string[]
-): PromiseResult<FileInfo | null, string> {
+): PromiseResult<FileMeta | null, string> {
     try {
         const files = await window.appAPI.openFileDialog(extensions);
         if (files.length === 0) {

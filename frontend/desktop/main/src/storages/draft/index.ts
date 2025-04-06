@@ -1,6 +1,5 @@
 import { FileSystemStorage } from "../base/FileSystemStorage";
-import { DraftInfo, DraftUpdate } from "@desktop-common/draft";
-import { fromStored } from "./storedDraftInfo";
+import { DraftData, DraftUpdateData } from "@desktop-common/draft";
 import { StoredDraft } from "./storedDraft";
 import { logError } from "@/utils/common";
 
@@ -17,30 +16,30 @@ export class DraftStorage extends FileSystemStorage {
         return this.idCounter;
     }
 
-    private getStoredDraft(draftId: number): StoredDraft {
+    getStoredDraft(draftId: number): StoredDraft {
         return new StoredDraft(this.root.path(String(draftId)));
     }
 
-    async createDraft(): Promise<DraftInfo> {
+    async createDraft(): Promise<DraftData> {
         const id = this.getNewId();
         const stored = this.getStoredDraft(id);
-        const storedData = await stored.init(id);
+        await stored.init(id);
 
         this.mainStorage.savedLevelDrafts.add(id);
 
-        return fromStored(storedData);
+        return stored.getDraftData();
     }
 
-    async getDraft(draftId: number): Promise<DraftInfo | null> {
+    async getDraft(draftId: number): Promise<DraftData | null> {
         const stored = this.getStoredDraft(draftId);
         const isInited = await stored.isInited();
         if (!isInited) {
             return null;
         }
-        return fromStored(await stored.loadData());
+        return stored.getDraftData();
     }
 
-    async getAllDrafts(): Promise<DraftInfo[]> {
+    async getAllDrafts(): Promise<DraftData[]> {
         const draftIds = this.mainStorage.savedLevelDrafts.getAll();
         const drafts = await Promise.all(
             draftIds.map(async (draftId) => {
@@ -48,12 +47,12 @@ export class DraftStorage extends FileSystemStorage {
                 return draft;
             })
         ).catch(logError("Failed to get all drafts"));
-        return drafts.filter((draft): draft is DraftInfo => draft !== null);
+        return drafts.filter((draft): draft is DraftData => draft !== null);
     }
 
-    async updateDraft(args: DraftUpdate.Args) {
-        const stored = this.getStoredDraft(args.id);
-        await stored.update(args);
+    async updateDraft(updateData: DraftUpdateData) {
+        const stored = this.getStoredDraft(updateData.id);
+        await stored.update(updateData);
     }
 
     async removeDraft(draftId: number) {

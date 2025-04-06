@@ -1,4 +1,4 @@
-import { SentenceStyleClass } from "@desktop-common/draft/style";
+import { StyleClass } from "../types/game";
 
 // Amount of score for actions in the game
 export namespace Score {
@@ -6,7 +6,7 @@ export namespace Score {
 }
 
 export namespace Defaults {
-    export const sentenceStyleClass: SentenceStyleClass = {
+    export const sentenceStyleClass: StyleClass = {
         padding: 0,
         borderRadius: 0,
         rotation: 0,

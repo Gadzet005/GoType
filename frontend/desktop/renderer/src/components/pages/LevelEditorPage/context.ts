@@ -4,8 +4,8 @@ import { requireTrue } from "@/core/utils/panic";
 
 export interface UpdateDraftOptions {
     quite?: boolean;
-    newAudioFile?: string | null;
-    newBackgroundFile?: string | null;
+    newAudioFile?: string;
+    newBackgroundFile?: string;
 }
 
 export interface EditorContextValue {

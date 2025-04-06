@@ -1,6 +1,6 @@
 import { DraftStorage } from "@/storages/draft";
-import { DraftInfo, DraftUpdate } from "@desktop-common/draft";
-import { ipcMain } from "electron";
+import { DraftData, DraftUpdateData } from "@desktop-common/draft";
+import { ipcMain, shell } from "electron";
 
 export function initDraftAPIHandlers(draftStorage: DraftStorage) {
     ipcMain.handle("get-all-drafts", async () => {
@@ -17,13 +17,19 @@ export function initDraftAPIHandlers(draftStorage: DraftStorage) {
 
     ipcMain.handle(
         "update-draft",
-        async (_, args: DraftUpdate.Args): Promise<DraftInfo> => {
+        async (_, args: DraftUpdateData): Promise<DraftData> => {
             await draftStorage.updateDraft(args);
-            return (await draftStorage.getDraft(args.id))!;
+            const draft = await draftStorage.getDraft(args.id);
+            return draft!;
         }
     );
 
     ipcMain.handle("remove-draft", async (_, draftId: number) => {
         await draftStorage.removeDraft(draftId);
+    });
+
+    ipcMain.handle("show-draft-dir", async (_, draftId: number) => {
+        const stored = draftStorage.getStoredDraft(draftId);
+        shell.openPath(stored.path());
     });
 }
