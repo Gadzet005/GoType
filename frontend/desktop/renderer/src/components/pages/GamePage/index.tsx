@@ -1,6 +1,5 @@
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { Button } from "@/components/ui/Button";
-import { tickTime } from "@/core/config/game.config";
 import { RoutePath } from "@/core/config/routes/path";
 import { useNavigate } from "@/core/hooks";
 import { GameRunner } from "@/core/store/game";
@@ -25,7 +24,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
 
   const [game] = React.useState<Game>(new Game(level));
   const [gameRunner] = React.useState<GameRunner>(
-    new GameRunner(game, tickTime)
+    new GameRunner(game)
   );
 
   const handleResume = React.useCallback(() => {

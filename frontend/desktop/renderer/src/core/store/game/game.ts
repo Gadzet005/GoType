@@ -33,11 +33,8 @@ export class Game {
         requireTrue(info.duration > 0, "duration must be greater than 0");
 
         makeObservable(this, {
-            statistics: observable,
             // @ts-expect-error: private observable
             time_: observable,
-            field: observable,
-            cursor: observable,
             status: observable,
 
             time: computed,

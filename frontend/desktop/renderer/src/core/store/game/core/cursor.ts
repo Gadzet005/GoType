@@ -15,8 +15,8 @@ export interface CursorPosition {
 }
 
 export class Cursor {
+    readonly lang: Language;
     private readonly sentences: Sentence[];
-    private readonly lang: Language;
     private position: CursorPosition = {
         sentence: 0,
         letter: 0,

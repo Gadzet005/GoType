@@ -6,13 +6,13 @@ export class Level {
     private readonly info: LevelInfo;
     readonly language: Language;
 
-    constructor(levelData: LevelInfo) {
-        this.info = levelData;
+    constructor(levelInfo: LevelInfo) {
+        this.info = levelInfo;
 
-        const lang = Language.byCode(levelData.languageCode);
+        const lang = Language.byCode(levelInfo.languageCode);
         requireTrue(
             lang !== null,
-            `Unknown language code=${levelData.languageCode}`
+            `Unknown language code=${levelInfo.languageCode}`
         );
         this.language = lang!;
     }

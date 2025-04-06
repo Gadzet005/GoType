@@ -2,21 +2,19 @@ import { Game } from "./game";
 
 export class GameRunner {
     readonly game: Game;
-    readonly tickTime: number;
-    private stepTimeout: NodeJS.Timeout | null = null;
     private timePassed: number = 0;
     private lastStepTime: number | null = null;
+    private frameRequest: number | null = null;
 
-    constructor(game: Game, tickTime: number) {
+    constructor(game: Game) {
         this.game = game;
-        this.tickTime = tickTime;
     }
 
     private stop() {
-        if (this.stepTimeout) {
-            clearTimeout(this.stepTimeout);
+        if (this.frameRequest !== null) {
+            cancelAnimationFrame(this.frameRequest);
+            this.frameRequest = null;
         }
-        this.stepTimeout = null;
         this.lastStepTime = null;
     }
 
@@ -26,21 +24,19 @@ export class GameRunner {
         this.timePassed = 0;
     }
 
-    private step() {
-        const stepStartTime = Date.now();
+    private step(time: number) {
         if (this.lastStepTime) {
-            this.timePassed += stepStartTime - this.lastStepTime;
+            this.timePassed += time - this.lastStepTime;
         }
-        this.lastStepTime = stepStartTime;
+        this.lastStepTime = time;
 
         this.game.step(this.timePassed);
         if (this.game.isFinished()) {
             this.stop();
         } else {
-            const timeout = this.tickTime - Date.now() + stepStartTime;
-            this.stepTimeout = setTimeout(() => {
-                this.step();
-            }, Math.max(0, timeout));
+            this.frameRequest = requestAnimationFrame((time) =>
+                this.step(time)
+            );
         }
     }
 
@@ -50,7 +46,7 @@ export class GameRunner {
         }
 
         this.game.start();
-        this.step();
+        this.frameRequest = requestAnimationFrame((time) => this.step(time));
     }
 
     finish() {

@@ -1,8 +1,5 @@
 import { SentenceStyleClass } from "@desktop-common/draft/style";
 
-// 60 fps
-export const tickTime = 16.6;
-
 // Amount of score for actions in the game
 export namespace Score {
     export const letter: number = 10;
