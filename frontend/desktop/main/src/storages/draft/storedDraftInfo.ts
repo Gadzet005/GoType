@@ -22,6 +22,7 @@ export function toStored(draft: DraftInfo): StoredDraftInfo {
         sentences: draft.sentences,
         styleClasses: draft.styleClasses,
         updateTime: draft.updateTime,
+        languageCode: draft.languageCode,
     };
 }
 
@@ -37,6 +38,7 @@ export function fromStored(storedDraft: StoredDraftInfo): DraftInfo {
         sentences: storedDraft.sentences,
         styleClasses: storedDraft.styleClasses,
         updateTime: storedDraft.updateTime,
+        languageCode: storedDraft.languageCode,
     };
 }
 
@@ -49,5 +51,6 @@ export function defaultStoredDraftData(id: number): StoredDraftInfo {
         audio: null,
         name: getDefaultDraftName(id),
         updateTime: Date.now(),
+        languageCode: "eng",
     };
 }

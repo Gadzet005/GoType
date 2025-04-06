@@ -1,18 +1,17 @@
 import { Field, Form, Formik } from "formik";
 import * as yup from "yup";
 import { useEditorContext } from "../../context";
-import { TextField } from "formik-mui";
+import { Select, TextField } from "formik-mui";
 import { FileField } from "@/components/common/form/FileField";
-import { Button, Stack } from "@mui/material";
+import { Button, MenuItem, Stack } from "@mui/material";
 import { AllowedAssetExtensions } from "@/core/config/asset.config";
-import { DraftUpdate } from "@desktop-common/draft";
-import { updateDraft } from "@/core/services/electron/levelDraft/updateDraft";
-import { useSnackbar } from "@/core/hooks";
+import { availableLanguages } from "@/core/config/lang.config";
 
 interface SettingsFormValues {
-  name?: string;
+  name: string;
   audio?: string | null;
   background?: string | null;
+  lang: string;
 }
 
 const validationSchema = yup.object().shape({
@@ -22,31 +21,20 @@ const validationSchema = yup.object().shape({
 });
 
 export const SettingsForm = () => {
-  const snackbar = useSnackbar();
-  const { draft } = useEditorContext();
+  const { draft, updateDraft } = useEditorContext();
 
   const handleSubmit = async (values: SettingsFormValues) => {
-    const updateInfo: DraftUpdate.Args = {
-      id: draft.id,
-      name: values.name,
+    draft.setName(values.name);
+    draft.setLanguage(values.lang);
+    await updateDraft({
       newAudioFile: values.audio,
       newBackgroundFile: values.background,
-    };
-
-    const result = await updateDraft(updateInfo);
-    if (result.ok) {
-      draft.setName(result.payload.name);
-      draft.setAudio(result.payload.audio);
-      draft.setBackground(result.payload.background);
-      snackbar.show("Изменения сохранены", "success");
-    } else {
-      snackbar.show("Ошибка при сохранении изменений", "error");
-    }
+    });
   };
 
   return (
     <Formik
-      initialValues={{ name: draft.name }}
+      initialValues={{ name: draft.name, lang: draft.language.code }}
       validationSchema={validationSchema}
       onSubmit={async (values: SettingsFormValues, { setSubmitting }) => {
         await handleSubmit(values);
@@ -57,6 +45,13 @@ export const SettingsForm = () => {
         <Form>
           <Stack spacing={2}>
             <Field name="name" label="Название" component={TextField} />
+            <Field name="lang" label="Язык" component={Select}>
+              {availableLanguages.map((lang) => (
+                <MenuItem value={lang.code} key={lang.code}>
+                  {lang.name}
+                </MenuItem>
+              ))}
+            </Field>
             <Field
               name="audio"
               label="Аудио"

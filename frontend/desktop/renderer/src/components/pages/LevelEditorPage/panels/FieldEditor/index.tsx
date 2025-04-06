@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { useEditorContext } from "../context";
+import { useEditorContext } from "../../context";
 import { observer } from "mobx-react";
 import { CenterBox } from "@/components/common/CenterBox";
 

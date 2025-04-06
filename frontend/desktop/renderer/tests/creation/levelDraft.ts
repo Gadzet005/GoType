@@ -14,6 +14,7 @@ export function createLevelDraft(
             ext: "mp3",
             url: "",
         },
+        languageCode: "eng",
         updateTime: 1000,
         background: null,
         sentences: sentences,

@@ -11,6 +11,7 @@ export interface DraftInfo {
     updateTime: number;
     audio: NamedAsset | null;
     background: NamedAsset | null;
+    languageCode: string;
     sentences: DraftSentenceInfo[];
     styleClasses: NamedSentenceStyleClass[];
 }
@@ -21,7 +22,7 @@ export namespace DraftUpdate {
     type RequiredArgs = Pick<DraftInfo, "id">;
     type NoRequiredArgs = Pick<
         DraftInfo,
-        "name" | "sentences" | "styleClasses"
+        "name" | "sentences" | "styleClasses" | "languageCode"
     >;
 
     /**

@@ -1,6 +1,7 @@
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
 import { useSnackbar } from "@/core/hooks";
+import { getDraft } from "@/core/services/electron/levelDraft/getDraft";
 import { updateDraft } from "@/core/services/electron/levelDraft/updateDraft";
 import { truncateString } from "@/core/utils/string";
 import { DraftUpdate } from "@desktop-common/draft";
@@ -9,15 +10,14 @@ import structuredClone from "@ungap/structured-clone";
 import { observer } from "mobx-react";
 import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { EditorContext } from "./context";
-import { Draft } from "./store/draft";
+import { EditorContext, UpdateDraftOptions } from "./context";
 import { FieldEditor } from "./panels/FieldEditor";
 import { Settings } from "./panels/Settings";
 import { StyleEditor } from "./panels/StyleEditor";
 import { TextEditor } from "./panels/TextEditor";
+import { Draft } from "./store/draft";
 import { EditorTab } from "./utils/EditorTab";
 import { EditorTabPanel } from "./utils/EditorTabPanel";
-import { getDraft } from "@/core/services/electron/levelDraft/getDraft";
 
 interface LevelEditorPageProps {
   draftId: number;
@@ -32,7 +32,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
     const [draft, setDraft] = React.useState<Draft | null>(null);
 
     const update = React.useCallback(
-      async (quite: boolean = false) => {
+      async (options?: UpdateDraftOptions) => {
         if (!draft) {
           return;
         }
@@ -44,12 +44,15 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
           styleClasses: structuredClone(draft.styleClasses.getAll(), {
             lossy: true,
           }),
+          languageCode: draft.language.code,
+          newAudioFile: options?.newAudioFile,
+          newBackgroundFile: options?.newBackgroundFile,
         };
 
         const result = await updateDraft(updateInfo);
         if (result.ok) {
           setDraft(new Draft(result.payload));
-          if (!quite) {
+          if (!options?.quite) {
             snakbar.show("Изменения сохранены", "success");
           }
         } else {
@@ -117,7 +120,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
               color="success"
               label="Сохранить и выйти"
               href={RoutePath.levelDraftList}
-              onBack={() => update(true)}
+              onBack={() => update({ quite: true })}
             />
           </Box>
 

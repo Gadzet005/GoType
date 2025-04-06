@@ -94,6 +94,9 @@ export class StoredDraft {
         if (args.styleClasses) {
             data.styleClasses = args.styleClasses;
         }
+        if (args.languageCode) {
+            data.languageCode = args.languageCode;
+        }
         if (args.newAudioFile !== undefined) {
             data.audio = await this.updateAsset("audio", args.newAudioFile);
         }
