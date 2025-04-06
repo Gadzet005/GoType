@@ -6,16 +6,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton,
-  Slider,
 } from "@mui/material";
 import React from "react";
 import { AudioPlayer } from "react-use-audio-player";
 import { timeView } from "./utils";
 import { Mark } from "@mui/material/Slider/useSlider.types";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import StopIcon from "@mui/icons-material/Stop";
 import { useAudioTime } from "@/core/hooks/useAudioTime";
+import { AudioPlayerView } from "@/components/common/AudioPlayerView";
 
 function toSeconds(t: number | null) {
   return t && Math.round(t / 1000);
@@ -87,46 +84,13 @@ export const EditTimingDialog: React.FC<EditTimingDialogProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle variant="h4">{content}</DialogTitle>
       <DialogContent>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            pt: 5,
-            pr: 3,
-            gap: 3,
-          }}
-        >
-          <IconButton
-            onClick={() => {
-              if (player.playing) {
-                player.pause();
-              } else {
-                setStep(ChoiceStep.showTime);
-                player.play();
-              }
-            }}
-          >
-            {player.playing ? (
-              <StopIcon fontSize="large" />
-            ) : (
-              <PlayArrowIcon fontSize="large" />
-            )}
-          </IconButton>
-          <Slider
-            size="medium"
-            min={0}
-            max={Math.round(player.duration)}
-            step={0.1}
+        <Box sx={{ pt: 5, pr: 3 }}>
+          <AudioPlayerView
+            player={player}
+            onPlay={() => setStep(ChoiceStep.showTime)}
             valueLabelFormat={(value) => timeView(toMilliseconds(value))}
             valueLabelDisplay="on"
-            value={time}
             marks={getMarks(showTime, duration)}
-            onChange={(_, value) => {
-              if (typeof value === "number") {
-                player.seek(value);
-              }
-            }}
-            disabled={player.playing}
           />
         </Box>
         <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
@@ -139,8 +103,13 @@ export const EditTimingDialog: React.FC<EditTimingDialogProps> = ({
                 setDuration(null);
                 setStep(ChoiceStep.duration);
               } else if (step === ChoiceStep.duration) {
-                setDuration(time - showTime!);
-                setStep(ChoiceStep.done);
+                const duration = time - showTime!;
+                if (duration > 0) {
+                  setDuration(time - showTime!);
+                  setStep(ChoiceStep.done);
+                } else {
+                  setShowTime(time);
+                }
               }
             }}
           >

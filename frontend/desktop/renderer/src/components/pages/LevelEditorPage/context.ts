@@ -1,6 +1,7 @@
 import React from "react";
 import { Draft } from "./store/draft";
 import { requireTrue } from "@/core/utils/panic";
+import { AudioPlayer } from "react-use-audio-player";
 
 export interface UpdateDraftOptions {
     quite?: boolean;
@@ -11,6 +12,7 @@ export interface UpdateDraftOptions {
 export interface EditorContextValue {
     draft: Draft;
     updateDraft: (options?: UpdateDraftOptions) => Promise<void>;
+    audioPlayer: AudioPlayer;
 }
 
 export const EditorContext = React.createContext<EditorContextValue | null>(
@@ -18,7 +20,7 @@ export const EditorContext = React.createContext<EditorContextValue | null>(
 );
 
 export function useEditorContext(): EditorContextValue {
-    const draft = React.useContext(EditorContext);
-    requireTrue(draft !== null, "EditorContext is not available");
-    return draft!;
+    const ctx = React.useContext(EditorContext);
+    requireTrue(ctx !== null, "EditorContext is not available");
+    return ctx!;
 }

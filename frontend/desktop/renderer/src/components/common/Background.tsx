@@ -60,7 +60,7 @@ export const Background: React.FC<BackgroundProps> = ({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: `rgba(0, 0, 0, ${brightness})`,
+          backgroundColor: `rgba(0, 0, 0, ${1 - brightness})`,
         },
       }}
     />

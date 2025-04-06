@@ -8,29 +8,13 @@ import { LoadTextDialog } from "./LoadTextDialog";
 import { SentenceList } from "./SentenceList";
 import { DraftSentence } from "../../store/draftSentence";
 import { EditTimingDialog } from "./EditTimingDialog";
-import { useAudioPlayer } from "react-use-audio-player";
 
 export const TextEditor = observer(() => {
-  const { draft } = useEditorContext();
-  const audioPlayer = useAudioPlayer();
+  const { draft, audioPlayer } = useEditorContext();
 
   const [loadTextDialogOpen, setLoadTextDialogOpen] = React.useState(false);
   const [selectedSentence, setSelectedSentence] =
     React.useState<DraftSentence | null>(null);
-
-  React.useEffect(() => {
-    if (!draft.audio) {
-      return;
-    }
-
-    audioPlayer.load(draft.audio.url, {
-      autoplay: false,
-      loop: false,
-      format: draft.audio.ext,
-    });
-    return () => audioPlayer.cleanup();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draft.audio]);
 
   if (!draft.audio) {
     return (

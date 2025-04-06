@@ -7,30 +7,32 @@ import { reaction } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useAudioPlayer } from "react-use-audio-player";
+import { AudioPlayer } from "react-use-audio-player";
 
 interface GameViewProps {
   game: Game;
-  audio: Asset;
+  audioPlayer: AudioPlayer;
   background: {
     asset: Asset;
     brightness?: number;
   };
   disableInput?: boolean;
   onReadyToStart?: () => void;
+  fullScreen?: boolean;
 }
 
 export const GameView: React.FC<GameViewProps> = observer(
   ({
     game,
-    audio,
+    audioPlayer,
     background,
     disableInput = false,
+    fullScreen = false,
     onReadyToStart = () => {},
   }) => {
     background.brightness ??= 1;
 
-    const audioPlayer = useAudioPlayer();
+    const [isBackgroundLoading, setIsBackgroundLoading] = React.useState(true);
 
     useHotkeys(
       game.language.alphabet.split(""),
@@ -42,29 +44,16 @@ export const GameView: React.FC<GameViewProps> = observer(
       []
     );
 
-    const [loadCount, setLoadCount] = React.useState(0);
-
     React.useEffect(() => {
-      audioPlayer.load(audio.url, {
-        autoplay: true,
-        loop: false,
-        format: audio.ext,
-      });
-      return () => audioPlayer.cleanup();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [audio]);
-
-    React.useEffect(() => {
-      if (audioPlayer.isReady) {
-        setLoadCount((v) => v + 1);
-      }
-    }, [audioPlayer.isReady]);
-
-    React.useEffect(() => {
-      if (loadCount == 2) {
+      if (!isBackgroundLoading && audioPlayer.isReady) {
         onReadyToStart();
+        if (game.isRunning()) {
+          audioPlayer.seek(0);
+          audioPlayer.play();
+        }
       }
-    }, [loadCount, onReadyToStart]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [onReadyToStart, isBackgroundLoading, audioPlayer.isReady]);
 
     React.useEffect(() => {
       const disposer1 = reaction(
@@ -88,15 +77,20 @@ export const GameView: React.FC<GameViewProps> = observer(
         disposer1();
         disposer2();
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [audioPlayer]);
+    }, [audioPlayer, game]);
 
     return (
-      <Box sx={{ height: "100%" }}>
+      <Box
+        sx={{
+          position: fullScreen ? "static" : "relative",
+          height: "100%",
+          p: 2,
+        }}
+      >
         <Background
           imageUrl={background.asset.url}
           brightness={background.brightness}
-          onLoad={() => setLoadCount((v) => v + 1)}
+          onLoad={() => setIsBackgroundLoading(false)}
         />
         <GameFieldView game={game} />
       </Box>

@@ -20,6 +20,7 @@ import { EditorTab } from "./utils/EditorTab";
 import { EditorTabPanel } from "./utils/EditorTabPanel";
 import FolderIcon from "@mui/icons-material/Folder";
 import { openDraftDir } from "@/core/services/electron/draft/openDraftDir";
+import { useAutoLoadAudioPlayer } from "@/core/hooks/useAutoLoadAudioPlayer";
 
 interface LevelEditorPageProps {
   draftId: number;
@@ -32,6 +33,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
 
     const [curTab, setCurTab] = React.useState(initialTab);
     const [draft, setDraft] = React.useState<Draft | null>(null);
+    const audioPlayer = useAutoLoadAudioPlayer(draft?.audio ?? undefined);
 
     const update = React.useCallback(
       async (options?: UpdateDraftOptions) => {
@@ -50,6 +52,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
           audioPath: options?.newAudioFile,
           background: {
             path: options?.newBackgroundFile,
+            brightness: draft.background.brightness,
           },
         };
 
@@ -61,9 +64,11 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
           }
         } else {
           snakbar.show("Ошибка при сохранении изменений", "error");
+          console.error(result.error);
         }
       },
-      [draft, snakbar]
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [draft]
     );
 
     useHotkeys("ctrl+s", () => update(), [update]);
@@ -92,6 +97,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
         value={{
           draft,
           updateDraft: update,
+          audioPlayer,
         }}
       >
         <Box sx={{ height: "100%" }}>
@@ -101,7 +107,6 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              mb: 2,
               gap: 5,
               p: 2,
               bgcolor: "background.paper",
@@ -137,7 +142,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
             />
           </Box>
 
-          <EditorTabPanel value={curTab} index={0}>
+          <EditorTabPanel sx={{ mt: 0 }} value={curTab} index={0}>
             <FieldEditor />
           </EditorTabPanel>
           <EditorTabPanel value={curTab} index={1}>

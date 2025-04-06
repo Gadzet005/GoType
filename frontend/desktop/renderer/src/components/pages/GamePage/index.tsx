@@ -14,6 +14,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { ComboCounter } from "./ComboCounter";
 import PauseMenu from "./PauseMenu";
 import { GameView } from "@/components/game/GameView";
+import { useAutoLoadAudioPlayer } from "@/core/hooks/useAutoLoadAudioPlayer";
 
 interface GamePageProps {
   level: Level;
@@ -21,11 +22,10 @@ interface GamePageProps {
 
 export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   const navigate = useNavigate();
+  const audioPlayer = useAutoLoadAudioPlayer(level.audio);
 
   const [game] = React.useState<Game>(new Game(level));
-  const [gameRunner] = React.useState<GameRunner>(
-    new GameRunner(game)
-  );
+  const [gameRunner] = React.useState<GameRunner>(new GameRunner(game));
 
   const handleResume = React.useCallback(() => {
     gameRunner.start();
@@ -62,7 +62,9 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
     );
     return () => {
       disposer();
-      gameRunner.finish();
+      if (game.isRunning()) {
+        gameRunner.pause();
+      }
     };
   }, [game, level, gameRunner, navigate]);
 
@@ -134,8 +136,9 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
       <GameView
         game={game}
         background={level.background}
-        audio={level.audio}
+        audioPlayer={audioPlayer}
         onReadyToStart={handleRestart}
+        fullScreen
       />
     </Stack>
   );

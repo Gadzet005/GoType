@@ -70,21 +70,15 @@ export class Game {
     }
 
     start() {
-        if (this.status !== GameStatus.finished) {
-            this.status = GameStatus.running;
-        }
+        this.status = GameStatus.running;
     }
 
     finish() {
-        if (this.status !== GameStatus.idle) {
-            this.status = GameStatus.finished;
-        }
+        this.status = GameStatus.finished;
     }
 
     pause() {
-        if (this.status === GameStatus.running) {
-            this.status = GameStatus.paused;
-        }
+        this.status = GameStatus.paused;
     }
 
     isRunning() {

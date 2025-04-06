@@ -6,7 +6,7 @@ import { GameView } from "@/components/game/GameView";
 import { Draft } from "../../store/draft";
 import React from "react";
 import { Game } from "@/core/store/game";
-import { useAudioPlayer } from "react-use-audio-player";
+import { AudioPlayerView } from "@/components/common/AudioPlayerView";
 
 function draftSentences(draft: Draft) {
   return draft.sentences
@@ -15,15 +15,15 @@ function draftSentences(draft: Draft) {
 }
 
 export const FieldEditor = observer(() => {
-  const audioPlayer = useAudioPlayer();
-  const { draft } = useEditorContext();
+  const { draft, audioPlayer } = useEditorContext();
 
-  const [game, setGame] = React.useState<Game | null>();
+  const [game, setGame] = React.useState<Game | null>(null);
 
   React.useEffect(() => {
     if (!audioPlayer.isReady) {
       return;
     }
+
     setGame(
       new Game({
         sentences: draftSentences(draft),
@@ -32,6 +32,14 @@ export const FieldEditor = observer(() => {
       })
     );
   }, [audioPlayer.duration, audioPlayer.isReady, draft]);
+
+  React.useEffect(() => {
+    audioPlayer.seek(0);
+    return () => {
+      audioPlayer.pause();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!draft.audio || !draft.background) {
     return (
@@ -52,18 +60,29 @@ export const FieldEditor = observer(() => {
       sx={{
         height: "100%",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        flexDirection: "column",
       }}
     >
-      <GameView
-        game={game}
-        audio={draft.audio}
-        background={{
-          asset: draft.background.asset!,
-          brightness: draft.background.brightness,
-        }}
-      />
+      <Box sx={{ width: "100%", px: 5, py: 1 }}>
+        <AudioPlayerView
+          player={audioPlayer}
+          step={0.1}
+          onTimeChange={(time) => {
+            game.step(time);
+          }}
+        />
+      </Box>
+      <Box sx={{ flex: 1 }}>
+        <GameView
+          game={game}
+          audioPlayer={audioPlayer}
+          background={{
+            asset: draft.background.asset!,
+            brightness: draft.background.brightness,
+          }}
+          disableInput
+        />
+      </Box>
     </Box>
   );
 });
