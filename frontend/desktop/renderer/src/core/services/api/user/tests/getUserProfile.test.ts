@@ -9,10 +9,14 @@ import { Dummy } from "./dummy";
 import { UserDummy } from "@tests/creation/user";
 
 describe("LoadUserProfile tests", () => {
+    const config = {
+        backendURL: "",
+        isDev: true,
+    };
     let ctx: AppContext;
 
     beforeEach(() => {
-        ctx = new GlobalAppContext();
+        ctx = new GlobalAppContext(config);
     });
 
     it("positive", async () => {

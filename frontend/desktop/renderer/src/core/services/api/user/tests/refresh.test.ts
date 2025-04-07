@@ -8,11 +8,15 @@ import { Refresh } from "@/core/types/api/user";
 import { UserDummy } from "@tests/creation/user";
 
 describe("Refresh tests", () => {
+    const config = {
+        backendURL: "",
+        isDev: true,
+    };
     let ctx: AppContext;
 
     beforeEach(() => {
         vi.restoreAllMocks();
-        ctx = new GlobalAppContext(UserDummy.create(true));
+        ctx = new GlobalAppContext(config, UserDummy.create(true));
     });
 
     it("positive", async () => {

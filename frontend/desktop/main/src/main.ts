@@ -20,8 +20,7 @@ import { LevelStorage } from "./storages/level";
 import { DraftStorage } from "./storages/draft";
 import { MainStorage } from "./storages/main";
 import { logError } from "./utils/common";
-
-const isDev = process.env.ELECTRON_IS_DEV ?? false;
+import { appConfig } from "./config";
 
 protocol.registerSchemesAsPrivileged([
     {
@@ -44,11 +43,10 @@ function createWindow(): BrowserWindow {
         frame: false,
     });
 
-    const startUrl = isDev
-        ? process.env.ELECTRON_START_URL ?? ""
-        : url
-              .pathToFileURL(path.join(__dirname, "../dist/index.html"))
-              .toString();
+    const productionURL = url
+        .pathToFileURL(path.join(__dirname, "../dist/index.html"))
+        .toString();
+    const startUrl = appConfig.isDev ? appConfig.devRendererURL : productionURL;
 
     mainWindow.maximize();
     mainWindow.loadURL(startUrl);
@@ -56,7 +54,7 @@ function createWindow(): BrowserWindow {
 }
 
 app.whenReady().then(() => {
-    if (isDev) {
+    if (appConfig.isDev) {
         installExtension(REACT_DEVELOPER_TOOLS).catch(
             logError("Can't install REACT_DEVELOPER_TOOLS")
         );

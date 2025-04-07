@@ -4,7 +4,7 @@
   "license": "MIT",
   "main": "src/main.ts",
   "scripts": {
-    "dev": "ELECTRON_IS_DEV=1 ELECTRON_START_URL='http://localhost:5173' NODE_OPTIONS='--import tsx' yarn electron . 2>/dev/null"
+    "dev": "ELECTRON_IS_DEV=1 NODE_OPTIONS='--import tsx' yarn electron . 2>/dev/null"
   },
   "dependencies": {
     "electron-store": "8.2.0",

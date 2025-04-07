@@ -5,6 +5,7 @@ import { AppContext as AppCtx } from "@/core/types/base/app";
 import { observer } from "mobx-react";
 import React from "react";
 import { AppContext } from "./context";
+import { appConfig } from "@/core/config/app.config";
 
 interface AppContextProviderProps {
   initialUser?: User;
@@ -17,7 +18,9 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = observer(
       initialUser = new User();
     }
 
-    const [context] = React.useState<AppCtx>(new GlobalAppContext(initialUser));
+    const [context] = React.useState<AppCtx>(
+      new GlobalAppContext(appConfig, initialUser)
+    );
 
     const loadUser = React.useCallback(async () => {
       const result = await getUserInfo();

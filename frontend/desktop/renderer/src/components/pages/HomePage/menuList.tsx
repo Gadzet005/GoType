@@ -30,12 +30,6 @@ export const menuList: MenuItem[] = [
     icon: <ModeEditOutlineIcon />,
   },
   {
-    label: "Тестовый редактор",
-    href: RoutePath.testLevelEditor,
-    accessType: AccessType.forAuth,
-    icon: <ModeEditOutlineIcon />,
-  },
-  {
     label: "Профиль",
     href: RoutePath.profile,
     accessType: AccessType.forAuth,
@@ -50,5 +44,14 @@ export const menuList: MenuItem[] = [
     },
     icon: <ExitToAppIcon />,
     color: "error",
+  },
+];
+
+export const devMenuList: MenuItem[] = [
+  {
+    label: "Тестовый редактор",
+    href: RoutePath.testLevelEditor,
+    accessType: AccessType.forAuth,
+    color: "warning",
   },
 ];

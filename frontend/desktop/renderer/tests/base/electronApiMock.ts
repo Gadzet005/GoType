@@ -24,6 +24,7 @@ export namespace ElectronAPIMock {
     export const App = {
         quitApp: vi.fn(),
         openFileDialog: vi.fn(),
+        getConfig: vi.fn(),
     };
 }
 

@@ -7,6 +7,9 @@ contextBridge.exposeInMainWorld("appAPI", {
     openFileDialog: async (extensions) => {
         return await ipcRenderer.invoke("openFileDialog", extensions);
     },
+    getConfig: async () => {
+        return await ipcRenderer.invoke("get-config");
+    },
 });
 
 contextBridge.exposeInMainWorld("userAPI", {

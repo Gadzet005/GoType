@@ -12,13 +12,17 @@ export const BaseAuthTests = (
     serviceArgs: any,
     serviceResult: any
 ) => {
+    const config = {
+        backendURL: "",
+        isDev: true,
+    };
     let user: IUser;
     let ctx: AppContext;
 
     beforeEach(() => {
         vi.resetAllMocks();
         user = new User();
-        ctx = new GlobalAppContext(user);
+        ctx = new GlobalAppContext(config, user);
 
         requestMock.post.mockResolvedValue({
             data: serviceResult,

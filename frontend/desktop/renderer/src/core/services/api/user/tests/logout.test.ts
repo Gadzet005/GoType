@@ -8,13 +8,17 @@ import { AppContext } from "@/core/types/base/app";
 import { IUser } from "@/core/types/base/user";
 
 describe("logout test", () => {
+    const config = {
+        backendURL: "",
+        isDev: true,
+    };
     let user: IUser;
     let ctx: AppContext;
 
     beforeEach(() => {
         vi.restoreAllMocks();
         user = UserDummy.create(true);
-        ctx = new GlobalAppContext(user);
+        ctx = new GlobalAppContext(config, user);
     });
 
     it("positive", async () => {

@@ -3,6 +3,8 @@ import { FileMeta } from "@desktop-common/file";
 import jetpack from "fs-jetpack";
 import path from "path";
 import { getExt } from "@/utils/path";
+import { appConfig } from "@/config";
+import { AppConfig } from "@desktop-common/config";
 
 export function initAppAPIHandlers() {
     ipcMain.handle("quit-app", async () => {
@@ -42,4 +44,11 @@ export function initAppAPIHandlers() {
             return rawFileInfoList.filter((item) => item !== null);
         }
     );
+
+    ipcMain.handle("get-config", async (): Promise<AppConfig> => {
+        return {
+            isDev: appConfig.isDev,
+            backendURL: appConfig.backendURL,
+        };
+    });
 }

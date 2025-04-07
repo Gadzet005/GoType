@@ -2,12 +2,14 @@ import { LevelData } from "@desktop-common/level";
 import { UserInfo } from "@desktop-common/user";
 import { FileMeta } from "@desktop-common/file";
 import { DraftUpdateData, DraftData } from "@desktop-common/draft";
+import { AppConfig } from "@desktop-common/config";
 
 declare global {
     interface Window {
         appAPI: {
             quitApp: () => Promise<void>;
             openFileDialog: (extensions?: string[]) => Promise<FileMeta[]>;
+            getConfig: () => Promise<AppConfig>;
         };
         userAPI: {
             getUserInfo: () => Promise<UserInfo>;
