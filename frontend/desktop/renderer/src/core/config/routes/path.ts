@@ -6,7 +6,9 @@ export enum RoutePath {
     signUp = "sign-up",
     profile = "profile",
     levelList = "level-list",
-    editor = "editor",
     game = "game",
     gameStatistics = "game-statistics",
+    levelEditor = "level-editor",
+    testLevelEditor = "test-level-editor",
+    levelDraftList = "level-draft-list",
 }

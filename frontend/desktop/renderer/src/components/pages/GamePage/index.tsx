@@ -1,69 +1,74 @@
+import { ProgressBar } from "@/components/common/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import { RoutePath } from "@/core/config/routes/path";
-import { useKeyboard, useNavigate, useTitle } from "@/core/hooks";
-import { Game } from "@/core/store/game";
-import { Level } from "@desktop-common/level";
+import { useNavigate } from "@/core/hooks";
+import { GameRunner } from "@/core/store/game";
+import { Game } from "@/core/store/game/game";
+import { Level } from "@/core/store/game/level";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, LinearProgress, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { when } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { GameField } from "./GameField";
+import { useHotkeys } from "react-hotkeys-hook";
+import { ComboCounter } from "./ComboCounter";
 import PauseMenu from "./PauseMenu";
-
-import "./index.css";
+import { GameView } from "@/components/game/GameView";
+import { useAutoLoadAudioPlayer } from "@/core/hooks/useAutoLoadAudioPlayer";
 
 interface GamePageProps {
   level: Level;
 }
 
 export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
-  useTitle("Игра");
-
   const navigate = useNavigate();
+  const audioPlayer = useAutoLoadAudioPlayer(level.audio);
+
   const [game] = React.useState<Game>(new Game(level));
+  const [gameRunner] = React.useState<GameRunner>(new GameRunner(game));
+  const [isGameReady, setIsGameReady] = React.useState<boolean>(false);
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (game.isRunning) {
-      game.input(event.key);
-    }
-  };
+  useHotkeys(
+    game.language.alphabet.split(""),
+    (event: KeyboardEvent) => {
+      if (game.isRunning()) {
+        game.input(event.key);
+      }
+    },
+    []
+  );
 
-  const handleResume = () => {
-    game.start();
-  };
+  const resumeGame = React.useCallback(() => {
+    gameRunner.start();
+    audioPlayer.seek((game.duration * game.getProgress()) / 1000);
+    audioPlayer.play();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game, gameRunner]);
 
-  const handlePause = () => {
-    game.pause();
-  };
+  const pauseGame = React.useCallback(() => {
+    gameRunner.pause();
+    audioPlayer.pause();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameRunner]);
 
-  const handleRestart = () => {
-    game.init();
-    game.start();
-  };
+  const restartGame = React.useCallback(() => {
+    gameRunner.reset();
+    resumeGame();
+  }, [gameRunner, resumeGame]);
 
-  const handleTogglePause = () => {
-    if (game.isPaused) {
-      handleResume();
+  const handleTogglePause = React.useCallback(() => {
+    if (game.isPaused()) {
+      resumeGame();
     } else {
-      handlePause();
+      pauseGame();
     }
-  };
+  }, [game, resumeGame, pauseGame]);
 
-  useKeyboard("Escape", handleTogglePause);
-  useKeyboard(null, handleKeyDown);
-
-  React.useEffect(() => {
-    game.init();
-    game.start();
-    return () => {
-      game.pause();
-    };
-  }, [game]);
+  useHotkeys("esc", handleTogglePause);
 
   React.useEffect(() => {
-    when(
-      () => game.isFinished,
+    const disposer = when(
+      () => game.isFinished(),
       () => {
         navigate(RoutePath.gameStatistics, {
           level,
@@ -71,79 +76,94 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
         });
       }
     );
-  }, [game.isFinished, game.statistics, level, navigate]);
+    return () => {
+      disposer();
+      if (game.isRunning()) {
+        gameRunner.pause();
+      }
+    };
+  }, [game, level, gameRunner, navigate]);
+
+  React.useEffect(() => {
+    if (isGameReady && audioPlayer.isReady) {
+      resumeGame();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGameReady, audioPlayer.isReady]);
 
   return (
-    <Box
-      sx={{
-        height: "100%",
-        backgroundImage: `url(${level.game.background.url})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-    >
-      <Box
-        sx={{
-          height: "100%",
-          p: 2,
-        }}
-      >
-        <Stack sx={{ display: "flex", height: "100%", width: "100%" }}>
+    <Stack sx={{ height: "100%" }}>
+      <Stack sx={{ p: 2, display: "flex" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 3,
+            pb: 2,
+          }}
+        >
+          <Box sx={{ width: "25%" }}>
+            <Button
+              sx={{
+                bgcolor: "background.paper",
+                color: "text.primary",
+                height: "50px",
+                width: "50px",
+              }}
+              variant="contained"
+              onClick={pauseGame}
+            >
+              <MenuIcon />
+            </Button>
+          </Box>
+          <Box sx={{ width: "50%", px: 3 }}>
+            <ProgressBar
+              sx={{
+                height: 15,
+                borderRadius: 10,
+              }}
+              value={game.getProgress() * 100}
+            />
+          </Box>
           <Box
             sx={{
+              width: "25%",
               display: "flex",
-              gap: 3,
-              pb: 2,
+              justifyContent: "end",
+              gap: 1,
             }}
           >
-            <Box sx={{ width: "20%" }}>
-              <Button
-                sx={{
-                  bgcolor: "background.paper",
-                  color: "text.primary",
-                }}
-                variant="contained"
-                onClick={handlePause}
-              >
-                <MenuIcon />
-              </Button>
-            </Box>
-            <Box sx={{ width: "60%" }}>
-              <LinearProgress
-                sx={{
-                  height: 15,
-                  borderRadius: 10,
-                  bgcolor: "background.paper",
-                }}
-                color="primary"
-                variant="determinate"
-                value={game.progress}
-              />
-            </Box>
+            <ComboCounter combo={game.statistics.comboCounter} />
             <Box
               sx={{
-                width: "20%",
-                display: "flex",
-                justifyContent: "end",
+                bgcolor: "background.paper",
+                p: 2,
+                borderRadius: 4,
+                minWidth: "200px",
+                textAlign: "center",
               }}
             >
-              <Box sx={{ bgcolor: "background.paper", p: 2, borderRadius: 4 }}>
-                <Typography color="text.secondary" variant="h3">
-                  {String(game.statistics.score).padStart(7, "0")}
-                </Typography>
-              </Box>
+              <Typography color="text.secondary" variant="h4">
+                {String(game.statistics.score).padStart(7, "0")}
+              </Typography>
             </Box>
           </Box>
-          <GameField width={"100%"} height={"100%"} game={game} />
-        </Stack>
-        <PauseMenu
-          open={game.isPaused}
-          onClose={handleResume}
-          onContinue={handleResume}
-          onRestart={handleRestart}
-          onExit={() => navigate(RoutePath.levelList)}
-        />
-      </Box>
-    </Box>
+        </Box>
+      </Stack>
+      <PauseMenu
+        open={game.isPaused()}
+        onClose={resumeGame}
+        onContinue={resumeGame}
+        onRestart={restartGame}
+        onExit={() => navigate(RoutePath.levelList)}
+      />
+      <GameView
+        sentences={game.getVisibleSentences()}
+        cursor={game.getCursorPosition()}
+        time={game.time}
+        background={level.background}
+        onReadyToStart={() => setIsGameReady(true)}
+        fullScreen
+      />
+    </Stack>
   );
 });

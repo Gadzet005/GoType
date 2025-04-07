@@ -1,199 +1,161 @@
-import { Box, Typography } from "@mui/material";
-import { Button } from "@/components/ui/Button";
 import { BackButton } from "@/components/common/BackButton";
 import { RoutePath } from "@/core/config/routes/path";
-import { useTitle } from "@/core/hooks";
+import { useSnackbar } from "@/core/hooks";
+import { getDraft } from "@/core/services/electron/draft/getDraft";
+import { updateDraft } from "@/core/services/electron/draft/updateDraft";
+import { truncateString } from "@/core/utils/string";
+import { DraftUpdateData } from "@desktop-common/draft";
+import { Box, IconButton, Tabs, Typography } from "@mui/material";
+import structuredClone from "@ungap/structured-clone";
 import { observer } from "mobx-react";
-import { Level } from "@desktop-common/level";
+import React from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { EditorContext, UpdateDraftOptions } from "./context";
+import { FieldEditor } from "./panels/FieldEditor";
+import { Settings } from "./panels/Settings";
+import { StyleEditor } from "./panels/StyleEditor";
+import { TextEditor } from "./panels/TextEditor";
+import { Draft } from "./store/draft";
+import { EditorTab } from "./utils/EditorTab";
+import { EditorTabPanel } from "./utils/EditorTabPanel";
+import FolderIcon from "@mui/icons-material/Folder";
+import { openDraftDir } from "@/core/services/electron/draft/openDraftDir";
+import { useAutoLoadAudioPlayer } from "@/core/hooks/useAutoLoadAudioPlayer";
 
-// TODO remove this!!!
-const level: Level = {
-  id: 3,
-  name: "Walk on Water",
-  description:
-    "«Walk on Water» — первый сингл группы 30 Seconds to Mars из пятого студийного альбома группы America. Песня была написана солистом группы Джаредом Лето. Сингл вышел в продажу 22 августа 2017 года.",
-  author: {
-    id: 1,
-    name: "John Doe",
-  },
-  duration: 26,
-  preview: {
-    type: "jpg",
-    url: "",
-  },
-  tags: ["имба"],
-  languageCode: "eng",
+interface LevelEditorPageProps {
+  draftId: number;
+  initialTab?: number;
+}
 
-  game: {
-    audio: {
-      type: "mp3",
-      url: "",
-    },
-    background: {
-      type: "jpg",
-      url: "",
-    },
-    sentences: [
-      {
-        content: "Can you even see what you're fighting for?",
-        showTime: 0,
-        duration: 1000,
-        style: {
-          bgcolor: "lightgrey",
-          padding: 1,
-          borderRadius: 4,
-          animations: {
-            fadeIn: {
-              duration: 1000,
-              letterDuration: 500,
-              easing: "ease-in-out",
-            },
-            fadeOut: {
-              duration: 1000,
-              letterDuration: 500,
-              easing: "ease-in-out",
-            },
+export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
+  ({ draftId, initialTab = 0 }) => {
+    const snakbar = useSnackbar();
+
+    const [curTab, setCurTab] = React.useState(initialTab);
+    const [draft, setDraft] = React.useState<Draft | null>(null);
+    const audioPlayer = useAutoLoadAudioPlayer(draft?.audio ?? undefined);
+
+    const update = React.useCallback(
+      async (options?: UpdateDraftOptions) => {
+        if (!draft) {
+          return;
+        }
+
+        const updateInfo: DraftUpdateData = {
+          id: draft.id,
+          name: draft.name,
+          sentences: draft.sentences.map((s) => s.toDraftSentenceData()),
+          styleClasses: structuredClone(draft.styleClasses.getAll(), {
+            lossy: true,
+          }),
+          languageCode: draft.language.code,
+          audioPath: options?.newAudioFile,
+          background: {
+            path: options?.newBackgroundFile,
+            brightness: draft.background.brightness,
           },
-          letter: {
-            default: {
-              fontFamily: "Roboto",
-              fontSize: 50,
-              fontWeight: "bold",
-              color: "black",
-            },
-            current: {
-              color: "blue",
-              fontSize: 60,
-            },
-            mistake: {
-              color: "red",
-            },
-            success: {
-              color: "green",
-            },
-          },
-        },
-        coord: { x: 5, y: 5 },
+        };
+
+        const result = await updateDraft(updateInfo);
+        if (result.ok) {
+          setDraft(new Draft(result.payload));
+          if (!options?.quite) {
+            snakbar.show("Изменения сохранены", "success");
+          }
+        } else {
+          snakbar.show("Ошибка при сохранении изменений", "error");
+          console.error(result.error);
+        }
       },
-      {
-        content: "Bloodlust and a holy war",
-        showTime: 800,
-        duration: 700,
-        style: {
-          bgcolor: "lightgrey",
-          padding: 1,
-          borderRadius: 4,
-          rotate: 30,
-          animations: {
-            fadeIn: {
-              duration: 500,
-              letterDuration: 200,
-              easing: "ease-in-out",
-            },
-            fadeOut: {
-              duration: 500,
-              letterDuration: 200,
-              easing: "ease-in-out",
-            },
-          },
-          letter: {
-            default: {
-              fontFamily: "Roboto",
-              fontSize: 50,
-              fontWeight: "bold",
-              color: "black",
-            },
-            current: {
-              color: "blue",
-              fontSize: 60,
-            },
-            mistake: {
-              color: "red",
-            },
-            success: {
-              color: "green",
-            },
-          },
-        },
-        coord: { x: 50, y: 50 },
-      },
-      {
-        content: "Listen up, hear the patriots shout",
-        showTime: 1700,
-        duration: 800,
-        style: {
-          bgcolor: "lightgrey",
-          padding: 1,
-          borderRadius: 4,
-          animations: {
-            fadeIn: {
-              duration: 500,
-              letterDuration: 200,
-              easing: "ease-in-out",
-            },
-            fadeOut: {
-              duration: 500,
-              letterDuration: 200,
-              easing: "ease-in-out",
-            },
-          },
-          letter: {
-            default: {
-              fontFamily: "Roboto",
-              fontSize: 70,
-              fontWeight: "bold",
-              color: "black",
-            },
-            current: {
-              color: "blue",
-              fontSize: 80,
-            },
-            mistake: {
-              color: "red",
-            },
-            success: {
-              color: "green",
-            },
-          },
-        },
-        coord: { x: 10, y: 90 },
-      },
-    ],
-  },
-};
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [draft]
+    );
 
-export const LevelEditorPage = observer(() => {
-  useTitle("Редактор уровня");
+    useHotkeys("ctrl+s", () => update(), [update]);
 
-  // TODO remove this!!!
-  const handleCreateLevel = () => {
-    window.levelAPI.addLevel(level);
-  };
+    React.useEffect(() => {
+      const loadDraft = async () => {
+        const result = await getDraft(draftId);
+        if (result.ok) {
+          setDraft(new Draft(result.payload));
+        } else {
+          snakbar.show("Ошибка при загрузке черновика", "error");
+          console.error(result.error);
+        }
+      };
 
-  return (
-    <Box sx={{ p: 2 }}>
-      <BackButton href={RoutePath.home} />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+      loadDraft();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draftId]);
+
+    if (!draft) {
+      return null;
+    }
+
+    return (
+      <EditorContext.Provider
+        value={{
+          draft,
+          updateDraft: update,
+          audioPlayer,
         }}
       >
-        <Typography variant="h3">Редактор уровней</Typography>
-        <Button
-          sx={{
-            textAlign: "center",
-            mt: 5,
-            width: "400px",
-            fontSize: "1.25rem",
-          }}
-          variant="contained"
-          onClick={handleCreateLevel}
-        >
-          Создать уровень
-        </Button>
-      </Box>
-    </Box>
-  );
-});
+        <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 5,
+              p: 2,
+              bgcolor: "background.paper",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <IconButton
+                onClick={() => {
+                  openDraftDir(draft.id);
+                }}
+              >
+                <FolderIcon fontSize="large" />
+              </IconButton>
+              <Typography variant="h4">
+                {truncateString(draft.name, 20)}
+              </Typography>
+            </Box>
+            <Tabs
+              value={curTab}
+              onChange={(_: any, newTab: number) => setCurTab(newTab)}
+            >
+              <EditorTab label="Поле" />
+              <EditorTab label="Текст" />
+              <EditorTab label="Дизайн" />
+              <EditorTab label="Настройки" />
+            </Tabs>
+            <BackButton
+              sx={{ p: 2 }}
+              color="success"
+              label="Сохранить и выйти"
+              href={RoutePath.levelDraftList}
+              onBack={() => update({ quite: true })}
+            />
+          </Box>
+
+          <EditorTabPanel sx={{ mt: 0 }} value={curTab} index={0}>
+            <FieldEditor />
+          </EditorTabPanel>
+          <EditorTabPanel value={curTab} index={1}>
+            <TextEditor />
+          </EditorTabPanel>
+          <EditorTabPanel value={curTab} index={2}>
+            <StyleEditor />
+          </EditorTabPanel>
+          <EditorTabPanel value={curTab} index={3}>
+            <Settings />
+          </EditorTabPanel>
+        </Box>
+      </EditorContext.Provider>
+    );
+  }
+);

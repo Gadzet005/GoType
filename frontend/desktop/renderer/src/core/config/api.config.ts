@@ -20,4 +20,8 @@ export enum ApiError {
     userExists = "ERR_USER_EXISTS",
     invalidInput = "ERR_INVALID_INPUT",
     noSuchUser = "ERR_NO_SUCH_USER",
+    internal = "ERR_INTERNAL",
+    accessTokenWrong = "ERR_ACCESS_TOKEN_WRONG",
+    refreshTokenWrong = "ERR_REFRESH_TOKEN_WRONG",
+    unauthorized = "ERR_UNAUTHORIZED",
 }

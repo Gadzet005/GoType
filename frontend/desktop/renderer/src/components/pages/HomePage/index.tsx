@@ -1,10 +1,11 @@
+import { useUser } from "@/core/hooks";
 import { Box, Typography } from "@mui/material";
 import { observer } from "mobx-react";
-import { useTitle, useUser } from "@/core/hooks";
+import React from "react";
 import { Menu } from "./Menu";
+import { menuList } from "./menuList";
 
-export const HomePage = observer(() => {
-  useTitle("Главная");
+export const HomePage: React.FC = observer(() => {
   const user = useUser();
 
   return (
@@ -25,7 +26,7 @@ export const HomePage = observer(() => {
           GoType!
         </Typography>
 
-        <Menu isUserAuth={user.isAuth} />
+        <Menu list={menuList} userAuthed={user.isAuth} />
       </Box>
     </Box>
   );

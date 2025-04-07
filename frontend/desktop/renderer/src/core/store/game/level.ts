@@ -1,24 +1,59 @@
-import { Level } from "@desktop-common/level";
-import { TICK_TIME } from "./consts";
-import { Language } from "@desktop-common/language";
+import { LevelData } from "@desktop-common/level";
+import { Language } from "@/core/utils/language";
+import { requireTrue } from "@/core/utils/panic";
 
-/* 
-    eslint-disable 
-    @typescript-eslint/no-empty-object-type,
-    @typescript-eslint/no-unsafe-declaration-merging
-*/
-export interface GameLevel extends Level {}
-export class GameLevel implements Level {
+export class Level {
+    private readonly info: LevelData;
     readonly language: Language;
 
-    constructor(level: Level) {
-        Object.assign(this, level);
-        this.language =
-            Language.byCode(this.languageCode) || Language.byCode("eng")!;
+    constructor(levelInfo: LevelData) {
+        this.info = levelInfo;
+
+        const lang = Language.byCode(levelInfo.languageCode);
+        requireTrue(
+            lang !== null,
+            `Unknown language code=${levelInfo.languageCode}`
+        );
+        this.language = lang!;
     }
 
-    get durationInTicks(): number {
-        return Math.ceil((this.duration * 1000) / TICK_TIME);
+    get id() {
+        return this.info.id;
+    }
+
+    get name() {
+        return this.info.name;
+    }
+
+    get description() {
+        return this.info.description;
+    }
+
+    get author() {
+        return this.info.author;
+    }
+
+    get duration() {
+        return this.info.duration;
+    }
+
+    get tags() {
+        return this.info.tags;
+    }
+
+    get preview() {
+        return this.info.preview;
+    }
+
+    get audio() {
+        return this.info.audio;
+    }
+
+    get background() {
+        return this.info.background;
+    }
+
+    get sentences() {
+        return this.info.sentences;
     }
 }
-/* eslint-enable */

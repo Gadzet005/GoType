@@ -1,21 +1,28 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Button, ButtonProps } from "@/components/ui/Button";
-import { useNavigate, useKeyboard } from "@/core/hooks";
+import { useNavigate } from "@/core/hooks";
+import { useHotkeys } from "react-hotkeys-hook";
 
-interface BackButtonProps extends ButtonProps {
+interface BackButtonProps extends Omit<ButtonProps, "children"> {
   href: string;
-  params?: object;
+  params?: Record<string, unknown>;
+  label?: string;
+  onBack?: () => void;
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({
   variant = "contained",
   startIcon = <ArrowBackIcon />,
   color = "error",
-  children = "Назад",
+  label = "Назад",
+  onBack = () => {},
   ...other
 }) => {
   const navigate = useNavigate();
-  useKeyboard("Escape", () => navigate(other.href, other.params));
+  useHotkeys("esc", () => {
+    onBack();
+    navigate(other.href, other.params);
+  });
 
   return (
     <Button
@@ -23,9 +30,10 @@ export const BackButton: React.FC<BackButtonProps> = ({
       variant={variant}
       startIcon={startIcon}
       color={color}
+      onClick={() => onBack()}
       {...other}
     >
-      {children}
+      {label}
     </Button>
   );
 };

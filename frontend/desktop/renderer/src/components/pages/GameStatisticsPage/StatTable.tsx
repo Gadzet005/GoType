@@ -21,6 +21,11 @@ export const StatTable: React.FC<StatTableProps> = ({ statistics }) => {
         value={statistics.rightLetters}
         valueColor="success"
       />
+      <StatRow
+        label="Максимальное комбо"
+        value={statistics.maxCombo}
+        valueColor="primary"
+      />
     </Stack>
   );
 };

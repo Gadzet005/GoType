@@ -6,8 +6,10 @@ import { LevelListPage } from "@/components/pages/LevelListPage";
 import { ProfilePage } from "@/components/pages/ProfilePage";
 import { SignInPage } from "@/components/pages/SignInPage";
 import { SignUpPage } from "@/components/pages/SignUpPage";
-import { RoutePath } from "./path";
+import { TestLevelEditorPage } from "@/components/pages/TestLevelEditorPage";
 import React from "react";
+import { RoutePath } from "./path";
+import { LevelDraftListPage } from "@/components/pages/LevelDraftListPage";
 
 export const routes = new Map<string, React.ElementType>([
     [RoutePath.default, HomePage],
@@ -18,5 +20,7 @@ export const routes = new Map<string, React.ElementType>([
     [RoutePath.levelList, LevelListPage],
     [RoutePath.game, GamePage],
     [RoutePath.gameStatistics, GameStatisticsPage],
-    [RoutePath.editor, LevelEditorPage],
+    [RoutePath.levelEditor, LevelEditorPage],
+    [RoutePath.testLevelEditor, TestLevelEditorPage],
+    [RoutePath.levelDraftList, LevelDraftListPage],
 ]);

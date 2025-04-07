@@ -1,4 +1,7 @@
-import { UserContext } from "@/core/store/user/UserContext";
-import React from "react";
+import { IUser } from "../types/base/user";
+import { useAppContext } from "./appContext";
 
-export const useUser = () => React.useContext(UserContext);
+export function useUser(): IUser {
+    const context = useAppContext();
+    return context!.user;
+}
