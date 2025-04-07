@@ -26,27 +26,43 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
 
   const [game] = React.useState<Game>(new Game(level));
   const [gameRunner] = React.useState<GameRunner>(new GameRunner(game));
+  const [isGameReady, setIsGameReady] = React.useState<boolean>(false);
 
-  const handleResume = React.useCallback(() => {
+  useHotkeys(
+    game.language.alphabet.split(""),
+    (event: KeyboardEvent) => {
+      if (game.isRunning()) {
+        game.input(event.key);
+      }
+    },
+    []
+  );
+
+  const resumeGame = React.useCallback(() => {
     gameRunner.start();
-  }, [gameRunner]);
+    audioPlayer.seek((game.duration * game.getProgress()) / 1000);
+    audioPlayer.play();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game, gameRunner]);
 
-  const handlePause = React.useCallback(() => {
+  const pauseGame = React.useCallback(() => {
     gameRunner.pause();
+    audioPlayer.pause();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameRunner]);
 
-  const handleRestart = React.useCallback(() => {
+  const restartGame = React.useCallback(() => {
     gameRunner.reset();
-    gameRunner.start();
-  }, [gameRunner]);
+    resumeGame();
+  }, [gameRunner, resumeGame]);
 
   const handleTogglePause = React.useCallback(() => {
     if (game.isPaused()) {
-      handleResume();
+      resumeGame();
     } else {
-      handlePause();
+      pauseGame();
     }
-  }, [game, handleResume, handlePause]);
+  }, [game, resumeGame, pauseGame]);
 
   useHotkeys("esc", handleTogglePause);
 
@@ -68,6 +84,13 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
     };
   }, [game, level, gameRunner, navigate]);
 
+  React.useEffect(() => {
+    if (isGameReady && audioPlayer.isReady) {
+      resumeGame();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isGameReady, audioPlayer.isReady]);
+
   return (
     <Stack sx={{ height: "100%" }}>
       <Stack sx={{ p: 2, display: "flex" }}>
@@ -87,7 +110,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
                 width: "50px",
               }}
               variant="contained"
-              onClick={handlePause}
+              onClick={pauseGame}
             >
               <MenuIcon />
             </Button>
@@ -128,16 +151,17 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
       </Stack>
       <PauseMenu
         open={game.isPaused()}
-        onClose={handleResume}
-        onContinue={handleResume}
-        onRestart={handleRestart}
+        onClose={resumeGame}
+        onContinue={resumeGame}
+        onRestart={restartGame}
         onExit={() => navigate(RoutePath.levelList)}
       />
       <GameView
-        game={game}
+        sentences={game.getVisibleSentences()}
+        cursor={game.getCursorPosition()}
+        time={game.time}
         background={level.background}
-        audioPlayer={audioPlayer}
-        onReadyToStart={handleRestart}
+        onReadyToStart={() => setIsGameReady(true)}
         fullScreen
       />
     </Stack>

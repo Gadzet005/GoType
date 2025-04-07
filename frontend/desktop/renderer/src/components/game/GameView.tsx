@@ -1,83 +1,57 @@
-import { Background } from "@/components/common/Background";
-import { GameFieldView } from "@/components/game/GameFieldView";
-import { Game } from "@/core/store/game/game";
-import { Asset } from "@desktop-common/asset";
 import { Box } from "@mui/material";
-import { reaction } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { useHotkeys } from "react-hotkeys-hook";
-import { AudioPlayer } from "react-use-audio-player";
+import useMeasure from "react-use-measure";
+import ResizeObserver from "resize-observer-polyfill";
+import { SentenceView } from "./SentenceView";
+import { SentenceContainer } from "./SentenceView/container";
+import { CursorPosition } from "@/core/store/game/core/cursor";
+import { FieldSentence } from "@/core/store/game/core/fieldSentence";
+import { Asset } from "@desktop-common/asset";
+import { Background } from "../common/Background";
 
 interface GameViewProps {
-  game: Game;
-  audioPlayer: AudioPlayer;
+  sentences: FieldSentence[];
+  time: number;
+  cursor?: CursorPosition | null;
   background: {
     asset: Asset;
     brightness?: number;
   };
-  disableInput?: boolean;
   onReadyToStart?: () => void;
   fullScreen?: boolean;
 }
 
 export const GameView: React.FC<GameViewProps> = observer(
   ({
-    game,
-    audioPlayer,
+    sentences,
+    time,
+    cursor = null,
     background,
-    disableInput = false,
     fullScreen = false,
     onReadyToStart = () => {},
   }) => {
-    background.brightness ??= 1;
+    const [ref, bounds] = useMeasure({ polyfill: ResizeObserver });
 
-    const [isBackgroundLoading, setIsBackgroundLoading] = React.useState(true);
-
-    useHotkeys(
-      game.language.alphabet.split(""),
-      (event: KeyboardEvent) => {
-        if (!disableInput && game.isRunning()) {
-          game.input(event.key);
-        }
-      },
-      []
+    const SentenceViews = React.useMemo(
+      () =>
+        sentences.map((sentence) => (
+          <SentenceContainer
+            key={sentence.idx}
+            x={sentence.style.coord.x}
+            y={sentence.style.coord.y}
+            fieldHeight={bounds.height}
+            fieldWidth={bounds.width}
+          >
+            <SentenceView
+              sentence={sentence}
+              cursor={sentence.getRelativeCursor(cursor) ?? undefined}
+              sentenceTime={sentence.getRelativeTime(time)}
+            />
+          </SentenceContainer>
+        )),
+      [bounds.height, bounds.width, cursor, sentences, time]
     );
-
-    React.useEffect(() => {
-      if (!isBackgroundLoading && audioPlayer.isReady) {
-        onReadyToStart();
-        if (game.isRunning()) {
-          audioPlayer.seek(0);
-          audioPlayer.play();
-        }
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [onReadyToStart, isBackgroundLoading, audioPlayer.isReady]);
-
-    React.useEffect(() => {
-      const disposer1 = reaction(
-        () => game.isPaused(),
-        (isPaused) => {
-          if (isPaused) {
-            audioPlayer.pause();
-          }
-        }
-      );
-      const disposer2 = reaction(
-        () => game.isRunning(),
-        (isRunning) => {
-          if (isRunning) {
-            audioPlayer.seek((game.duration * game.getProgress()) / 1000);
-            audioPlayer.play();
-          }
-        }
-      );
-      return () => {
-        disposer1();
-        disposer2();
-      };
-    }, [audioPlayer, game]);
 
     return (
       <Box
@@ -90,9 +64,16 @@ export const GameView: React.FC<GameViewProps> = observer(
         <Background
           imageUrl={background.asset.url}
           brightness={background.brightness}
-          onLoad={() => setIsBackgroundLoading(false)}
+          onLoad={() => onReadyToStart()}
         />
-        <GameFieldView game={game} />
+        <Box
+          ref={ref}
+          sx={{ position: "relative", overflow: "hidden" }}
+          height="100%"
+          width="100%"
+        >
+          {SentenceViews}
+        </Box>
       </Box>
     );
   }

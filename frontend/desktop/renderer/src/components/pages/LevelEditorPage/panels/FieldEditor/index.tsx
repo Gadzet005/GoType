@@ -2,36 +2,19 @@ import { Box, Typography } from "@mui/material";
 import { useEditorContext } from "../../context";
 import { observer } from "mobx-react";
 import { CenterBox } from "@/components/common/CenterBox";
-import { GameView } from "@/components/game/GameView";
-import { Draft } from "../../store/draft";
 import React from "react";
-import { Game } from "@/core/store/game";
 import { AudioPlayerView } from "@/components/common/AudioPlayerView";
-
-function draftSentences(draft: Draft) {
-  return draft.sentences
-    .map((sentence) => sentence.toSentenceData())
-    .filter((sentence) => sentence !== null);
-}
+import { useAudioTime } from "@/core/hooks/useAudioTime";
+import { EditorGameView } from "./EditorGameView";
+import { DraftSentence } from "../../store/draftSentence";
+import { EditSentenceDialog } from "./EditSentenceDialog";
 
 export const FieldEditor = observer(() => {
   const { draft, audioPlayer } = useEditorContext();
+  const time = useAudioTime(audioPlayer);
 
-  const [game, setGame] = React.useState<Game | null>(null);
-
-  React.useEffect(() => {
-    if (!audioPlayer.isReady) {
-      return;
-    }
-
-    setGame(
-      new Game({
-        sentences: draftSentences(draft),
-        language: draft.language,
-        duration: audioPlayer.duration,
-      })
-    );
-  }, [audioPlayer.duration, audioPlayer.isReady, draft]);
+  const [selectedSentence, setSelectedSentence] =
+    React.useState<DraftSentence | null>(null);
 
   React.useEffect(() => {
     audioPlayer.seek(0);
@@ -51,37 +34,31 @@ export const FieldEditor = observer(() => {
     );
   }
 
-  if (!game) {
-    return null;
-  }
-
   return (
-    <Box
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box sx={{ width: "100%", px: 5, py: 1 }}>
-        <AudioPlayerView
-          player={audioPlayer}
-          step={0.1}
-          onTimeChange={(time) => {
-            game.step(time);
-          }}
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      {selectedSentence && (
+        <EditSentenceDialog
+          open
+          onClose={() => setSelectedSentence(null)}
+          sentence={selectedSentence}
         />
-      </Box>
+      )}
       <Box sx={{ flex: 1 }}>
-        <GameView
-          game={game}
-          audioPlayer={audioPlayer}
+        <EditorGameView
+          sentences={draft.sentences}
+          time={time * 1000}
           background={{
             asset: draft.background.asset!,
             brightness: draft.background.brightness,
           }}
-          disableInput
+          onSelect={(sentence) => {
+            audioPlayer.pause();
+            setSelectedSentence(sentence);
+          }}
         />
+      </Box>
+      <Box sx={{ width: "100%", px: 3, py: 1 }}>
+        <AudioPlayerView player={audioPlayer} step={0.1} />
       </Box>
     </Box>
   );

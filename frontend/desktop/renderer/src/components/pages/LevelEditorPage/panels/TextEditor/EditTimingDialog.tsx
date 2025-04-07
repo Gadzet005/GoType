@@ -118,7 +118,7 @@ export const EditTimingDialog: React.FC<EditTimingDialogProps> = ({
         </Box>
         <DialogContentText>
           Для того, чтобы разметить начало и конец предложения, запустите плеер,
-          затем нажмите на пробел, когда придет время начала и окончания
+          затем нажмите на кнопку выше, когда придет время начала и окончания
           предложения.
         </DialogContentText>
       </DialogContent>

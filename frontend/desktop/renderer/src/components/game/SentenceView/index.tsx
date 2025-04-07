@@ -95,7 +95,7 @@ function getLetterColor(
 
 interface SentenceViewProps {
   sentence: FieldSentence;
-  cursor: number | undefined;
+  cursor?: number;
   sentenceTime: number;
 }
 
@@ -135,6 +135,7 @@ export const SentenceView: React.FC<SentenceViewProps> = observer(
           rotate: `${sentence.style.rotation}deg`,
           opacity: animationState.opacity,
           transition: "opacity 500ms easy-in-out",
+          whiteSpace: "nowrap",
         }}
       >
         <Box>{letterViews}</Box>

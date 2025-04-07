@@ -100,7 +100,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
           audioPlayer,
         }}
       >
-        <Box sx={{ height: "100%" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
           <Box
             sx={{
               width: "100%",

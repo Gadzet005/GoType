@@ -1,7 +1,7 @@
 import { Box, IconButton, Slider, SliderProps } from "@mui/material";
 import { AudioPlayer } from "react-use-audio-player";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import StopIcon from "@mui/icons-material/Stop";
+import PauseIcon from "@mui/icons-material/Pause";
 import { useAudioTime } from "@/core/hooks/useAudioTime";
 import React from "react";
 
@@ -51,7 +51,7 @@ export const AudioPlayerView: React.FC<AudioPlayerViewProps> = ({
         }}
       >
         {player.playing ? (
-          <StopIcon fontSize="large" />
+          <PauseIcon fontSize="large" />
         ) : (
           <PlayArrowIcon fontSize="large" />
         )}
