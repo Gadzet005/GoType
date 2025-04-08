@@ -117,8 +117,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	stats := router.Group("/stats", h.UserIdentity)
 	{
-		stats.GET("/get-user-stats", h.Stats.GetUserStats)
-		stats.GET("/get-users-top", h.Stats.GetUsersTop)
+		stats.POST("/get-user-stats", h.Stats.GetUserStats) //Change
+		stats.POST("/get-users-top", h.Stats.GetUsersTop)   //Change
 	}
 
 	admin := router.Group("/admin", h.UserIdentity)
@@ -131,16 +131,16 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		admin.GET("/get-level-complaints", h.Admin.getLevelComplaints)
 		admin.POST("/process-user-complaint", h.Admin.processUserComplaint)
 		admin.POST("/process-level-complaint", h.Admin.processLevelComplaint)
-		admin.GET("/get-users", h.Admin.getUsers)
+		admin.POST("/get-users", h.Admin.getUsers) //Change
 	}
 
 	level := router.Group("/level", h.UserIdentity)
 	{
 		level.POST("/create-level", h.Level.CreateLevel)
-		level.GET("/download-level", h.Level.GetLevel)
-		level.GET("/get-level-info", h.Level.GetLevelInfoById)
+		level.POST("/download-level", h.Level.GetLevel)         //Change
+		level.POST("/get-level-info", h.Level.GetLevelInfoById) //Change
 		level.POST("/update-level", h.Level.UpdateLevel)
-		level.GET("/get-level-list", h.Level.GetLevelList)
+		level.POST("/get-level-list", h.Level.GetLevelList) //Change
 	}
 
 	singleGame := router.Group("/single-game", h.UserIdentity)

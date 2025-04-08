@@ -40,7 +40,7 @@ func TestRegister(t *testing.T) {
 	}
 
 	for name, tc := range tests {
-		name, tc := name, tc
+		//name, tc := name, tc
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			serv.On("CreateUser", mock.AnythingOfType("domain.User")).Return(tc.mockRetAccessToken, tc.mockRetRefreshToken, tc.mockRetErrorError).Once()
