@@ -213,7 +213,7 @@ func (lp *LevelPostgres) FetchLevels(params map[string]interface{}) ([]levels.Le
 
 	params["tags"] = pq.Array(params["tags"])
 
-	q := `SELECT l.id, l.name, l.author, l.description, l.duration, l.language, l.preview_type, l.type, l.difficulty, l.preview_path, l.author_name, COALESCE( (SELECT ARRAY_AGG(lt.tag_name) FROM LevelTag lt WHERE lt.level_id = l.id), '{}') AS tags FROM %s l WHERE l.is_banned = FALSE`
+	q := `SELECT l.id, l.name, l.author, l.description, l.duration, l.language, l.preview_type, l.type, l.difficulty, l.preview_path, l.author_name, COALESCE( (SELECT ARRAY_AGG(lt.tag_name) FROM LevelTag lt WHERE lt.level_id = l.id), '{}') AS tags FROM %s l WHERE l.is_banned = FALSE `
 
 	if params["difficulty"].(int) >= 1 && params["difficulty"].(int) <= 10 {
 		q += " and l.difficulty = " + strconv.Itoa(params["difficulty"].(int)) + " "
