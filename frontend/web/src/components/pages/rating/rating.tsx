@@ -20,7 +20,7 @@ import {
   Box
 } from '@mui/material';
 import { UserApi } from '@/api/userApi';
-import { PlayerStats } from '@/models';
+import { PlayerStats } from '@/api/models';
 
 export const Rating = () => {
   const [loading, setLoading] = useState(true);
@@ -28,9 +28,9 @@ export const Rating = () => {
   const [users, setUsers] = useState<PlayerStats[]>([]);
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
-    category: 0,       // Индекс категории из AvailableClasses
-    pattern: 'desc',   // asc/desc
-    points: 'desc',    // Сортировка по очкам
+    category: 0,       
+    pattern: 'desc',   
+    points: 'desc',    
     pageSize: 10
   });
 
@@ -39,34 +39,36 @@ export const Rating = () => {
   useEffect(() => {
     const fetchRating = async () => {
       try {
+        setLoading(true);
+        setError('');
         const data = await UserApi.getUsersTop({
           category_params: {
-            category: filters.category,
+            category: filters.category, 
             pattern: filters.pattern
           },
           page_info: {
-            offset: (page - 1) * PAGE_SIZE,
+            offset: 1 + (page - 1) * PAGE_SIZE,
             page_size: PAGE_SIZE
           },
           points: filters.points
         });
-        
+        console.log(data);
         setUsers(data);
       } catch (err) {
-        setError('Failed to load rating');
+        setError('Ошибка загрузки рейтинга');
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchRating();
   }, [page, filters]);
 
   const handleCategoryChange = (value: number) => {
     setFilters(prev => ({
-      ...prev,
+      ...prev,        
       category: value,
-      pattern: 'desc' // Сброс паттерна при смене категории
+      pattern: 'desc' 
     }));
   };
 

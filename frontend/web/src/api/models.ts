@@ -68,6 +68,9 @@ export interface LevelBan {
     num_games_mult: number;
     num_games_classic: number;
     num_games_relax: number;
+    num_chars_classic: number;
+    num_chars_relax: number;
+    average_delay: number
 }
   
   export interface ErrorResponse {
@@ -118,6 +121,7 @@ export interface LevelBan {
   }
 
   export interface LevelComplaint {
+    id: number;
     level_id: number;
     author_id: number;
     reason: string;

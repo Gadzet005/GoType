@@ -36,19 +36,17 @@ export const LevelApi = {
 
 
   getLevelList: async (params: {
-    filter_params?: { difficulty?: number; language?: string; level_name?: string };
-    sort_params?: { date?: string; popularity?: string };
-    tags?: string[];
-    page_info: { offset: number; page_size: number };
-  }): Promise<LevelsList> => {
-    const { data } = await $authHost.get('/level/get-level-list', { 
-      params: {
-        filter_params: JSON.stringify(params.filter_params),
-        sort_params: JSON.stringify(params.sort_params),
-        page_info: JSON.stringify(params.page_info),
-        tags: params.tags?.join(',')
-      }
-    });
-    return data;
-  },
+  filter_params?: { difficulty?: number; language?: string; level_name?: string };
+  sort_params?: { date?: string; popularity?: string };
+  tags?: string[];
+  page_info: { offset: number; page_size: number };
+}): Promise<LevelsList> => {
+  const { data } = await $authHost.post('/level/get-level-list', {
+    filter_params: params.filter_params,
+    sort_params: params.sort_params,
+    page_info: params.page_info,
+    tags: params.tags
+  });
+  return data;
+},
 };

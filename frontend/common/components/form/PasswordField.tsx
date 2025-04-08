@@ -42,7 +42,9 @@ export const PasswordField: FC<PasswordFieldProps> = ({
   };
 
   return (
-    <FormControl variant="outlined">
+    <FormControl variant="outlined"
+                fullWidth={true}
+    >
       <InputLabel htmlFor={name} required={required} error={error}>
         {label}
       </InputLabel>

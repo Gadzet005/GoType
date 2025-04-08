@@ -33,24 +33,20 @@ export const Header = () => {
 
   const handleLogout = async () => {
     try {
-      // 1. Сохраняем токен перед удалением
       const token = localStorage.getItem('token');
       
-      // 2. Удаляем токен сразу
       localStorage.removeItem('token');
       setIsAuthenticated(false);
-      
-      // 3. Отправляем запрос на сервер с явным указанием токена
+
       if (token) {
-        await UserApi.logout(token); // Передаем токен явно
+        await UserApi.logout(token); 
       }
       
-      // 4. Перенаправляем пользователя
       navigate(RoutePath.login, { replace: true });
       
     } catch (error) {
       console.error('Logout error:', error);
-      // 5. Гарантированное перенаправление даже при ошибке
+      
       navigate(RoutePath.login);
     }
   };

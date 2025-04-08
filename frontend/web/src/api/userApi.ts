@@ -49,27 +49,23 @@ export const UserApi = {
   getUserStats: async (userId: number): Promise<PlayerStats> => {
     const { data } = await $authHost.post('/stats/get-user-stats', { id: userId });
     return data.user_stats;
-  },
+},
 
-  getUsersTop: async (params: {
-    category_params?: { category?: number; pattern?: string };
+getUsersTop: async (params: {
+    category_params: { category: number; pattern: string };
     page_info: { offset: number; page_size: number };
-    points?: string;
+    points: string;
   }): Promise<PlayerStats[]> => {
     
-    const queryParams = {
-      category_params: JSON.stringify(params.category_params || {}),
-      page_info: JSON.stringify(params.page_info),
+    const { data } = await $authHost.post('/stats/get-users-top', {
+      category_params: {
+        category: String.fromCharCode(params.category_params.category), // Конвертируем число в символ
+        pattern: params.category_params.pattern
+      },
+      page_info: params.page_info,
       points: params.points
-    };
-
-    const { data } = await $authHost.get('/stats/get-users-top', {
-      params: queryParams,
-      paramsSerializer: (params) => {
-        return qs.stringify(params, { encode: false });
-      }
     });
-
+    
     return data.users;
   },
 };

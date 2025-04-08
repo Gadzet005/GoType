@@ -16,8 +16,10 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SecurityIcon from '@mui/icons-material/Security';
 import PersonIcon from '@mui/icons-material/Person';
 import BlockIcon from '@mui/icons-material/Block';
+import EqualizerIcon from '@mui/icons-material/Equalizer';
 import { UserApi } from '@/api/userApi';
 import { RoutePath } from '@/config/routes/path';
+import { PlayerStats } from '@/api/models';
 
 interface UserProfile {
   id: number;
@@ -32,14 +34,18 @@ interface UserProfile {
 export const Profile = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [stats, setStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const data = await UserApi.getUserInfo();
-        setProfile(data);
+        const userData = await UserApi.getUserInfo();
+        setProfile(userData);
+        
+        const statsData = await UserApi.getUserStats(userData.id);
+        setStats(statsData);
       } catch (error) {
         console.error('Profile fetch error:', error);
         setError('Ошибка загрузки профиля');
@@ -86,7 +92,6 @@ export const Profile = () => {
             Профиль пользователя
           </Typography>
 
-
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <Avatar sx={{ width: 100, height: 100 }}>
               {username?.[0]?.toUpperCase()}
@@ -103,7 +108,6 @@ export const Profile = () => {
             </Stack>
           </Box>
 
-
           <Box>
             <Typography variant="subtitle1" color="text.secondary">
               <SecurityIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
@@ -116,9 +120,7 @@ export const Profile = () => {
             />
           </Box>
 
-
-          
-          {ban_reason != "no ban" && (
+          {ban_reason && ban_reason !== "no ban" && (
             <Box sx={{ backgroundColor: '#ffeeee', p: 2, borderRadius: 1 }}>
               <Typography variant="subtitle1" color="error">
                 <BlockIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
@@ -132,8 +134,6 @@ export const Profile = () => {
               )}
             </Box>
           )}
-          
-
 
           <Box>
             <Typography variant="subtitle1" color="text.secondary">
@@ -148,7 +148,71 @@ export const Profile = () => {
             </Stack>
           </Box>
 
-          
+          {stats && (
+            <Box>
+              <Typography variant="subtitle1" color="text.secondary">
+                <EqualizerIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+                Игровая статистика:
+              </Typography>
+              
+              <Stack spacing={2} sx={{ mt: 2 }}>
+                <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+                  {stats.sum_points !== undefined && (
+                    <Chip label={`Очки: ${stats.sum_points}`} variant="outlined" />
+                  )}
+                  {stats.win_percentage !== undefined && (
+                    <Chip 
+                      label={`Победы: ${stats.win_percentage.toFixed(1)}%`} 
+                      variant="outlined" 
+                    />
+                  )}
+                  {stats.num_games_mult !== undefined && (
+                    <Chip 
+                      label={`Мультиплеер: ${stats.num_games_mult} игр`} 
+                      variant="outlined" 
+                    />
+                  )}
+                </Stack>
+
+                <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+                  {stats.average_accuracy_classic !== undefined && (
+                    <Chip
+                      label={`Классика: ${stats.average_accuracy_classic.toFixed(1)}%`}
+                      color="primary"
+                    />
+                  )}
+                  {stats.average_accuracy_relax !== undefined && (
+                    <Chip
+                      label={`Релакс: ${stats.average_accuracy_relax.toFixed(1)}%`}
+                      color="secondary"
+                    />
+                  )}
+                </Stack>
+
+                <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+                  {stats.num_chars_classic !== undefined && (
+                    <Chip
+                      label={`Символов (классика): ${stats.num_chars_classic}`}
+                      variant="outlined"
+                    />
+                  )}
+                  {stats.num_chars_relax !== undefined && (
+                    <Chip
+                      label={`Символов (релакс): ${stats.num_chars_relax}`}
+                      variant="outlined"
+                    />
+                  )}
+                </Stack>
+
+                {stats.average_delay !== undefined && (
+                  <Chip
+                    label={`Средняя задержка: ${stats.average_delay.toFixed(1)} мс`}
+                    variant="outlined"
+                  />
+                )}
+              </Stack>
+            </Box>
+          )}
         </Stack>
       </Paper>
     </Box>
