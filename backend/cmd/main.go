@@ -2,9 +2,9 @@ package main
 
 import (
 	gotype "github.com/Gadzet005/GoType/backend"
-	"github.com/Gadzet005/GoType/backend/pkg/handler"
-	"github.com/Gadzet005/GoType/backend/pkg/repository"
-	"github.com/Gadzet005/GoType/backend/pkg/service"
+	"github.com/Gadzet005/GoType/backend/internal/handler"
+	"github.com/Gadzet005/GoType/backend/internal/repository"
+	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"

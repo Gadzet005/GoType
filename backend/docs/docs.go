@@ -36,7 +36,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelBan"
+                            "$ref": "#/definitions/domain.LevelBan"
                         }
                     }
                 ],
@@ -92,7 +92,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserBan"
+                            "$ref": "#/definitions/domain.UserBan"
                         }
                     }
                 ],
@@ -148,7 +148,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.ChangeUserAccess"
+                            "$ref": "#/definitions/domain.ChangeUserAccess"
                         }
                     }
                 ],
@@ -158,6 +158,273 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id does not exist; ERR_INVALID_INPUT - Wrong structure of input json;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/get-level-complaints": {
+            "get": {
+                "description": "Get list of level complaints assigned to current admin. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get Level Complaints for moderator to process",
+                "operationId": "get-level-complaints",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.LevelComplaints"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/get-user-complaints": {
+            "get": {
+                "description": "Get list of user complaints assigned to current admin. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get User Complaints for moderator to process",
+                "operationId": "get-user-complaints",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserComplaints"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/get-users": {
+            "get": {
+                "description": "Get list of users with given params. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get Users with given params",
+                "operationId": "get-users",
+                "parameters": [
+                    {
+                        "description": "Search params - name, isBanned, pages info",
+                        "name": "user_search_params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserSearchParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Users"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/process-level-complaint": {
+            "post": {
+                "description": "Delete level complaint with given id. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Delete level complaint with given id",
+                "operationId": "process-level-complaint",
+                "parameters": [
+                    {
+                        "description": "Complaint ID",
+                        "name": "complaint_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ComplaintID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint with such id among the ones assigned to you",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/process-user-complaint": {
+            "post": {
+                "description": "Delete user complaint with given id. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Delete user complaint with given id",
+                "operationId": "process-user-complaint",
+                "parameters": [
+                    {
+                        "description": "Complaint ID",
+                        "name": "complaint_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ComplaintID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint with such id among the ones assigned to you",
                         "schema": {
                             "$ref": "#/definitions/handler.errorResponse"
                         }
@@ -204,7 +471,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelBan"
+                            "$ref": "#/definitions/domain.LevelBan"
                         }
                     }
                 ],
@@ -260,7 +527,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserUnban"
+                            "$ref": "#/definitions/domain.UserUnban"
                         }
                     }
                 ],
@@ -316,7 +583,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.User"
+                            "$ref": "#/definitions/domain.User"
                         }
                     }
                 ],
@@ -324,7 +591,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/domain.RefreshStruct"
                         }
                     },
                     "400": {
@@ -369,7 +636,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/domain.RefreshStruct"
                         }
                     }
                 ],
@@ -377,7 +644,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/domain.RefreshStruct"
                         }
                     },
                     "400": {
@@ -428,7 +695,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.User"
+                            "$ref": "#/definitions/domain.User"
                         }
                     }
                 ],
@@ -436,7 +703,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/domain.RefreshStruct"
                         }
                     },
                     "400": {
@@ -447,6 +714,553 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server; ",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/create-level": {
+            "post": {
+                "description": "Create level with given structure",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Create level",
+                "operationId": "create-level",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Archive with level.",
+                        "name": "level",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "JSON file with level description.",
+                        "name": "info",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File with preview image of the level",
+                        "name": "preview",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/download-level": {
+            "get": {
+                "description": "Download level with given id from server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Download level",
+                "operationId": "download-level",
+                "parameters": [
+                    {
+                        "description": "id of level you want to download",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archive with level.",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json; ERR_ENTITY_NOT_FOUND - no such level on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/get-level-info": {
+            "get": {
+                "description": "Get level info about level with given id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Get level info",
+                "operationId": "get-level-info",
+                "parameters": [
+                    {
+                        "description": "id of level you want to find out about",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.LevelInfo"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/get-level-list": {
+            "get": {
+                "description": "Get level list with given params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Get level list",
+                "operationId": "get-level-list",
+                "parameters": [
+                    {
+                        "description": "search and filter params",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.FetchLevelStruct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.LevelsList"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/update-level": {
+            "post": {
+                "description": "Update level with given structure",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Update level",
+                "operationId": "update-level",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Archive with level.",
+                        "name": "level",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "JSON file with level description.",
+                        "name": "info",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File with preview image of the level",
+                        "name": "preview",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/single-game/send-results": {
+            "post": {
+                "description": "Send results of single player game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "single-game"
+                ],
+                "summary": "Send results of single player game",
+                "operationId": "send-results",
+                "parameters": [
+                    {
+                        "description": "Results of the game",
+                        "name": "complaint_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.LevelComplete"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/get-user-stats": {
+            "get": {
+                "description": "Get User Statistics by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Get User Statistics",
+                "operationId": "get-user-stats",
+                "parameters": [
+                    {
+                        "description": "Id of user",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetUserStatsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/get-users-top": {
+            "get": {
+                "description": "Get Users Top with given params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Get Users Top",
+                "operationId": "get-users-top",
+                "parameters": [
+                    {
+                        "description": "Search params",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.StatSortFilterParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetUsersTop"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired;",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-actions/change-avatar": {
+            "post": {
+                "description": "Change avatar. In case of empty request sets default avatar.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-actions"
+                ],
+                "summary": "Change Avatar",
+                "operationId": "change-avatar",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File with new avatar image",
+                        "name": "avatar",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input files (e.g. wrong name, not \"avatar\");",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
                             "$ref": "#/definitions/handler.errorResponse"
                         }
@@ -478,7 +1292,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.getUserInfoStruct"
+                            "$ref": "#/definitions/domain.GetUserInfoStruct"
                         }
                     },
                     "400": {
@@ -574,7 +1388,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelComplaint"
+                            "$ref": "#/definitions/domain.LevelComplaint"
                         }
                     }
                 ],
@@ -630,7 +1444,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserComplaint"
+                            "$ref": "#/definitions/domain.UserComplaint"
                         }
                     }
                 ],
@@ -667,7 +1481,18 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "entities.ChangeUserAccess": {
+        "domain.CategoryParams": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "integer"
+                },
+                "pattern": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ChangeUserAccess": {
             "type": "object",
             "required": [
                 "id",
@@ -682,7 +1507,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.LevelBan": {
+        "domain.ComplaintID": {
             "type": "object",
             "required": [
                 "id"
@@ -693,7 +1518,150 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.LevelComplaint": {
+        "domain.FetchLevelStruct": {
+            "type": "object",
+            "required": [
+                "filter_params",
+                "page_info",
+                "sort_params",
+                "tags"
+            ],
+            "properties": {
+                "filter_params": {
+                    "$ref": "#/definitions/domain.LevelFilterParams"
+                },
+                "page_info": {
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo"
+                },
+                "sort_params": {
+                    "$ref": "#/definitions/domain.LevelSortParams"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "domain.GetLevelInfoStruct": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.GetUserInfoStruct": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "type": "integer"
+                },
+                "ban_reason": {
+                    "type": "string"
+                },
+                "ban_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.GetUserStatsRes": {
+            "type": "object",
+            "properties": {
+                "user_stats": {
+                    "$ref": "#/definitions/domain.PlayerStats"
+                }
+            }
+        },
+        "domain.GetUsersTop": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.PlayerStats"
+                    }
+                }
+            }
+        },
+        "domain.Level": {
+            "type": "object",
+            "required": [
+                "author",
+                "author_name",
+                "description",
+                "difficulty",
+                "duration",
+                "image_type",
+                "language",
+                "name",
+                "tags",
+                "type"
+            ],
+            "properties": {
+                "author": {
+                    "type": "integer"
+                },
+                "author_name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "difficulty": {
+                    "type": "integer"
+                },
+                "duration": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_type": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "preview_path": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.LevelBan": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.LevelComplaint": {
             "type": "object",
             "required": [
                 "author_id",
@@ -716,7 +1684,195 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.User": {
+        "domain.LevelComplaints": {
+            "type": "object",
+            "properties": {
+                "level_complaints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.LevelComplaint"
+                    }
+                }
+            }
+        },
+        "domain.LevelComplete": {
+            "type": "object",
+            "required": [
+                "average_velocity",
+                "level_id",
+                "max_combo",
+                "num_press_err_by_char",
+                "placement",
+                "player_id",
+                "points"
+            ],
+            "properties": {
+                "average_velocity": {
+                    "type": "number"
+                },
+                "level_id": {
+                    "type": "integer"
+                },
+                "max_combo": {
+                    "type": "integer"
+                },
+                "num_press_err_by_char": {
+                    "description": "NumPressErrByChar map[rune][2]int ` + "`" + `json:\"num_press_err_by_char\" binding:\"required\" db:\"-\"` + "`" + `",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "placement": {
+                    "type": "integer"
+                },
+                "player_id": {
+                    "type": "integer"
+                },
+                "points": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.LevelFilterParams": {
+            "type": "object",
+            "properties": {
+                "difficulty": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "level_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.LevelInfo": {
+            "type": "object",
+            "properties": {
+                "level_info": {
+                    "$ref": "#/definitions/domain.Level"
+                }
+            }
+        },
+        "domain.LevelSortParams": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "popularity": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.LevelsList": {
+            "type": "object",
+            "properties": {
+                "levels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Level"
+                    }
+                }
+            }
+        },
+        "domain.PlayerStats": {
+            "type": "object",
+            "required": [
+                "num_press_err_by_char_by_lang"
+            ],
+            "properties": {
+                "average_accuracy_classic": {
+                    "type": "number"
+                },
+                "average_accuracy_relax": {
+                    "type": "number"
+                },
+                "average_delay": {
+                    "type": "number"
+                },
+                "num_chars_classic": {
+                    "type": "integer"
+                },
+                "num_chars_relax": {
+                    "type": "integer"
+                },
+                "num_classes_classic": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "num_games_mult": {
+                    "type": "integer"
+                },
+                "num_level_classic": {
+                    "type": "integer"
+                },
+                "num_level_relax": {
+                    "type": "integer"
+                },
+                "num_press_err_by_char_by_lang": {
+                    "description": "NumPressErrByCharByLang map[string]interface{} ` + "`" + `json:\"num_press_err_by_char_by_lang\" db:\"num_press_err_by_char_by_lang\" binding:\"required\"` + "`" + `",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "sum_points": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                },
+                "win_percentage": {
+                    "type": "number"
+                }
+            }
+        },
+        "domain.RefreshStruct": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StatSortFilterParams": {
+            "type": "object",
+            "required": [
+                "page_info"
+            ],
+            "properties": {
+                "category_params": {
+                    "$ref": "#/definitions/domain.CategoryParams"
+                },
+                "page_info": {
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo"
+                },
+                "points": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.User": {
             "type": "object",
             "required": [
                 "name",
@@ -732,7 +1888,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.UserBan": {
+        "domain.UserBan": {
             "type": "object",
             "required": [
                 "ban_reason",
@@ -751,7 +1907,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.UserComplaint": {
+        "domain.UserComplaint": {
             "type": "object",
             "required": [
                 "author_id",
@@ -774,7 +1930,18 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.UserUnban": {
+        "domain.UserComplaints": {
+            "type": "object",
+            "properties": {
+                "user_complaints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.UserComplaint"
+                    }
+                }
+            }
+        },
+        "domain.UserID": {
             "type": "object",
             "required": [
                 "id"
@@ -785,41 +1952,85 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.UserSearchParams": {
+            "type": "object",
+            "required": [
+                "is_banned",
+                "name",
+                "offset",
+                "page_size"
+            ],
+            "properties": {
+                "is_banned": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.UserUnban": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.Users": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.User"
+                    }
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo": {
+            "type": "object",
+            "required": [
+                "offset",
+                "page_size"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo": {
+            "type": "object",
+            "required": [
+                "offset",
+                "page_size"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                }
+            }
+        },
         "handler.errorResponse": {
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.getUserInfoStruct": {
-            "type": "object",
-            "properties": {
-                "access": {
-                    "type": "integer"
-                },
-                "ban_reason": {
-                    "type": "string"
-                },
-                "ban_time": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.refreshStruct": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "refresh_token": {
                     "type": "string"
                 }
             }

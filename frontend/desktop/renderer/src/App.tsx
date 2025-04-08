@@ -1,21 +1,21 @@
-import { ThemeProvider } from "@mui/material";
-import { appTheme } from "@/public/theme/appTheme";
-import { UserProvider } from "./public/user/UserProvider";
-import { AppNavigation } from "./public/navigation/AppNavigation";
-
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
+import { Box, CssBaseline, ThemeProvider } from "@mui/material";
+import { appTheme } from "@/core/style/appTheme";
+import { AppContextProvider } from "./components/providers/app";
+import { AppNavigation } from "./components/navigation/AppNavigation";
+import { routes } from "./core/config/routes";
+import { SnackbarProvider } from "./components/providers/snackbar";
 
 export const App = () => {
   return (
-    <UserProvider>
+    <AppContextProvider>
       <ThemeProvider theme={appTheme}>
-        <AppNavigation />
+        <SnackbarProvider>
+          <CssBaseline />
+          <Box sx={{ height: "100%" }}>
+            <AppNavigation routes={routes} />
+          </Box>
+        </SnackbarProvider>
       </ThemeProvider>
-    </UserProvider>
+    </AppContextProvider>
   );
 };
-
-export default App;

@@ -1,40 +1,25 @@
 {
-    "name": "desktop",
-    "version": "1.0.0",
-    "license": "MIT",
-    "main": "main/main.ts",
-    "scripts": {
-        "dev": "yarn concurrently -k --success first \"yarn run dev:main\" \"yarn run dev:renderer\"",
-        "dev:renderer": "yarn vite renderer --host='localhost' --port='5173' --strictPort",
-        "dev:main": "ELECTRON_START_URL='http://localhost:5173' NODE_OPTIONS='--import tsx' yarn electron . 2>/dev/null",
-        "build": "tsc -b renderer && vite build renderer && electron-builder"
-    },
-    "dependencies": {
-        "@emotion/react": "^11.14.0",
-        "@emotion/styled": "^11.14.0",
-        "@fontsource/roboto": "^5.1.1",
-        "@mui/icons-material": "^6.3.0",
-        "@mui/material": "^6.3.0",
-        "axios": "^1.7.9",
-        "electron-store": "^10.0.0",
-        "mobx": "^6.13.5",
-        "mobx-react": "^9.2.0",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1"
-    },
-    "devDependencies": {
-        "@types/electron": "^1.6.12",
-        "@types/node": "^22.10.6",
-        "@types/react": "^18.3.18",
-        "@types/react-dom": "^18.3.5",
-        "@vitejs/plugin-react": "^4.3.4",
-        "concurrently": "^9.1.2",
-        "electron": "^33.2.1",
-        "electron-builder": "^25.1.8",
-        "globals": "^15.14.0",
-        "tsx": "^4.19.2",
-        "typescript": "~5.6.2",
-        "vite": "^6.0.5",
-        "yarn": "^1.22.22"
-    }
+  "name": "@gotype/desktop",
+  "license": "MIT",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "yarn concurrently -k --success first \"yarn run dev:main\" \"yarn run dev:renderer\"",
+    "dev:renderer": "yarn workspace @gotype/desktop-renderer dev",
+    "dev:main": "yarn workspace @gotype/desktop-main dev"
+  },
+  "workspaces": [
+    "main",
+    "renderer"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "peerDependencies": {
+    "@mui/material": "*",
+    "react": "*",
+    "react-dom": "*",
+    "typescript": "*",
+    "yarn": "*"
+  }
 }

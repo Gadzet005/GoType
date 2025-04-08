@@ -12,6 +12,7 @@ const (
 	ErrInvalidInput     = "ERR_INVALID_INPUT"
 	ErrPermissionDenied = "ERR_PERMISSION_DENIED"
 	ErrEntityNotFound   = "ERR_ENTITY_NOT_FOUND"
+	ErrFileNotFound     = "ERR_FILE_NOT_FOUND"
 )
 
 var CodeErrors = map[string]int{
@@ -24,4 +25,5 @@ var CodeErrors = map[string]int{
 	ErrInvalidInput:     400,
 	ErrPermissionDenied: 403,
 	ErrEntityNotFound:   400,
+	ErrFileNotFound:     400,
 }

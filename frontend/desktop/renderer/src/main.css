@@ -1,0 +1,25 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  user-select: none;
+  overflow: hidden;
+  cursor: url("/cursor/default.png"), default;
+}
+
+button:hover,
+label:hover,
+a:hover,
+.pointer {
+  cursor: url("/cursor/pointer.png"), pointer;
+}
+
+div#root {
+  height: 100%;
+}
+
+div.app {
+  height: 100%;
+}

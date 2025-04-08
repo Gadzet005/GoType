@@ -1,38 +1,39 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Button, ButtonProps } from "@/components/common/Button";
-import React, { useEffect } from "react";
-import { useNavigate } from "@/public/navigation";
+import { Button, ButtonProps } from "@/components/ui/Button";
+import { useNavigate } from "@/core/hooks";
+import { useHotkeys } from "react-hotkeys-hook";
 
-interface BackButtonProps extends ButtonProps {
+interface BackButtonProps extends Omit<ButtonProps, "children"> {
   href: string;
-  params?: any[];
+  params?: Record<string, unknown>;
+  label?: string;
+  onBack?: () => void;
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({
   variant = "contained",
   startIcon = <ArrowBackIcon />,
   color = "error",
-  children = "Назад",
+  label = "Назад",
+  onBack = () => {},
   ...other
 }) => {
   const navigate = useNavigate();
-
-  const handleKeydown = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      navigate(other.href, other.params);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeydown);
-    return () => {
-      document.removeEventListener("keydown", handleKeydown);
-    };
-  }, []);
+  useHotkeys("esc", () => {
+    onBack();
+    navigate(other.href, other.params);
+  });
 
   return (
-    <Button variant={variant} startIcon={startIcon} color={color} {...other}>
-      {children}
+    <Button
+      sx={{ py: 2, px: 4, fontSize: "1rem", fontWeight: 500 }}
+      variant={variant}
+      startIcon={startIcon}
+      color={color}
+      onClick={() => onBack()}
+      {...other}
+    >
+      {label}
     </Button>
   );
 };

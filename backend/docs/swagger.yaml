@@ -1,5 +1,12 @@
 definitions:
-  entities.ChangeUserAccess:
+  domain.CategoryParams:
+    properties:
+      category:
+        type: integer
+      pattern:
+        type: string
+    type: object
+  domain.ChangeUserAccess:
     properties:
       id:
         type: integer
@@ -9,14 +16,111 @@ definitions:
     - id
     - new_access
     type: object
-  entities.LevelBan:
+  domain.ComplaintID:
     properties:
       id:
         type: integer
     required:
     - id
     type: object
-  entities.LevelComplaint:
+  domain.FetchLevelStruct:
+    properties:
+      filter_params:
+        $ref: '#/definitions/domain.LevelFilterParams'
+      page_info:
+        $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo'
+      sort_params:
+        $ref: '#/definitions/domain.LevelSortParams'
+      tags:
+        items:
+          type: string
+        type: array
+    required:
+    - filter_params
+    - page_info
+    - sort_params
+    - tags
+    type: object
+  domain.GetLevelInfoStruct:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  domain.GetUserInfoStruct:
+    properties:
+      access:
+        type: integer
+      ban_reason:
+        type: string
+      ban_time:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+  domain.GetUserStatsRes:
+    properties:
+      user_stats:
+        $ref: '#/definitions/domain.PlayerStats'
+    type: object
+  domain.GetUsersTop:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/domain.PlayerStats'
+        type: array
+    type: object
+  domain.Level:
+    properties:
+      author:
+        type: integer
+      author_name:
+        type: string
+      description:
+        type: string
+      difficulty:
+        type: integer
+      duration:
+        type: integer
+      id:
+        type: integer
+      image_type:
+        type: string
+      language:
+        type: string
+      name:
+        type: string
+      preview_path:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      type:
+        type: string
+    required:
+    - author
+    - author_name
+    - description
+    - difficulty
+    - duration
+    - image_type
+    - language
+    - name
+    - tags
+    - type
+    type: object
+  domain.LevelBan:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  domain.LevelComplaint:
     properties:
       author_id:
         type: integer
@@ -32,7 +136,134 @@ definitions:
     - message
     - reason
     type: object
-  entities.User:
+  domain.LevelComplaints:
+    properties:
+      level_complaints:
+        items:
+          $ref: '#/definitions/domain.LevelComplaint'
+        type: array
+    type: object
+  domain.LevelComplete:
+    properties:
+      average_velocity:
+        type: number
+      level_id:
+        type: integer
+      max_combo:
+        type: integer
+      num_press_err_by_char:
+        additionalProperties:
+          items:
+            type: integer
+          type: array
+        description: NumPressErrByChar map[rune][2]int `json:"num_press_err_by_char"
+          binding:"required" db:"-"`
+        type: object
+      placement:
+        type: integer
+      player_id:
+        type: integer
+      points:
+        type: integer
+    required:
+    - average_velocity
+    - level_id
+    - max_combo
+    - num_press_err_by_char
+    - placement
+    - player_id
+    - points
+    type: object
+  domain.LevelFilterParams:
+    properties:
+      difficulty:
+        type: integer
+      language:
+        type: string
+      level_name:
+        type: string
+    type: object
+  domain.LevelInfo:
+    properties:
+      level_info:
+        $ref: '#/definitions/domain.Level'
+    type: object
+  domain.LevelSortParams:
+    properties:
+      date:
+        type: string
+      popularity:
+        type: string
+    type: object
+  domain.LevelsList:
+    properties:
+      levels:
+        items:
+          $ref: '#/definitions/domain.Level'
+        type: array
+    type: object
+  domain.PlayerStats:
+    properties:
+      average_accuracy_classic:
+        type: number
+      average_accuracy_relax:
+        type: number
+      average_delay:
+        type: number
+      num_chars_classic:
+        type: integer
+      num_chars_relax:
+        type: integer
+      num_classes_classic:
+        items:
+          type: integer
+        type: array
+      num_games_mult:
+        type: integer
+      num_level_classic:
+        type: integer
+      num_level_relax:
+        type: integer
+      num_press_err_by_char_by_lang:
+        additionalProperties:
+          additionalProperties:
+            items:
+              type: integer
+            type: array
+          type: object
+        description: NumPressErrByCharByLang map[string]interface{} `json:"num_press_err_by_char_by_lang"
+          db:"num_press_err_by_char_by_lang" binding:"required"`
+        type: object
+      sum_points:
+        type: integer
+      user_id:
+        type: integer
+      user_name:
+        type: string
+      win_percentage:
+        type: number
+    required:
+    - num_press_err_by_char_by_lang
+    type: object
+  domain.RefreshStruct:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  domain.StatSortFilterParams:
+    properties:
+      category_params:
+        $ref: '#/definitions/domain.CategoryParams'
+      page_info:
+        $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo'
+      points:
+        type: string
+    required:
+    - page_info
+    type: object
+  domain.User:
     properties:
       name:
         type: string
@@ -43,7 +274,7 @@ definitions:
     - name
     - password
     type: object
-  entities.UserBan:
+  domain.UserBan:
     properties:
       ban_reason:
         type: string
@@ -56,7 +287,7 @@ definitions:
     - ban_time
     - id
     type: object
-  entities.UserComplaint:
+  domain.UserComplaint:
     properties:
       author_id:
         type: integer
@@ -72,36 +303,73 @@ definitions:
     - reason
     - user_id
     type: object
-  entities.UserUnban:
+  domain.UserComplaints:
+    properties:
+      user_complaints:
+        items:
+          $ref: '#/definitions/domain.UserComplaint'
+        type: array
+    type: object
+  domain.UserID:
     properties:
       id:
         type: integer
     required:
     - id
     type: object
+  domain.UserSearchParams:
+    properties:
+      is_banned:
+        type: boolean
+      name:
+        type: string
+      offset:
+        type: integer
+      page_size:
+        type: integer
+    required:
+    - is_banned
+    - name
+    - offset
+    - page_size
+    type: object
+  domain.UserUnban:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  domain.Users:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/domain.User'
+        type: array
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo:
+    properties:
+      offset:
+        type: integer
+      page_size:
+        type: integer
+    required:
+    - offset
+    - page_size
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo:
+    properties:
+      offset:
+        type: integer
+      page_size:
+        type: integer
+    required:
+    - offset
+    - page_size
+    type: object
   handler.errorResponse:
     properties:
       message:
-        type: string
-    type: object
-  handler.getUserInfoStruct:
-    properties:
-      access:
-        type: integer
-      ban_reason:
-        type: string
-      ban_time:
-        type: string
-      id:
-        type: integer
-      username:
-        type: string
-    type: object
-  handler.refreshStruct:
-    properties:
-      access_token:
-        type: string
-      refresh_token:
         type: string
     type: object
 host: localhost:8000
@@ -123,7 +391,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.LevelBan'
+          $ref: '#/definitions/domain.LevelBan'
       produces:
       - application/json
       responses:
@@ -164,7 +432,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.UserBan'
+          $ref: '#/definitions/domain.UserBan'
       produces:
       - application/json
       responses:
@@ -207,7 +475,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.ChangeUserAccess'
+          $ref: '#/definitions/domain.ChangeUserAccess'
       produces:
       - application/json
       responses:
@@ -235,6 +503,200 @@ paths:
       summary: Change access level
       tags:
       - admin
+  /admin/get-level-complaints:
+    get:
+      consumes:
+      - application/json
+      description: Get list of level complaints assigned to current admin. Available
+        only for moderators and admins
+      operationId: get-level-complaints
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.LevelComplaints'
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token;'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get Level Complaints for moderator to process
+      tags:
+      - admin
+  /admin/get-user-complaints:
+    get:
+      consumes:
+      - application/json
+      description: Get list of user complaints assigned to current admin. Available
+        only for moderators and admins
+      operationId: get-user-complaints
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.UserComplaints'
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token;'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get User Complaints for moderator to process
+      tags:
+      - admin
+  /admin/get-users:
+    get:
+      consumes:
+      - application/json
+      description: Get list of users with given params. Available only for moderators
+        and admins
+      operationId: get-users
+      parameters:
+      - description: Search params - name, isBanned, pages info
+        in: body
+        name: user_search_params
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserSearchParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Users'
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token;'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get Users with given params
+      tags:
+      - admin
+  /admin/process-level-complaint:
+    post:
+      consumes:
+      - application/json
+      description: Delete level complaint with given id. Available only for moderators
+        and admins
+      operationId: process-level-complaint
+      parameters:
+      - description: Complaint ID
+        in: body
+        name: complaint_id
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ComplaintID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint
+            with such id among the ones assigned to you'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Delete level complaint with given id
+      tags:
+      - admin
+  /admin/process-user-complaint:
+    post:
+      consumes:
+      - application/json
+      description: Delete user complaint with given id. Available only for moderators
+        and admins
+      operationId: process-user-complaint
+      parameters:
+      - description: Complaint ID
+        in: body
+        name: complaint_id
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ComplaintID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint
+            with such id among the ones assigned to you'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Delete user complaint with given id
+      tags:
+      - admin
   /admin/unban-level:
     post:
       consumes:
@@ -247,7 +709,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.LevelBan'
+          $ref: '#/definitions/domain.LevelBan'
       produces:
       - application/json
       responses:
@@ -288,7 +750,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.UserUnban'
+          $ref: '#/definitions/domain.UserUnban'
       produces:
       - application/json
       responses:
@@ -328,14 +790,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.User'
+          $ref: '#/definitions/domain.User'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.refreshStruct'
+            $ref: '#/definitions/domain.RefreshStruct'
         "400":
           description: 'Possible messages: ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_NO_SUCH_USER - User with such name and password does not
@@ -366,14 +828,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/handler.refreshStruct'
+          $ref: '#/definitions/domain.RefreshStruct'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.refreshStruct'
+            $ref: '#/definitions/domain.RefreshStruct'
         "400":
           description: 'Possible messages: ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_NO_SUCH_USER - User with id as in access token does not
@@ -408,14 +870,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.User'
+          $ref: '#/definitions/domain.User'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.refreshStruct'
+            $ref: '#/definitions/domain.RefreshStruct'
         "400":
           description: 'Possible messages: ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_USER_EXISTS - User with such name already exists;'
@@ -432,6 +894,392 @@ paths:
       summary: Register
       tags:
       - auth
+  /level/create-level:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create level with given structure
+      operationId: create-level
+      parameters:
+      - description: Archive with level.
+        in: formData
+        name: level
+        required: true
+        type: file
+      - description: JSON file with level description.
+        in: formData
+        name: info
+        required: true
+        type: file
+      - description: File with preview image of the level
+        in: formData
+        name: preview
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.GetLevelInfoStruct'
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
+            input json;'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Create level
+      tags:
+      - level
+  /level/download-level:
+    get:
+      consumes:
+      - application/json
+      description: Download level with given id from server
+      operationId: download-level
+      parameters:
+      - description: id of level you want to download
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.GetLevelInfoStruct'
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: Archive with level.
+          schema:
+            type: file
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
+            input json; ERR_ENTITY_NOT_FOUND - no such level on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Download level
+      tags:
+      - level
+  /level/get-level-info:
+    get:
+      consumes:
+      - application/json
+      description: Get level info about level with given id
+      operationId: get-level-info
+      parameters:
+      - description: id of level you want to find out about
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.GetLevelInfoStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.LevelInfo'
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
+            input json;'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get level info
+      tags:
+      - level
+  /level/get-level-list:
+    get:
+      consumes:
+      - application/json
+      description: Get level list with given params
+      operationId: get-level-list
+      parameters:
+      - description: search and filter params
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.FetchLevelStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.LevelsList'
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
+            input json;'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get level list
+      tags:
+      - level
+  /level/update-level:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Update level with given structure
+      operationId: update-level
+      parameters:
+      - description: Archive with level.
+        in: formData
+        name: level
+        required: true
+        type: file
+      - description: JSON file with level description.
+        in: formData
+        name: info
+        required: true
+        type: file
+      - description: File with preview image of the level
+        in: formData
+        name: preview
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.GetLevelInfoStruct'
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
+            input json;'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Update level
+      tags:
+      - level
+  /single-game/send-results:
+    post:
+      consumes:
+      - application/json
+      description: Send results of single player game
+      operationId: send-results
+      parameters:
+      - description: Results of the game
+        in: body
+        name: complaint_id
+        required: true
+        schema:
+          $ref: '#/definitions/domain.LevelComplete'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with
+            such id'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Send results of single player game
+      tags:
+      - single-game
+  /stats/get-user-stats:
+    get:
+      consumes:
+      - application/json
+      description: Get User Statistics by id
+      operationId: get-user-stats
+      parameters:
+      - description: Id of user
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.GetUserStatsRes'
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with
+            such id'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get User Statistics
+      tags:
+      - stats
+  /stats/get-users-top:
+    get:
+      consumes:
+      - application/json
+      description: Get Users Top with given params
+      operationId: get-users-top
+      parameters:
+      - description: Search params
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.StatSortFilterParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.GetUsersTop'
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with
+            such id'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Get Users Top
+      tags:
+      - stats
+  /user-actions/change-avatar:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Change avatar. In case of empty request sets default avatar.
+      operationId: change-avatar
+      parameters:
+      - description: File with new avatar image
+        in: formData
+        name: avatar
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
+            of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
+            input files (e.g. wrong name, not "avatar");'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
+            ERR_PERMISSION_DENIED - Not enough rights to perform the action'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: 'Possible messages: ERR_INTERNAL - Error on server'
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Change Avatar
+      tags:
+      - user-actions
   /user-actions/get-user-info:
     get:
       consumes:
@@ -444,7 +1292,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.getUserInfoStruct'
+            $ref: '#/definitions/domain.GetUserInfoStruct'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - There is no id
             in token payload/Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER
@@ -511,7 +1359,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.LevelComplaint'
+          $ref: '#/definitions/domain.LevelComplaint'
       produces:
       - application/json
       responses:
@@ -551,7 +1399,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/entities.UserComplaint'
+          $ref: '#/definitions/domain.UserComplaint'
       produces:
       - application/json
       responses:

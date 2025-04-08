@@ -1,0 +1,24 @@
+{
+  "name": "@gotype/desktop-main",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "ELECTRON_IS_DEV=1 ELECTRON_START_URL='http://localhost:5173' NODE_OPTIONS='--import tsx' yarn electron . 2>/dev/null"
+  },
+  "dependencies": {
+    "electron-store": "8.2.0",
+    "fs-jetpack": "^5.1.0",
+    "lru-cache": "^11.0.2"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.12",
+    "@types/node": "^22.10.6",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "electron-devtools-installer": "^4.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "yarn": "^1.22.22"
+  }
+}

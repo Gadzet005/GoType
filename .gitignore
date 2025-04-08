@@ -58,3 +58,4 @@ sketch
 .env
 
 postgres-data/
+coverage
