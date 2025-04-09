@@ -3,4 +3,5 @@ export namespace AllowedAssetExtensions {
     export const AUDIO = ["mp3", "wav"];
     export const BACKGROUND = PICTURE;
     export const PREVIEW = PICTURE;
+    export const LEVEL_ARCHIVE = ["zip"];
 }

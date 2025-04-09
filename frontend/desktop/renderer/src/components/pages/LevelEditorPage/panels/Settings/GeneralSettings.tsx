@@ -22,7 +22,7 @@ const validationSchema = yup.object().shape({
   name: yup.string().min(3, "Слишком короткое название"),
 });
 
-export const SettingsForm = () => {
+export const GeneralSettings = () => {
   const { draft, updateDraft } = useEditorContext();
 
   const handleSubmit = async (values: SettingsFormValues) => {
@@ -55,7 +55,11 @@ export const SettingsForm = () => {
       {({ isSubmitting }) => (
         <Form>
           <Stack spacing={2}>
-            <Field name="name" label="Название" component={TextField} />
+            <Field
+              name="name"
+              label="Название черновика"
+              component={TextField}
+            />
             <Field name="lang" label="Язык" component={Select}>
               {availableLanguages.map((lang) => (
                 <MenuItem value={lang.code} key={lang.code}>

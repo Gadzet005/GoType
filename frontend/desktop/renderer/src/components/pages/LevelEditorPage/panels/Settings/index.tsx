@@ -1,15 +1,22 @@
 import { Container, Stack, Typography } from "@mui/material";
 import React from "react";
 import { observer } from "mobx-react";
-import { SettingsForm } from "./form";
+import { GeneralSettings } from "./GeneralSettings";
+import { Publication } from "./Publication";
 
 export const Settings: React.FC = observer(() => {
   return (
     <Stack sx={{ alignItems: "center" }} spacing={3}>
-      <Typography variant="h4">Основные настройки</Typography>
       <Container maxWidth="sm">
-        <Stack spacing={2}>
-          <SettingsForm />
+        <Stack spacing={3}>
+          <Typography sx={{ textAlign: "center" }} variant="h4">
+            Основные настройки
+          </Typography>
+          <GeneralSettings />
+          <Typography sx={{ textAlign: "center" }} variant="h4">
+            Публикация
+          </Typography>
+          <Publication />
         </Stack>
       </Container>
     </Stack>
