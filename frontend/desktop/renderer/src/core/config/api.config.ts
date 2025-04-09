@@ -11,6 +11,11 @@ export namespace ApiRoutes {
         export const GET_USER_INFO = `${ROOT}/get-user-info`;
         export const LOGOUT = `${ROOT}/logout`;
     }
+
+    export namespace SingleGame {
+        const ROOT = "/single-game";
+        export const SEND_RESULTS = `${ROOT}/send-results`;
+    }
 }
 
 export enum ApiError {

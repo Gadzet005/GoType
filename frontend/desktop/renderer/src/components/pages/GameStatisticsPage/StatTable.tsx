@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
-import React from "react";
-import { GameStatistics } from "@/core/store/game/statistics";
 import { StatRow } from "./StatRow";
+import { GameStatistics } from "@/core/store/game/statistics";
+import React from "react";
 
 interface StatTableProps {
   statistics: GameStatistics;
@@ -14,12 +14,28 @@ export const StatTable: React.FC<StatTableProps> = ({ statistics }) => {
         Статистика
       </Typography>
 
+      {!statistics.failed && (
+        <StatRow
+          label="Общая оценка"
+          value={statistics.accuracyLevel}
+          valueColor="secondary"
+        />
+      )}
       <StatRow label="Очки" value={statistics.score} />
       <StatRow label="Точность" value={statistics.accuracy.toFixed(2) + "%"} />
       <StatRow
-        label="Правильные буквы"
-        value={statistics.rightLetters}
-        valueColor="success"
+        label="Скорость"
+        value={statistics.avgVelocity.toFixed(2) + "мс."}
+      />
+      <StatRow
+        label="Ошибки"
+        value={statistics.totalMistakes}
+        valueColor="error"
+      />
+      <StatRow
+        label="Пропущено"
+        value={statistics.missedTotal}
+        valueColor="secondary"
       />
       <StatRow
         label="Максимальное комбо"

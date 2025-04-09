@@ -34,3 +34,9 @@ export namespace Constraints {
     export const maxIntroDurationPercent = 20;
     export const maxOutroDurationPercent = 20;
 }
+
+export namespace Accuracy {
+    export const minAccuracy = 60;
+    export const names = ["D", "C", "B", "A", "S"];
+    export const thresholds = [minAccuracy, 70, 80, 90, 100];
+}

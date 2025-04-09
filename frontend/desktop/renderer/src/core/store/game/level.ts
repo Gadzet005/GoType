@@ -3,57 +3,57 @@ import { Language } from "@/core/utils/language";
 import { requireTrue } from "@/core/utils/panic";
 
 export class Level {
-    private readonly info: LevelData;
+    private readonly data: LevelData;
     readonly language: Language;
 
-    constructor(levelInfo: LevelData) {
-        this.info = levelInfo;
+    constructor(levelData: LevelData) {
+        this.data = levelData;
 
-        const lang = Language.byCode(levelInfo.languageCode);
+        const lang = Language.byCode(levelData.languageCode);
         requireTrue(
             lang !== null,
-            `Unknown language code=${levelInfo.languageCode}`
+            `Unknown language code=${levelData.languageCode}`
         );
         this.language = lang!;
     }
 
     get id() {
-        return this.info.id;
+        return this.data.id;
     }
 
     get name() {
-        return this.info.name;
+        return this.data.name;
     }
 
     get description() {
-        return this.info.description;
+        return this.data.description;
     }
 
     get author() {
-        return this.info.author;
+        return this.data.author;
     }
 
     get duration() {
-        return this.info.duration;
+        return this.data.duration;
     }
 
     get tags() {
-        return this.info.tags;
+        return this.data.tags;
     }
 
     get preview() {
-        return this.info.preview;
+        return this.data.preview;
     }
 
     get audio() {
-        return this.info.audio;
+        return this.data.audio;
     }
 
     get background() {
-        return this.info.background;
+        return this.data.background;
     }
 
     get sentences() {
-        return this.info.sentences;
+        return this.data.sentences;
     }
 }

@@ -2,7 +2,7 @@ import { RoutePath } from "@/core/config/routes/path";
 import { useNavigate } from "@/core/hooks";
 import { GameStatistics } from "@/core/store/game/statistics";
 import { LevelData } from "@desktop-common/level";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Button } from "../../ui/Button";
@@ -28,36 +28,21 @@ export const GameStatisticsPage: React.FC<GameStatisticsPageProps> = ({
         p: 2,
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          mt: 3,
-          gap: 5,
-          width: "50%",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 2,
-          }}
-        >
+      <Stack sx={{ mt: 3, width: "50%" }} spacing={5}>
+        <Stack sx={{ alignItems: "center" }} spacing={2}>
           <Typography
             sx={{
               fontWeight: "bold",
             }}
-            color="success"
+            color={statistics.failed ? "error" : "success"}
             variant="h4"
           >
-            Уровень завершен
+            {statistics.failed ? "Уровень провален" : "Уровень пройден"}
           </Typography>
           <Typography color="primary" sx={{ fontWeight: "bold" }} variant="h4">
             {level.name}
           </Typography>
-        </Box>
+        </Stack>
 
         <StatTable statistics={statistics} />
 
@@ -82,7 +67,7 @@ export const GameStatisticsPage: React.FC<GameStatisticsPageProps> = ({
             К списку уровней
           </Button>
         </Box>
-      </Box>
+      </Stack>
     </Container>
   );
 };

@@ -1,10 +1,11 @@
 import { action, makeObservable, observable, computed } from "mobx";
-import { GameStatistics } from "./statistics";
+import { GameStatistics, StatInputResultType } from "./statistics";
 import { GameField } from "./core/field";
 import { Cursor, InputResult } from "./core/cursor";
 import { SentenceData } from "@desktop-common/level/sentence";
 import { Language } from "@/core/utils/language";
 import { requireTrue } from "@/core/utils/panic";
+import { LetterState } from "./core/letter";
 
 enum GameStatus {
     idle,
@@ -13,7 +14,7 @@ enum GameStatus {
     finished,
 }
 
-export interface GameInfo {
+export interface GameData {
     sentences: SentenceData[];
     language: Language;
     duration: number;
@@ -27,10 +28,11 @@ export class Game {
     private readonly field: GameField;
     private readonly cursor: Cursor;
     private status = GameStatus.idle;
-    private time_: number = 0;
+    private time_ = 0;
+    private firstActiveSentence = 0;
 
-    constructor(info: GameInfo) {
-        requireTrue(info.duration > 0, "duration must be greater than 0");
+    constructor(data: GameData) {
+        requireTrue(data.duration > 0, "duration must be greater than 0");
 
         makeObservable(this, {
             // @ts-expect-error: private observable
@@ -47,11 +49,11 @@ export class Game {
             finish: action,
         });
 
-        this.field = new GameField(info.sentences);
-        this.cursor = new Cursor(this.field.sentences, info.language);
-        this.statistics = new GameStatistics(info.language);
-        this.duration = info.duration;
-        this.language = info.language;
+        this.field = new GameField(data.sentences);
+        this.cursor = new Cursor(this.field.sentences, data.language);
+        this.statistics = new GameStatistics(data.language, data.duration);
+        this.duration = data.duration;
+        this.language = data.language;
     }
 
     reset() {
@@ -62,8 +64,35 @@ export class Game {
         this.time_ = 0;
     }
 
+    private updateFirstActiveSentence() {
+        while (
+            this.firstActiveSentence < this.field.sentences.length &&
+            this.field.sentences[this.firstActiveSentence].isComplete(
+                this.time_
+            )
+        ) {
+            const sentence = this.field.sentences[this.firstActiveSentence];
+            sentence.letters.forEach((letter) => {
+                if (letter.state === LetterState.default) {
+                    this.statistics.addInputResult({
+                        type: StatInputResultType.missed,
+                        time: this.time_,
+                        letter: letter.char,
+                    });
+                }
+            });
+            this.firstActiveSentence++;
+        }
+    }
+
     step(time: number) {
+        if (!this.isRunning()) {
+            return;
+        }
+
         this.time_ = time;
+        this.updateFirstActiveSentence();
+
         if (time >= this.duration) {
             this.finish();
         }
@@ -111,7 +140,15 @@ export class Game {
         if (result === InputResult.ignore) {
             return;
         }
-        this.statistics.addInputResult(letter, result === InputResult.correct);
+
+        this.statistics.addInputResult({
+            time: this.time_,
+            letter: letter,
+            type:
+                result === InputResult.correct
+                    ? StatInputResultType.correct
+                    : StatInputResultType.incorrect,
+        });
     }
 
     /**

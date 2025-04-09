@@ -45,7 +45,7 @@ export class Sentence {
         }
     }
 
-    isVisible(time: number): boolean {
+    isVisible(time: number) {
         const state = this.getState(time);
         return (
             state === SentenceState.intro ||
@@ -54,8 +54,13 @@ export class Sentence {
         );
     }
 
-    isActive(time: number): boolean {
+    isActive(time: number) {
         return this.getState(time) === SentenceState.active;
+    }
+
+    isComplete(time: number) {
+        const state = this.getState(time);
+        return state === SentenceState.outro || state === SentenceState.hidden;
     }
 
     get length() {

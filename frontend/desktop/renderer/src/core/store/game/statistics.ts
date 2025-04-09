@@ -1,79 +1,82 @@
 import { action, observable, makeObservable, computed } from "mobx";
-import { Score } from "@/core/config/game.config";
+import { Accuracy, Score } from "@/core/config/game.config";
 import { Language } from "@/core/utils/language";
 
-export class GameStatistics {
-    private readonly language: Language;
-    private _score: number = 0;
-    private _alphabetTotal: number[];
-    private _alphabetRight: number[];
-    private _comboCounter = 1;
-    private _maxCombo = 1;
+export enum StatInputResultType {
+    correct,
+    incorrect,
+    missed,
+}
 
-    constructor(language: Language) {
+export interface StatInputResult {
+    type: StatInputResultType;
+    time: number;
+    letter: string;
+}
+
+export class GameStatistics {
+    readonly levelDuration: number;
+    readonly language: Language;
+
+    private score_: number = 0;
+    private missedTotal_: number = 0;
+    private alphabetTotal_: number[];
+    private alphabetMistakes_: number[];
+    private comboCounter_ = 1;
+    private maxCombo_ = 1;
+
+    constructor(language: Language, levelDuration: number) {
         makeObservable(this, {
             // @ts-expect-error: private observable
-            _score: observable,
-            _comboCounter: observable,
+            score_: observable,
+            comboCounter_: observable,
 
             score: computed,
             comboCounter: computed,
+            failed: computed,
 
             reset: action,
             addInputResult: action,
         });
 
         this.language = language;
-        this._alphabetTotal = Array(language.alphabet.length).fill(0);
-        this._alphabetRight = Array(language.alphabet.length).fill(0);
+        this.alphabetTotal_ = Array(language.alphabet.length).fill(0);
+        this.alphabetMistakes_ = Array(language.alphabet.length).fill(0);
+        this.levelDuration = levelDuration;
     }
 
     reset() {
-        this._score = 0;
-        this._alphabetTotal = Array(this.language.alphabet.length).fill(0);
-        this._alphabetRight = Array(this.language.alphabet.length).fill(0);
-        this._comboCounter = 1;
-        this._maxCombo = 1;
+        this.score_ = 0;
+        this.alphabetTotal_ = Array(this.language.alphabet.length).fill(0);
+        this.alphabetMistakes_ = Array(this.language.alphabet.length).fill(0);
+        this.comboCounter_ = 1;
+        this.maxCombo_ = 1;
     }
 
-    private addLetterToStatistics(letter: string, isRight: boolean): void {
-        const index = this.language.alphabet.indexOf(letter);
-        if (index >= 0) {
-            this._alphabetTotal[index]++;
-            this._alphabetRight[index] += isRight ? 1 : 0;
-        }
+    get failed() {
+        return this.accuracy < Accuracy.minAccuracy;
     }
 
     get score() {
-        return this._score;
+        return this.score_;
     }
 
-    get alphabetTotal() {
-        return this._alphabetTotal.map((value: number, index: number) => {
+    get alphabetStat() {
+        return this.alphabetTotal_.map((value: number, index: number) => {
             return {
                 letter: this.language.alphabet[index],
                 total: value,
-            };
-        });
-    }
-
-    get alphabetRatio() {
-        return this._alphabetRight.map((value: number, index: number) => {
-            const total = this._alphabetTotal[index];
-            const ratio = total === 0 ? 1 : value / total;
-            return {
-                letter: this.language.alphabet[index],
-                ratio: ratio * 100,
+                mistakes: this.alphabetMistakes_[index],
             };
         });
     }
 
     get totalLetters() {
-        return this._alphabetTotal.reduce((a, b) => a + b, 0);
+        return this.alphabetTotal_.reduce((a, b) => a + b, 0);
     }
 
-    get rightLetters() {
-        return this._alphabetRight.reduce((a, b) => a + b, 0);
+    get totalMistakes() {
+        return this.alphabetMistakes_.reduce((a, b) => a + b, 0);
     }
 
     // right / total in %
@@ -81,29 +84,71 @@ export class GameStatistics {
         if (this.totalLetters === 0) {
             return 100;
         }
-        return (this.rightLetters / this.totalLetters) * 100;
+        return (1 - this.totalMistakes / this.totalLetters) * 100;
+    }
+
+    get accuracyLevel() {
+        if (this.failed) {
+            return "?";
+        }
+
+        const accuracy = this.accuracy;
+        for (let i = 1; i < Accuracy.thresholds.length; i++) {
+            if (accuracy < Accuracy.thresholds[i]) {
+                return Accuracy.names[i - 1];
+            }
+        }
+
+        // should be unreachable
+        return "?";
     }
 
     get comboCounter() {
-        return this._comboCounter;
+        return this.comboCounter_;
     }
 
     get maxCombo() {
-        return this._maxCombo;
+        return this.maxCombo_;
+    }
+
+    get avgVelocity() {
+        if (this.totalLetters === 0) {
+            return 0;
+        }
+        return this.levelDuration / this.totalLetters;
+    }
+
+    get missedTotal() {
+        return this.missedTotal_;
     }
 
     /** Add to statistics that letter was typed */
-    addInputResult(letter: string, isRight: boolean) {
-        if (!this.language.includes(letter)) {
+    addInputResult(result: StatInputResult) {
+        if (!this.language.includes(result.letter)) {
             return;
         }
-        this.addLetterToStatistics(letter, isRight);
-        if (isRight) {
-            this._comboCounter++;
-            this._maxCombo = Math.max(this._comboCounter, this._maxCombo);
-            this._score += this.comboCounter * Score.letter;
-        } else {
-            this._comboCounter = 1;
+
+        switch (result.type) {
+            case StatInputResultType.correct:
+                this.comboCounter_++;
+                this.maxCombo_ = Math.max(this.comboCounter_, this.maxCombo_);
+                this.score_ += this.comboCounter * Score.letter;
+                break;
+            case StatInputResultType.incorrect:
+                this.comboCounter_ = 1;
+                break;
+            case StatInputResultType.missed:
+                this.comboCounter_ = 1;
+                this.missedTotal_++;
+                break;
+        }
+
+        const isRight = result.type === StatInputResultType.correct;
+        const letterIdx = this.language.alphabet.indexOf(result.letter);
+
+        this.alphabetTotal_[letterIdx]++;
+        if (!isRight) {
+            this.alphabetMistakes_[letterIdx]++;
         }
     }
 }

@@ -1,7 +1,7 @@
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import { RoutePath } from "@/core/config/routes/path";
-import { useNavigate } from "@/core/hooks";
+import { useAppContext, useNavigate } from "@/core/hooks";
 import { GameRunner } from "@/core/store/game";
 import { Game } from "@/core/store/game/game";
 import { Level } from "@/core/store/game/level";
@@ -15,12 +15,14 @@ import { ComboCounter } from "./ComboCounter";
 import PauseMenu from "./PauseMenu";
 import { GameView } from "@/components/game/GameView";
 import { useAutoLoadAudioPlayer } from "@/core/hooks/useAutoLoadAudioPlayer";
+import { sendGameResults } from "@/core/services/api/game/sendGameResults";
 
 interface GamePageProps {
   level: Level;
 }
 
 export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
+  const ctx = useAppContext();
   const navigate = useNavigate();
   const audioPlayer = useAutoLoadAudioPlayer(level.audio);
 
@@ -69,7 +71,13 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   React.useEffect(() => {
     const disposer = when(
       () => game.isFinished(),
-      () => {
+      async () => {
+        if (!game.statistics.failed) {
+          const result = await sendGameResults(ctx, level.id, game.statistics);
+          if (!result.ok) {
+            console.error(result.error);
+          }
+        }
         navigate(RoutePath.gameStatistics, {
           level,
           statistics: game.statistics,
@@ -82,7 +90,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
         gameRunner.pause();
       }
     };
-  }, [game, level, gameRunner, navigate]);
+  }, [game, level, gameRunner, navigate, ctx]);
 
   React.useEffect(() => {
     if (isGameReady && audioPlayer.isReady) {
