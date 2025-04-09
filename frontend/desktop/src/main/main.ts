@@ -37,7 +37,7 @@ app.setPath("userData", path.join(app.getPath("appData"), USER_DATA_DIR_NAME));
 function createWindow(): BrowserWindow {
     const mainWindow = new BrowserWindow({
         webPreferences: {
-            preload: path.join(__dirname, "../preload/index.js"),
+            preload: path.join(__dirname, "preload.js"),
         },
         autoHideMenuBar: true,
         frame: false,

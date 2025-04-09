@@ -2,13 +2,19 @@
   "name": "gotype",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "src/main/main.ts",
+  "main": "dist/main/main.js",
   "scripts": {
-    "dev": "concurrently -k --success first \"vite\" \"yarn run dev:electron\"",
-    "dev:electron": "ELECTRON_IS_DEV=1 NODE_OPTIONS='--import tsx' yarn electron . 2>/dev/null",
+    "dev": "concurrently -k --success first \"vite\" \"yarn dev:electron\"",
+    "dev:electron": "ELECTRON_IS_DEV=1 NODE_OPTIONS='--import tsx' yarn electron src/main/main.ts 2>/dev/null",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:renderer": "vite build",
+    "build:app": "yarn build:renderer && yarn build:main",
+    "build:linux": "yarn build:app && yarn electron-builder --linux",
+    "build:win": "yarn build:app && yarn electron-builder --win --x64",
+    "build:mac": "yarn build:app && yarn electron-builder --mac --x64"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -37,6 +43,7 @@
     "react-use-audio-player": "^3.0.2",
     "react-use-measure": "^2.1.7",
     "typescript-eslint": "^8.29.1",
+    "electron-devtools-installer": "^4.0.0",
     "yup": "^1.6.1"
   },
   "devDependencies": {
@@ -53,7 +60,6 @@
     "concurrently": "^8.0.0",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
-    "electron-devtools-installer": "^4.0.0",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
@@ -64,5 +70,29 @@
     "typescript": "^5.7.3",
     "vite": "^6.0.5",
     "vitest": "^3.0.4"
+  },
+  "build": {
+    "appId": "gotype.com",
+    "productName": "GoType!",
+    "directories": {
+      "output": "dist/release"
+    },
+    "extraResources": [
+      {
+        "from": "src/main/preload.js",
+        "to": "preload.js"
+      }
+    ],
+    "files": [
+      "dist/main/**/*",
+      "dist/renderer/**/*",
+      "!dist/**/*.map"
+    ],
+    "linux": {
+      "category": "Game"
+    },
+    "win": {
+      "target": "nsis"
+    }
   }
 }

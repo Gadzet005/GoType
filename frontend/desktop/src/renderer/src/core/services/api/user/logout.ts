@@ -6,9 +6,9 @@ import { clearUserInfo } from "../../electron/user/clearUserInfo";
 
 export async function logout(ctx: AppContext): PromiseResult<void, string> {
     try {
-        await ctx.authApi.post(ApiRoutes.UserActions.LOGOUT);
         ctx.user.unauthorize();
         await clearUserInfo();
+        await ctx.authApi.post(ApiRoutes.UserActions.LOGOUT);
         return success();
     } catch (error: any) {
         return commonApiErrorResult(error);

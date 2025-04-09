@@ -1,3 +1,4 @@
+import config from "./config.json";
 import { AppConfig } from "../common/config";
 
 export interface InternalAppConfig extends AppConfig {
@@ -5,7 +6,7 @@ export interface InternalAppConfig extends AppConfig {
 }
 
 export const appConfig: InternalAppConfig = {
-    backendURL: "http://localhost:8080",
-    devRendererURL: "http://localhost:3000",
+    backendURL: config.backendURL,
+    devRendererURL: config.devRendererURL,
     isDev: Boolean(process.env.ELECTRON_IS_DEV ?? false),
 };

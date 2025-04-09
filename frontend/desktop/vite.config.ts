@@ -7,6 +7,7 @@ import path from "path";
 export default defineConfig({
     plugins: [react()],
     root: "src/renderer",
+    base: "./",
     server: {
         port: 3000,
     },
