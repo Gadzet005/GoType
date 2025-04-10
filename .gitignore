@@ -59,3 +59,5 @@ sketch
 
 postgres-data/
 coverage
+
+frontend/desktop/src/main/config.json
