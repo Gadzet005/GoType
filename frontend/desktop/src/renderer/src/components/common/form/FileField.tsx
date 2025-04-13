@@ -1,5 +1,5 @@
 import { openOneFileDialog } from "@/core/services/electron/app/openFileDialog";
-import { Box, IconButton, TextField, Typography } from "@mui/material";
+import { Box, IconButton, TextField } from "@mui/material";
 import { FieldProps } from "formik";
 import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
@@ -7,6 +7,7 @@ import CloseIcon from "@mui/icons-material/Close";
 interface FileFieldProps extends FieldProps {
   extensions?: string[];
   label?: string;
+  helperText?: string;
 }
 
 export const FileField: React.FC<FileFieldProps> = ({
@@ -14,6 +15,7 @@ export const FileField: React.FC<FileFieldProps> = ({
   form,
   extensions = [],
   label = "",
+  helperText = "",
 }) => {
   const [fileName, setFileName] = useState<string>("");
   const error = form.errors[field.name];
@@ -53,6 +55,7 @@ export const FileField: React.FC<FileFieldProps> = ({
           fullWidth
           onClick={handleUploadFile}
           error={error != null && touched != null}
+          helperText={error && touched ? (error as string) : helperText}
           slotProps={{
             input: {
               readOnly: true,
@@ -70,11 +73,6 @@ export const FileField: React.FC<FileFieldProps> = ({
           }}
         />
       </Box>
-      {error && touched && (
-        <Typography variant="caption" color="error" mt={0.5}>
-          {error as string}
-        </Typography>
-      )}
     </Box>
   );
 };

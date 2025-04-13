@@ -24,6 +24,12 @@ export function createLevelDraft(
         },
         sentences: sentences,
         styleClasses: styleClasses,
-        publication: null,
+        publication: {
+            levelId: null,
+            levelName: "",
+            description: "",
+            preview: null,
+            difficulty: 1,
+        },
     };
 }

@@ -1,8 +1,8 @@
 import { LevelData } from "@common/level";
 import { logError } from "../../utils/common";
-import { toStored, fromStored } from "./storedLevel";
+import { toStored, fromStored, StoredLevelData } from "./storedLevel";
 import { FileSystemStorage } from "../base/FileSystemStorage";
-import { AssetStorage } from "../assets/assetStorage";
+import { extractZipBuffer } from "../../utils/zip";
 
 export class LevelStorage extends FileSystemStorage {
     static readonly DATA_FILE = "level.json";
@@ -23,9 +23,8 @@ export class LevelStorage extends FileSystemStorage {
 
     async getLevel(levelId: number): Promise<LevelData | null> {
         const levelDir = this.root.cwd(String(levelId));
-        const assets = new AssetStorage(levelDir.path());
 
-        const storedLevel = await levelDir
+        const storedLevel: StoredLevelData = await levelDir
             .readAsync(LevelStorage.DATA_FILE, "json")
             .catch(
                 logError(
@@ -33,7 +32,7 @@ export class LevelStorage extends FileSystemStorage {
                 )
             );
 
-        return fromStored(storedLevel, assets);
+        return fromStored(storedLevel, levelDir.path());
     }
 
     async getAllLevels(): Promise<LevelData[]> {
@@ -66,5 +65,16 @@ export class LevelStorage extends FileSystemStorage {
                     `Failed to remove level directory. levelId = ${levelId}`
                 )
             );
+    }
+
+    async importLevel(
+        levelId: number,
+        levelArchiveBuffer: Buffer
+    ): Promise<void> {
+        const levelDir = this.root.cwd(String(levelId));
+        await levelDir.removeAsync();
+        await extractZipBuffer(levelArchiveBuffer, levelDir.path()).catch(
+            logError("Failed to extract level archive.")
+        );
     }
 }

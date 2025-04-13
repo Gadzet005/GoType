@@ -24,7 +24,7 @@ export const FieldEditor = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!draft.audio || !draft.background) {
+  if (!draft.audio || !draft.background.asset) {
     return (
       <CenterBox>
         <Typography variant="h5">
@@ -48,7 +48,7 @@ export const FieldEditor = observer(() => {
           sentences={draft.sentences}
           time={time * 1000}
           background={{
-            asset: draft.background.asset!,
+            asset: draft.background.asset,
             brightness: draft.background.brightness,
           }}
           onSelect={(sentence) => {

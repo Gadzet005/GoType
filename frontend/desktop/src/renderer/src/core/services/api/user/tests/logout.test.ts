@@ -40,6 +40,6 @@ describe("logout test", () => {
         const result = await logout(ctx);
 
         expect(result.ok).toBe(false);
-        expect(user.isAuth).toBe(true);
+        expect(user.isAuth).toBe(false);
     });
 });

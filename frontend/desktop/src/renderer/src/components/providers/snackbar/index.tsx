@@ -23,13 +23,16 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     autoHideDuration: 5000,
   });
 
-  const show = (
-    message: string,
-    severity: AlertColor = "info",
-    autoHideDuration: number = 5000
-  ) => {
-    setSnackbar({ open: true, message, severity, autoHideDuration });
-  };
+  const show = React.useCallback(
+    (
+      message: string,
+      severity: AlertColor = "info",
+      autoHideDuration: number = 5000
+    ) => {
+      setSnackbar({ open: true, message, severity, autoHideDuration });
+    },
+    []
+  );
 
   const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") {
@@ -38,8 +41,10 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
+  const contextValue = React.useMemo(() => ({ show }), [show]);
+
   return (
-    <SnackbarContext.Provider value={{ show }}>
+    <SnackbarContext.Provider value={contextValue}>
       {children}
       <Snackbar
         open={snackbar.open}

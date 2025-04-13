@@ -1,8 +1,8 @@
-import { Asset } from "@common/asset";
+import { AssetRef } from "@common/asset";
 import React from "react";
 import { useAudioPlayer } from "react-use-audio-player";
 
-export function useAutoLoadAudioPlayer(asset?: Asset) {
+export function useAutoLoadAudioPlayer(asset?: AssetRef) {
     const audioPlayer = useAudioPlayer();
 
     React.useEffect(() => {

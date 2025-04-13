@@ -18,4 +18,12 @@ export function initLevelAPIHandlers(levelStorage: LevelStorage) {
     ipcMain.handle("remove-level", async (_, levelId: number) => {
         await levelStorage.removeLevel(levelId);
     });
+
+    ipcMain.handle(
+        "import-level",
+        async (_, levelId: number, levelArchive: string) => {
+            const buffer = Buffer.from(levelArchive, "base64");
+            await levelStorage.importLevel(levelId, buffer);
+        }
+    );
 }

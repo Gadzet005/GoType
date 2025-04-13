@@ -16,6 +16,13 @@ export namespace ApiRoutes {
         const ROOT = "/single-game";
         export const SEND_RESULTS = `${ROOT}/send-results`;
     }
+
+    export namespace Level {
+        const ROOT = "/level";
+        export const CREATE_LEVEL = `${ROOT}/create-level`;
+        export const DOWNLOAD_LEVEL = `${ROOT}/download-level`;
+        export const UPDATE_LEVEL = `${ROOT}/update-level`;
+    }
 }
 
 export enum ApiError {

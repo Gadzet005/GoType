@@ -32,4 +32,9 @@ export function initDraftAPIHandlers(draftStorage: DraftStorage) {
         const stored = draftStorage.getStoredDraft(draftId);
         shell.openPath(stored.path());
     });
+
+    ipcMain.handle("get-level-creation-data", async (_, draftId: number) => {
+        const stored = draftStorage.getStoredDraft(draftId);
+        return await stored.getLevelCreationData();
+    });
 }

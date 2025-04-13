@@ -10,6 +10,7 @@ export namespace ElectronAPIMock {
         getLevel: vi.fn(),
         saveLevel: vi.fn(),
         removeLevel: vi.fn(),
+        importLevel: vi.fn(),
     };
 
     export const Draft = {
@@ -19,6 +20,7 @@ export namespace ElectronAPIMock {
         removeDraft: vi.fn(),
         getAllDrafts: vi.fn(),
         showDraftDir: vi.fn(),
+        getLevelCreationData: vi.fn(),
     };
 
     export const App = {
