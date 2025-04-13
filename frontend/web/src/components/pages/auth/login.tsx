@@ -1,5 +1,5 @@
-import { useState, FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -10,12 +10,12 @@ import {
   Alert,
   Container,
   InputAdornment,
-  Grid
-} from '@mui/material';
-import { EmailOutlined, LockOutlined } from '@mui/icons-material';
-import { AuthApi } from '@/api/authApi';
-import { RoutePath } from '@/config/routes/path';
-import { PasswordField } from '@common/components/form/PasswordField';
+  Grid,
+} from "@mui/material";
+import { EmailOutlined, LockOutlined } from "@mui/icons-material";
+import { AuthApi } from "@/api/authApi";
+import { RoutePath } from "@/config/routes/path";
+import { PasswordField } from "@/components/form/PasswordField";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -28,16 +28,16 @@ export const Login = () => {
     setIsPending(true);
 
     const formData = new FormData(event.currentTarget);
-    const name = formData.get('name') as string;
-    const password = formData.get('password') as string;
+    const name = formData.get("name") as string;
+    const password = formData.get("password") as string;
 
     try {
       const tokens = await AuthApi.login({ name, password });
-      localStorage.setItem('token', tokens.access_token);
+      localStorage.setItem("token", tokens.access_token);
       navigate(RoutePath.profile);
     } catch (error: any) {
-      console.error('Login error:', error);
-      setFormError(error.response?.data?.message || 'Ошибка авторизации');
+      console.error("Login error:", error);
+      setFormError(error.response?.data?.message || "Ошибка авторизации");
     } finally {
       setIsPending(false);
     }
@@ -74,32 +74,29 @@ export const Login = () => {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             onSubmit={handleSubmit}
           >
-            <TextField 
-              name="name" 
-              variant="outlined" 
-              label="Имя" 
+            <TextField
+              name="name"
+              variant="outlined"
+              label="Имя"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <EmailOutlined sx={{ color: 'action.active' }} />
+                    <EmailOutlined sx={{ color: "action.active" }} />
                   </InputAdornment>
                 ),
               }}
             />
-            
-            <Grid container alignItems="flex-end" sx={{ width: '100%' }}>
-  <Grid item sx={{ mr: 1, my: 0.5 }}>
-    <LockOutlined sx={{ color: 'action.active' }} />
-  </Grid>
-  <Grid item xs sx={{ width: '100%' }}>
-    <Box sx={{ width: '100%' }}>
-      <PasswordField
-        name="password"
-        label="Пароль"
-      />
-    </Box>
-  </Grid>
-</Grid>
+
+            <Grid container alignItems="flex-end" sx={{ width: "100%" }}>
+              <Grid item sx={{ mr: 1, my: 0.5 }}>
+                <LockOutlined sx={{ color: "action.active" }} />
+              </Grid>
+              <Grid item xs sx={{ width: "100%" }}>
+                <Box sx={{ width: "100%" }}>
+                  <PasswordField name="password" label="Пароль" />
+                </Box>
+              </Grid>
+            </Grid>
 
             <Button
               variant="contained"
@@ -107,7 +104,7 @@ export const Login = () => {
               size="large"
               disabled={isPending}
             >
-              {isPending ? <CircularProgress size={24} /> : 'Вход'}
+              {isPending ? <CircularProgress size={24} /> : "Вход"}
             </Button>
           </Box>
         </Container>
