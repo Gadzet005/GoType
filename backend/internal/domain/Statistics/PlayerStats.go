@@ -8,7 +8,7 @@ import (
 type PlayerStats struct {
 	UserId                  int                        `json:"user_id" db:"user_id"`
 	UserName                string                     `json:"user_name" db:"user_name"`
-	AvatarPath              sql.NullString             `json:"avatar_path" db:"avatar_path"`
+	AvatarPath              sql.NullString             `json:"avatar_path" db:"avatar_path" swaggerignore:"true"`
 	NumPressErrByCharByLang map[string]map[rune][2]int `json:"num_press_err_by_char_by_lang" db:"num_press_err_by_char_by_lang" binding:"required"`
 	NumLevelRelax           int                        `json:"num_level_relax" db:"num_level_relax"`
 	NumLevelClassic         int                        `json:"num_level_classic" db:"num_level_classic"`

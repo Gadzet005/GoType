@@ -288,13 +288,28 @@
                 "operationId": "get-users",
                 "parameters": [
                     {
-                        "description": "Search params - name, isBanned, pages info",
-                        "name": "user_search_params",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.UserSearchParams"
-                        }
+                        "type": "string",
+                        "description": "name of user you want to find",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is user banned or not",
+                        "name": "is_banned",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size of page",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset of users",
+                        "name": "offset",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -807,13 +822,11 @@
                 "operationId": "download-level",
                 "parameters": [
                     {
-                        "description": "id of level you want to download",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
-                        }
+                        "type": "integer",
+                        "description": "id of user you want to find",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -866,13 +879,11 @@
                 "operationId": "get-level-info",
                 "parameters": [
                     {
-                        "description": "id of level you want to find out about",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.GetLevelInfoStruct"
-                        }
+                        "type": "integer",
+                        "description": "id of user you want to find",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1111,13 +1122,11 @@
                 "operationId": "get-user-stats",
                 "parameters": [
                     {
-                        "description": "Id of user",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.UserID"
-                        }
+                        "type": "integer",
+                        "description": "id of user you want to find",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1811,7 +1820,6 @@
                     "type": "integer"
                 },
                 "num_press_err_by_char_by_lang": {
-                    "description": "NumPressErrByCharByLang map[string]interface{} `json:\"num_press_err_by_char_by_lang\" db:\"num_press_err_by_char_by_lang\" binding:\"required\"`",
                     "type": "object",
                     "additionalProperties": {
                         "type": "object",
@@ -1931,40 +1939,6 @@
                     "items": {
                         "$ref": "#/definitions/domain.UserComplaint"
                     }
-                }
-            }
-        },
-        "domain.UserID": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "domain.UserSearchParams": {
-            "type": "object",
-            "required": [
-                "is_banned",
-                "name",
-                "offset",
-                "page_size"
-            ],
-            "properties": {
-                "is_banned": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "offset": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
                 }
             }
         },

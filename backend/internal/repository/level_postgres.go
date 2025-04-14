@@ -124,10 +124,12 @@ func (lp *LevelPostgres) UpdateLevel(levelInfo levels.LevelUpdateStruct) (string
 		return "", "", -1, errors.New(gotype.ErrInternal)
 	}
 
+	fmt.Println("FROM REPO: ", levelInfo.Id)
 	query := fmt.Sprintf("UPDATE %s SET name = $1, description = $2, duration = $3, language = $4, type = $5, archive_path = $6, author_name = $7 WHERE id = $8 RETURNING id", levelTable)
-	archiveName := levels.GenerateLevelArchiveName(levelInfo.Name, levelInfo.Author, id)
-	previewName := levels.GeneratePreviewName(id)
-	row := tx.QueryRow(query, levelInfo.Name, levelInfo.Description, levelInfo.Duration, levelInfo.Language, levelInfo.Type, levels.GenerateLevelPath(levelInfo.Name, levelInfo.Author, id), levelInfo.AuthorName, levelInfo.Id)
+	row := tx.QueryRow(query, levelInfo.Name, levelInfo.Description, levelInfo.Duration, levelInfo.Language, levelInfo.Type, levels.GenerateLevelPath(levelInfo.Name, levelInfo.Author, levelInfo.Id), levelInfo.AuthorName, levelInfo.Id)
+
+	archiveName := levels.GenerateLevelArchiveName(levelInfo.Name, levelInfo.Author, levelInfo.Id)
+	previewName := levels.GeneratePreviewName(levelInfo.Id)
 
 	if err := row.Scan(&id); err != nil {
 		_ = tx.Rollback()

@@ -376,7 +376,10 @@ func (h *Admin) processLevelComplaint(c *gin.Context) {
 // @ID get-users
 // @Accept json
 // @Produce json
-// @Param user_search_params body user.UserSearchParams true "Search params - name, isBanned, pages info"
+// @Param name query string false "name of user you want to find"
+// @Param is_banned query boolean false "is user banned or not"
+// @Param page_size query int false "size of page"
+// @Param offset query int false "offset of users"
 // @Success 200 {object} user.Users
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token;"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action"
@@ -393,7 +396,8 @@ func (h *Admin) getUsers(c *gin.Context) {
 
 	var input user.UserSearchParams
 
-	err := c.ShouldBindBodyWithJSON(&input)
+	err := c.ShouldBindQuery(&input)
+	//err := c.ShouldBindBodyWithJSON(&input)
 
 	if err != nil {
 		logrus.Printf("BindJSON error: %v; %v", err, input)
