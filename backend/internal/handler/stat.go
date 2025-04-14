@@ -65,7 +65,7 @@ func (h *Stat) GetUserStats(c *gin.Context) {
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired;"
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
-// @Router /stats/get-users-top [get]
+// @Router /stats/get-users-top [post]
 func (h *Stat) GetUsersTop(c *gin.Context) {
 	var input statistics.StatSortFilterParamsJSON
 

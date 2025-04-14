@@ -16,6 +16,10 @@ services:
           condition: service_healthy
         db-migrator:
           condition: service_completed_successfully
+      volumes:
+        - ./levels:/build/levels
+        - ./avatars:/build/avatars
+        - ./previews:/build/previews
 
     db-migrator:
       build:

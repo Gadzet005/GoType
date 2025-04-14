@@ -928,7 +928,7 @@ const docTemplate = `{
             }
         },
         "/level/get-level-list": {
-            "get": {
+            "post": {
                 "description": "Get level list with given params",
                 "consumes": [
                     "application/json"
@@ -987,7 +987,7 @@ const docTemplate = `{
             }
         },
         "/level/update-level": {
-            "post": {
+            "put": {
                 "description": "Update level with given structure",
                 "consumes": [
                     "multipart/form-data"
@@ -1171,7 +1171,7 @@ const docTemplate = `{
             }
         },
         "/stats/get-users-top": {
-            "get": {
+            "post": {
                 "description": "Get Users Top with given params",
                 "consumes": [
                     "application/json"
