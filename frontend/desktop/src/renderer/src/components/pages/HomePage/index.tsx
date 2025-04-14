@@ -1,25 +1,12 @@
-import { useAppContext, useUser } from "@/core/hooks";
+import { useUser } from "@/core/hooks";
 import { Box, Typography } from "@mui/material";
 import { observer } from "mobx-react";
 import React from "react";
 import { Menu } from "./Menu";
-import { menuList, devMenuList } from "./menuList";
-import { MenuItem } from "./Menu/types";
-
-function getMenuList(isDev: boolean) {
-  const list: MenuItem[] = [];
-  list.push(...menuList);
-  if (isDev) {
-    list.push(...devMenuList);
-  }
-  return list;
-}
+import { menuList } from "./menuList";
 
 export const HomePage: React.FC = observer(() => {
-  const appContext = useAppContext();
   const user = useUser();
-
-  const list = getMenuList(appContext.config.isDev);
 
   return (
     <Box sx={{ p: 3, display: "flex", justifyContent: "center" }}>
@@ -39,7 +26,7 @@ export const HomePage: React.FC = observer(() => {
           GoType!
         </Typography>
 
-        <Menu list={list} userAuthed={user.isAuth} />
+        <Menu list={menuList} userAuthed={user.isAuth} />
       </Box>
     </Box>
   );

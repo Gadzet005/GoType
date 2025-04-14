@@ -19,7 +19,6 @@ declare global {
         levelAPI: {
             getAllLevels: () => Promise<LevelData[]>;
             getLevel: (levelId: number) => Promise<LevelData | null>;
-            saveLevel: (level: LevelData) => Promise<void>;
             removeLevel: (levelId: number) => Promise<void>;
             importLevel: (
                 levelId: number,

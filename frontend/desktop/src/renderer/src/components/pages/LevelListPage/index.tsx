@@ -1,17 +1,21 @@
 import { RoutePath } from "@/core/config/routes/path";
 import { getAllLevels } from "@/core/services/electron/level/getAllLevels";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import React from "react";
 import { BackButton } from "../../common/BackButton";
 import { LevelList } from "./LevelList";
 import { Level } from "@/core/store/game/level";
 import { useSnackbar } from "@/core/hooks";
-import { FileUploadButton } from "@/components/common/FileUploadButton";
-import { AllowedAssetExtensions } from "@/core/config/asset.config";
+import { DownloadLevelDialog } from "./DownloadLevelDialog";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { removeLevel } from "@/core/services/electron/level/removeLevel";
 
 export const LevelListPage = () => {
   const snackbar = useSnackbar();
   const [levels, setLevels] = React.useState<Level[]>([]);
+  const [downloadDialogOpen, setDownloadDialogOpen] =
+    React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   const loadLevels = React.useCallback(async () => {
     const result = await getAllLevels();
@@ -22,8 +26,20 @@ export const LevelListPage = () => {
       snackbar.show("Ошибка при загрузке уровней", "error");
       console.error(result.error);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setIsLoading(false);
   }, []);
+
+  const handleDelete = async (levelId: number) => {
+    const result = await removeLevel(levelId);
+    if (result.ok) {
+      snackbar.show("Уровень успешно удален", "success");
+      setLevels((prevLevels) =>
+        prevLevels.filter((level) => level.id !== levelId)
+      );
+    } else {
+      snackbar.show("Ошибка при удалении уровня", "error");
+    }
+  };
 
   React.useEffect(() => {
     loadLevels();
@@ -31,20 +47,27 @@ export const LevelListPage = () => {
 
   return (
     <Box sx={{ p: 2 }}>
+      <DownloadLevelDialog
+        open={downloadDialogOpen}
+        onClose={() => setDownloadDialogOpen(false)}
+        onSuccess={loadLevels}
+      />
       <BackButton href={RoutePath.home} />
       <Stack spacing={4}>
         <Stack sx={{ alignItems: "center" }} spacing={2}>
           <Typography sx={{ fontWeight: "bold" }} color="primary" variant="h2">
             Сохраненные уровни
           </Typography>
-          <FileUploadButton
-            extensions={AllowedAssetExtensions.LEVEL_ARCHIVE}
-            size="large"
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<FileDownloadIcon />}
+            onClick={() => setDownloadDialogOpen(true)}
           >
             Загрузить уровень
-          </FileUploadButton>
+          </Button>
         </Stack>
-        <LevelList levels={levels} />
+        {!isLoading && <LevelList levels={levels} onDelete={handleDelete} />}
       </Stack>
     </Box>
   );

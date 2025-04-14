@@ -63,8 +63,8 @@ export class StoredDraft {
         if (!data.publication?.preview) {
             return null;
         }
-        const backgroundFileName = "background." + data.publication.preview;
-        return new Asset(this.root.path(backgroundFileName));
+        const previewFileName = "preview." + data.publication.preview;
+        return new Asset(this.root.path(previewFileName));
     }
 
     async update(params: UpdateParams) {

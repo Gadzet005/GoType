@@ -32,5 +32,6 @@ export function createLevel(
             brightness: 0.5,
         },
         sentences: sentences,
+        difficulty: 1,
     };
 }

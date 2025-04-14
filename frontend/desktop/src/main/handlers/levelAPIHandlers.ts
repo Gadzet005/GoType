@@ -1,5 +1,4 @@
 import { LevelStorage } from "../storages/level";
-import { LevelData } from "@common/level";
 import { ipcMain } from "electron";
 
 export function initLevelAPIHandlers(levelStorage: LevelStorage) {
@@ -11,10 +10,6 @@ export function initLevelAPIHandlers(levelStorage: LevelStorage) {
         return await levelStorage.getLevel(levelId);
     });
 
-    ipcMain.handle("save-level", async (_, level: LevelData) => {
-        await levelStorage.saveLevel(level);
-    });
-
     ipcMain.handle("remove-level", async (_, levelId: number) => {
         await levelStorage.removeLevel(levelId);
     });
@@ -22,8 +17,7 @@ export function initLevelAPIHandlers(levelStorage: LevelStorage) {
     ipcMain.handle(
         "import-level",
         async (_, levelId: number, levelArchive: string) => {
-            const buffer = Buffer.from(levelArchive, "base64");
-            await levelStorage.importLevel(levelId, buffer);
+            await levelStorage.importLevel(levelId, levelArchive);
         }
     );
 }

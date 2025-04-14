@@ -15,31 +15,13 @@ export interface StoredLevelData {
     tags: string[];
     languageCode: string;
     previewExt: string;
+    difficulty: number;
     background: {
         ext: string;
         brightness: number;
     };
     audioExt: string;
     sentences: SentenceData[];
-}
-
-export function toStored(level: LevelData): StoredLevelData {
-    return {
-        id: level.id,
-        name: level.name,
-        description: level.description,
-        author: level.author,
-        duration: level.duration,
-        tags: level.tags,
-        languageCode: level.languageCode,
-        previewExt: level.preview.ext,
-        audioExt: level.audio.ext,
-        background: {
-            ext: level.background.asset.ext,
-            brightness: level.background.brightness,
-        },
-        sentences: level.sentences,
-    };
 }
 
 export function fromStored(

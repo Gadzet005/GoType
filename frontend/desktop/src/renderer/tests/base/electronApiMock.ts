@@ -8,7 +8,6 @@ export namespace ElectronAPIMock {
     export const Level = {
         getAllLevels: vi.fn(),
         getLevel: vi.fn(),
-        saveLevel: vi.fn(),
         removeLevel: vi.fn(),
         importLevel: vi.fn(),
     };

@@ -45,7 +45,7 @@ export const StyleFormDialog: React.FC<StyleFormProps> = ({
   ) => {
     const styleClass = fromValues(values);
     if (initial) {
-      draft.styleClasses.update(styleClass.name, styleClass);
+      draft.styleClasses.update(initial.name, styleClass);
     } else {
       const r = draft.styleClasses.add(styleClass.name, styleClass);
       if (!r) {

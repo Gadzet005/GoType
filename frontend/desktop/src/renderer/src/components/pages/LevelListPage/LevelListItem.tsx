@@ -12,12 +12,18 @@ import { Button } from "@/components/ui/Button";
 import React from "react";
 import { RoutePath } from "@/core/config/routes/path";
 import { Level } from "@/core/store/game/level";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
 interface LevelListItemProps {
   level: Level;
+  onDelete?: () => void;
 }
 
-export const LevelListItem: React.FC<LevelListItemProps> = ({ level }) => {
+export const LevelListItem: React.FC<LevelListItemProps> = ({
+  level,
+  onDelete = () => {},
+}) => {
   const durationInMinutes = (level.duration / 60000).toFixed(1);
   return (
     <Card
@@ -64,23 +70,33 @@ export const LevelListItem: React.FC<LevelListItemProps> = ({ level }) => {
               {level.author.name}
             </Typography>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, pb: 1 }}>
             <AccessTimeIcon fontSize="small" color="action" />
             <Typography variant="body2" color="text.secondary">
               {durationInMinutes} мин.
             </Typography>
           </Box>
+          <Button
+            size="large"
+            color="error"
+            variant="contained"
+            fullWidth
+            onClick={onDelete}
+            startIcon={<DeleteOutlineIcon />}
+          >
+            Удалить
+          </Button>
+          <Button
+            href={RoutePath.game}
+            params={{ level }}
+            size="large"
+            variant="contained"
+            fullWidth
+            startIcon={<PlayArrowIcon />}
+          >
+            Играть
+          </Button>
         </Stack>
-        <Button
-          href={RoutePath.game}
-          params={{ level }}
-          size="large"
-          variant="contained"
-          fullWidth
-          sx={{ mt: "auto" }}
-        >
-          Играть
-        </Button>
       </CardContent>
     </Card>
   );

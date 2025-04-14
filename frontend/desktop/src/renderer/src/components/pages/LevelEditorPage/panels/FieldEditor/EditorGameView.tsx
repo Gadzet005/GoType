@@ -68,6 +68,7 @@ export const EditorGameView: React.FC<EditorGameViewProps> = observer(
           position: fullScreen ? "static" : "relative",
           height: "100%",
           p: 2,
+          overflow: "hidden",
         }}
       >
         <Background

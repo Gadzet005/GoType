@@ -20,7 +20,8 @@ export namespace ApiRoutes {
     export namespace Level {
         const ROOT = "/level";
         export const CREATE_LEVEL = `${ROOT}/create-level`;
-        export const DOWNLOAD_LEVEL = `${ROOT}/download-level`;
+        export const DOWNLOAD_LEVEL = (id: number) =>
+            `${ROOT}/download-level/${id}`;
         export const UPDATE_LEVEL = `${ROOT}/update-level`;
     }
 }

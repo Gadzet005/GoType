@@ -1,5 +1,3 @@
-import { SentenceData } from "@common/level/sentence";
-
 export namespace LevelAPI {
     export interface CreationData {
         id?: number;
@@ -13,14 +11,5 @@ export namespace LevelAPI {
         type: string;
         difficulty: number;
         image_type: string;
-    }
-
-    export interface ServerStoredLevelData {
-        sentences: SentenceData[];
-        background: {
-            ext: string;
-            brightness: number;
-        };
-        audioExt: string;
     }
 }

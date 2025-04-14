@@ -9,7 +9,7 @@ import {
 import { getLevelCreationData } from "../../electron/draft/getLevelCreationData";
 import { Draft } from "@/components/pages/LevelEditorPage/store/draft";
 import { LevelAPI } from "@/core/types/api/level";
-import { createLevelArchive } from "./utils";
+import { base64ToBlob, createLevelArchive } from "./utils";
 
 export async function publishLevel(
     ctx: AppContext,
@@ -23,6 +23,7 @@ export async function publishLevel(
         }
 
         const data = result.payload;
+        const duration = Math.ceil(audioDuration);
 
         const creationData: LevelAPI.CreationData = {
             id: data.draft.publication.levelId ?? undefined,
@@ -35,10 +36,10 @@ export async function publishLevel(
             difficulty: data.draft.publication.difficulty,
             type: "classic",
             language: data.draft.languageCode,
-            duration: Math.ceil(audioDuration),
+            duration: duration,
         };
 
-        const levelArchive = await createLevelArchive(data);
+        const levelArchive = await createLevelArchive(data, ctx.user, duration);
 
         const formData = new FormData();
         formData.append(
@@ -51,25 +52,37 @@ export async function publishLevel(
         formData.append("level", levelArchive, "level.zip");
         formData.append(
             "preview",
-            new Blob([data.preview]),
+            base64ToBlob(
+                data.preview,
+                "image/" + data.draft.publication.preview?.ext
+            ),
             "preview." + data.draft.publication.preview?.ext
         );
 
         const creating = data.draft.publication.levelId === null;
 
-        const response = await ctx.authApi.post(
-            creating
-                ? ApiRoutes.Level.CREATE_LEVEL
-                : ApiRoutes.Level.UPDATE_LEVEL,
-            formData,
-            {
+        let levelId: number;
+        if (creating) {
+            const response = await ctx.authApi.post(
+                ApiRoutes.Level.CREATE_LEVEL,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+            levelId = response.data.id;
+        } else {
+            await ctx.authApi.put(ApiRoutes.Level.UPDATE_LEVEL, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-            }
-        );
+            });
+            levelId = data.draft.publication.levelId!;
+        }
 
-        return success(response.data.id);
+        return success(levelId);
     } catch (err) {
         return commonApiErrorResult(err);
     }

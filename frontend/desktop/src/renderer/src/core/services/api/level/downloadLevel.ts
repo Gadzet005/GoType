@@ -7,18 +7,24 @@ import {
     success,
 } from "@/core/types/result";
 import { importLevel } from "../../electron/level/importLevel";
+import { blobToBase64 } from "./utils";
 
 export async function downloadLevel(
     ctx: AppContext,
     levelId: number
 ): PromiseResult<void, string> {
     try {
-        const response = await ctx.authApi.post(
-            ApiRoutes.Level.DOWNLOAD_LEVEL,
-            { id: levelId }
+        const response = await ctx.authApi.get(
+            ApiRoutes.Level.DOWNLOAD_LEVEL(levelId),
+            {
+                responseType: "blob",
+            }
         );
 
-        const result = await importLevel(levelId, response.data);
+        const blob = await response.data;
+        const base64 = await blobToBase64(blob);
+
+        const result = await importLevel(levelId, base64);
         if (!result.ok) {
             return failure("Failed to import level");
         }

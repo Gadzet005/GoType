@@ -15,6 +15,7 @@ type NumberFieldProps = FieldProps &
     defaultValue?: number;
     onlyInt?: boolean;
     onChange?: (value: number) => void;
+    withoutIncAndDec?: boolean;
   };
 
 export const NumberField: React.FC<NumberFieldProps> = ({
@@ -26,6 +27,7 @@ export const NumberField: React.FC<NumberFieldProps> = ({
   onChange,
   onBlur,
   onlyInt = false,
+  withoutIncAndDec = false,
   ...props
 }) => {
   const [rawValue, setRawValue] = React.useState(String(field.value));
@@ -75,6 +77,8 @@ export const NumberField: React.FC<NumberFieldProps> = ({
     }
   };
 
+  const error = Boolean(form.touched[field.name] && form.errors[field.name]);
+
   return (
     <TextField
       {...field}
@@ -85,9 +89,11 @@ export const NumberField: React.FC<NumberFieldProps> = ({
       inputMode="numeric"
       onChange={handleChange}
       onBlur={handleBlur}
+      error={error}
+      helperText={error ? (form.errors[field.name] as string) : undefined}
       slotProps={{
         input: {
-          startAdornment: (
+          startAdornment: !withoutIncAndDec && (
             <InputAdornment position="start">
               <IconButton
                 onClick={handleDecrement}
@@ -99,7 +105,7 @@ export const NumberField: React.FC<NumberFieldProps> = ({
               </IconButton>
             </InputAdornment>
           ),
-          endAdornment: (
+          endAdornment: !withoutIncAndDec && (
             <InputAdornment position="end">
               <IconButton
                 onClick={handleIncrement}
