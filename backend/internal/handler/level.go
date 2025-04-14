@@ -171,7 +171,7 @@ func (h *Level) GetLevelInfoById(c *gin.Context) {
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action"
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
-// @Router /level/update-level [post]
+// @Router /level/update-level [put]
 func (h *Level) UpdateLevel(c *gin.Context) {
 	levelFile, err := c.FormFile("level")
 	if err != nil {
@@ -221,7 +221,7 @@ func (h *Level) UpdateLevel(c *gin.Context) {
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired"
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
-// @Router /level/get-level-list [get]
+// @Router /level/get-level-list [post]
 func (h *Level) GetLevelList(c *gin.Context) {
 	var fetchParams level.FetchLevelStruct
 	err := c.BindQuery(&fetchParams)

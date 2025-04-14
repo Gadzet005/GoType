@@ -397,7 +397,6 @@ func (h *Admin) getUsers(c *gin.Context) {
 	var input user.UserSearchParams
 
 	err := c.ShouldBindQuery(&input)
-	//err := c.ShouldBindBodyWithJSON(&input)
 
 	if err != nil {
 		logrus.Printf("BindJSON error: %v; %v", err, input)

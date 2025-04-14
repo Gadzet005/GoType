@@ -1011,7 +1011,7 @@ paths:
       tags:
       - level
   /level/get-level-list:
-    get:
+    post:
       consumes:
       - application/json
       description: Get level list with given params
@@ -1052,7 +1052,7 @@ paths:
       tags:
       - level
   /level/update-level:
-    post:
+    put:
       consumes:
       - multipart/form-data
       description: Update level with given structure
@@ -1183,7 +1183,7 @@ paths:
       tags:
       - stats
   /stats/get-users-top:
-    get:
+    post:
       consumes:
       - application/json
       description: Get Users Top with given params
