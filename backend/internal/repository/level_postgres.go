@@ -124,10 +124,12 @@ func (lp *LevelPostgres) UpdateLevel(levelInfo levels.LevelUpdateStruct) (string
 		return "", "", -1, errors.New(gotype.ErrInternal)
 	}
 
+	fmt.Println("FROM REPO: ", levelInfo.Id)
 	query := fmt.Sprintf("UPDATE %s SET name = $1, description = $2, duration = $3, language = $4, type = $5, archive_path = $6, author_name = $7 WHERE id = $8 RETURNING id", levelTable)
-	archiveName := levels.GenerateLevelArchiveName(levelInfo.Name, levelInfo.Author, id)
-	previewName := levels.GeneratePreviewName(id)
-	row := tx.QueryRow(query, levelInfo.Name, levelInfo.Description, levelInfo.Duration, levelInfo.Language, levelInfo.Type, levels.GenerateLevelPath(levelInfo.Name, levelInfo.Author, id), levelInfo.AuthorName, levelInfo.Id)
+	row := tx.QueryRow(query, levelInfo.Name, levelInfo.Description, levelInfo.Duration, levelInfo.Language, levelInfo.Type, levels.GenerateLevelPath(levelInfo.Name, levelInfo.Author, levelInfo.Id), levelInfo.AuthorName, levelInfo.Id)
+
+	archiveName := levels.GenerateLevelArchiveName(levelInfo.Name, levelInfo.Author, levelInfo.Id)
+	previewName := levels.GeneratePreviewName(levelInfo.Id)
 
 	if err := row.Scan(&id); err != nil {
 		_ = tx.Rollback()
@@ -213,7 +215,7 @@ func (lp *LevelPostgres) FetchLevels(params map[string]interface{}) ([]levels.Le
 
 	params["tags"] = pq.Array(params["tags"])
 
-	q := `SELECT l.id, l.name, l.author, l.description, l.duration, l.language, l.preview_type, l.type, l.difficulty, l.preview_path, l.author_name, COALESCE( (SELECT ARRAY_AGG(lt.tag_name) FROM LevelTag lt WHERE lt.level_id = l.id), '{}') AS tags FROM %s l WHERE l.is_banned = FALSE`
+	q := `SELECT l.id, l.name, l.author, l.description, l.duration, l.language, l.preview_type, l.type, l.difficulty, l.preview_path, l.author_name, COALESCE( (SELECT ARRAY_AGG(lt.tag_name) FROM LevelTag lt WHERE lt.level_id = l.id), '{}') AS tags FROM %s l WHERE l.is_banned = FALSE `
 
 	if params["difficulty"].(int) >= 1 && params["difficulty"].(int) <= 10 {
 		q += " and l.difficulty = " + strconv.Itoa(params["difficulty"].(int)) + " "

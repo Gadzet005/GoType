@@ -3,11 +3,11 @@ package handler
 import (
 	gotype "github.com/Gadzet005/GoType/backend"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
-	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 )
 
 type Stat struct {
@@ -24,7 +24,7 @@ func NewStat(service service.Stats) *Stat {
 // @ID get-user-stats
 // @Accept json
 // @Produce json
-// @Param input body user.UserID true "Id of user"
+// @Param id query int true "id of user you want to find"
 // @Success 200 {object} statistics.GetUserStatsRes
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired;"
@@ -32,15 +32,16 @@ func NewStat(service service.Stats) *Stat {
 // @Failure default {object} errorResponse
 // @Router /stats/get-user-stats [get]
 func (h *Stat) GetUserStats(c *gin.Context) {
-	var input user.UserID
+	var levId int
+	levId, err := strconv.Atoi(c.Param("id"))
 
-	if err := c.BindJSON(&input); err != nil {
+	if err != nil {
 		logrus.Printf(err.Error())
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
-	userStats, err := h.service.GetUserStats(input.Id)
+	userStats, err := h.service.GetUserStats(levId)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -68,7 +69,7 @@ func (h *Stat) GetUserStats(c *gin.Context) {
 func (h *Stat) GetUsersTop(c *gin.Context) {
 	var input statistics.StatSortFilterParamsJSON
 
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.BindQuery(&input); err != nil {
 		logrus.Printf(err.Error())
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return

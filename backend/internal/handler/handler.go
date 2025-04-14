@@ -11,9 +11,9 @@ import (
 )
 
 type AuthorizationHandler interface {
-	register(c *gin.Context)
-	login(c *gin.Context)
-	refresh(c *gin.Context)
+	Register(c *gin.Context)
+	Login(c *gin.Context)
+	Refresh(c *gin.Context)
 }
 
 type UserActionsHandler interface {
@@ -101,9 +101,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	auth := router.Group("/auth")
 	{
-		auth.POST("/register", h.Authorization.register)
-		auth.POST("/login", h.Authorization.login)
-		auth.POST("/refresh", h.Authorization.refresh)
+		auth.POST("/register", h.Authorization.Register)
+		auth.POST("/login", h.Authorization.Login)
+		auth.POST("/refresh", h.Authorization.Refresh)
 	}
 
 	userActions := router.Group("/user-actions", h.UserIdentity)
@@ -117,8 +117,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	stats := router.Group("/stats", h.UserIdentity)
 	{
-		stats.GET("/get-user-stats", h.Stats.GetUserStats)
-		stats.GET("/get-users-top", h.Stats.GetUsersTop)
+		stats.GET("/get-user-stats/:id", h.Stats.GetUserStats) //
+		stats.POST("/get-users-top", h.Stats.GetUsersTop)
 	}
 
 	admin := router.Group("/admin", h.UserIdentity)
@@ -131,16 +131,16 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		admin.GET("/get-level-complaints", h.Admin.getLevelComplaints)
 		admin.POST("/process-user-complaint", h.Admin.processUserComplaint)
 		admin.POST("/process-level-complaint", h.Admin.processLevelComplaint)
-		admin.GET("/get-users", h.Admin.getUsers)
+		admin.GET("/get-users", h.Admin.getUsers) //
 	}
 
 	level := router.Group("/level", h.UserIdentity)
 	{
 		level.POST("/create-level", h.Level.CreateLevel)
-		level.GET("/download-level", h.Level.GetLevel)
-		level.GET("/get-level-info", h.Level.GetLevelInfoById)
-		level.POST("/update-level", h.Level.UpdateLevel)
-		level.GET("/get-level-list", h.Level.GetLevelList)
+		level.GET("/download-level/:id", h.Level.GetLevel)         //
+		level.GET("/get-level-info/:id", h.Level.GetLevelInfoById) //
+		level.PUT("/update-level", h.Level.UpdateLevel)
+		level.POST("/get-level-list", h.Level.GetLevelList)
 	}
 
 	singleGame := router.Group("/single-game", h.UserIdentity)

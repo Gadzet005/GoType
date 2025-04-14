@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	gotype "github.com/Gadzet005/GoType/backend"
 	"github.com/Gadzet005/GoType/backend/internal/domain"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
@@ -88,6 +89,7 @@ func (s *LevelService) UpdateLevel(userId int, levelFile, infoFile, previewFile 
 	if err != nil {
 		return -1, errors.New(gotype.ErrInvalidInput)
 	}
+	fmt.Println(levelInfo)
 
 	realAuthorId, _, oldArchivePath, err := s.repo.GetPathsById(levelInfo.Id)
 
@@ -215,8 +217,8 @@ func (s *LevelService) GetLevelStats(levelId int) (statistics.LevelStats, error)
 	return levelStats, nil
 }
 
-func (s *LevelService) CheckLevelExists(levInfo level.GetLevelInfoStruct) (string, error) {
-	_, _, filePath, err := s.repo.GetPathsById(levInfo.Id)
+func (s *LevelService) CheckLevelExists(levId int) (string, error) {
+	_, _, filePath, err := s.repo.GetPathsById(levId)
 
 	if err != nil {
 		return "", err

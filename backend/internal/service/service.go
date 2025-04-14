@@ -60,7 +60,7 @@ type Level interface {
 	DeleteLevel(levelId int) error
 	GetLevelById(levelId int) (level.Level, error)
 	GetLevelList(fetchStruct level.FetchLevelStruct) ([]level.Level, error)
-	CheckLevelExists(levInfo level.GetLevelInfoStruct) (string, error)
+	CheckLevelExists(levId int) (string, error)
 	GetLevelStats(levelId int) (statistics.LevelStats, error)
 	GetLevelUserTop(levelId int) ([]statistics.UserLevelCompletionInfo, error)
 }

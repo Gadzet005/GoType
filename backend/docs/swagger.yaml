@@ -231,8 +231,6 @@ definitions:
               type: integer
             type: array
           type: object
-        description: NumPressErrByCharByLang map[string]interface{} `json:"num_press_err_by_char_by_lang"
-          db:"num_press_err_by_char_by_lang" binding:"required"`
         type: object
       sum_points:
         type: integer
@@ -309,29 +307,6 @@ definitions:
         items:
           $ref: '#/definitions/domain.UserComplaint'
         type: array
-    type: object
-  domain.UserID:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
-  domain.UserSearchParams:
-    properties:
-      is_banned:
-        type: boolean
-      name:
-        type: string
-      offset:
-        type: integer
-      page_size:
-        type: integer
-    required:
-    - is_banned
-    - name
-    - offset
-    - page_size
     type: object
   domain.UserUnban:
     properties:
@@ -581,12 +556,22 @@ paths:
         and admins
       operationId: get-users
       parameters:
-      - description: Search params - name, isBanned, pages info
-        in: body
-        name: user_search_params
-        required: true
-        schema:
-          $ref: '#/definitions/domain.UserSearchParams'
+      - description: name of user you want to find
+        in: query
+        name: name
+        type: string
+      - description: is user banned or not
+        in: query
+        name: is_banned
+        type: boolean
+      - description: size of page
+        in: query
+        name: page_size
+        type: integer
+      - description: offset of users
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -952,12 +937,11 @@ paths:
       description: Download level with given id from server
       operationId: download-level
       parameters:
-      - description: id of level you want to download
-        in: body
-        name: input
+      - description: id of user you want to find
+        in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/domain.GetLevelInfoStruct'
+        type: integer
       produces:
       - application/octet-stream
       responses:
@@ -993,12 +977,11 @@ paths:
       description: Get level info about level with given id
       operationId: get-level-info
       parameters:
-      - description: id of level you want to find out about
-        in: body
-        name: input
+      - description: id of user you want to find
+        in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/domain.GetLevelInfoStruct'
+        type: integer
       produces:
       - application/json
       responses:
@@ -1166,12 +1149,11 @@ paths:
       description: Get User Statistics by id
       operationId: get-user-stats
       parameters:
-      - description: Id of user
-        in: body
-        name: input
+      - description: id of user you want to find
+        in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/domain.UserID'
+        type: integer
       produces:
       - application/json
       responses:

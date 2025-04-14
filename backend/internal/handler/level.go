@@ -6,6 +6,7 @@ import (
 	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -75,7 +76,7 @@ func (h *Level) CreateLevel(c *gin.Context) {
 // @ID download-level
 // @Accept json
 // @Produce      application/octet-stream
-// @Param input body level.GetLevelInfoStruct true "id of level you want to download"
+// @Param id query int true "id of user you want to find"
 // @Success 200 {file}  file "Archive with level."
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json; ERR_ENTITY_NOT_FOUND - no such level on server"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired"
@@ -83,16 +84,18 @@ func (h *Level) CreateLevel(c *gin.Context) {
 // @Failure default {object} errorResponse
 // @Router /level/download-level [get]
 func (h *Level) GetLevel(c *gin.Context) {
-	var levInfo level.GetLevelInfoStruct
+	//var levInfo level.GetLevelInfoStruct
+	var levelId int
 
-	err := c.BindJSON(&levInfo)
+	//err := c.BindJSON(&levInfo)
+	levelId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
-	filePath, err := h.service.CheckLevelExists(levInfo)
+	filePath, err := h.service.CheckLevelExists(levelId)
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrEntityNotFound)
@@ -109,7 +112,7 @@ func (h *Level) GetLevel(c *gin.Context) {
 // @ID get-level-info
 // @Accept json
 // @Produce json
-// @Param input body level.GetLevelInfoStruct true "id of level you want to find out about"
+// @Param id query int true "id of user you want to find"
 // @Success 200 {object} level.LevelInfo
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired"
@@ -117,30 +120,30 @@ func (h *Level) GetLevel(c *gin.Context) {
 // @Failure default {object} errorResponse
 // @Router /level/get-level-info [get]
 func (h *Level) GetLevelInfoById(c *gin.Context) {
-	var levId level.GetLevelInfoStruct
+	var levId int
 
-	err := c.BindJSON(&levId)
+	levId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
-	levelInfo, err := h.service.GetLevelById(levId.Id)
+	levelInfo, err := h.service.GetLevelById(levId)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
 	}
 
-	levelStats, err := h.service.GetLevelStats(levId.Id)
+	levelStats, err := h.service.GetLevelStats(levId)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return
 	}
 
-	levelUserTop, err := h.service.GetLevelUserTop(levId.Id)
+	levelUserTop, err := h.service.GetLevelUserTop(levId)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -221,7 +224,7 @@ func (h *Level) UpdateLevel(c *gin.Context) {
 // @Router /level/get-level-list [get]
 func (h *Level) GetLevelList(c *gin.Context) {
 	var fetchParams level.FetchLevelStruct
-	err := c.BindJSON(&fetchParams)
+	err := c.BindQuery(&fetchParams)
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)

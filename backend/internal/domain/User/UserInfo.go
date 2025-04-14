@@ -18,5 +18,5 @@ type GetUserInfoStruct struct {
 	Access     int            `json:"access"`
 	BanTime    time.Time      `json:"ban_time"`
 	BanReason  string         `json:"ban_reason"`
-	AvatarPath sql.NullString `json:"avatar_path"`
+	AvatarPath sql.NullString `json:"avatar_path" swaggerignore:"true"`
 }

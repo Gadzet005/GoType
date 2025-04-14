@@ -28,7 +28,7 @@ func NewAuth(service service.Authorization) *Auth {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server; "
 // @Failure default {object} errorResponse
 // @Router /auth/register [post]
-func (h *Auth) register(c *gin.Context) {
+func (h *Auth) Register(c *gin.Context) {
 	var input user.User
 	if err := c.BindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
@@ -59,7 +59,7 @@ func (h *Auth) register(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server; "
 // @Failure default {object} errorResponse
 // @Router /auth/login [post]
-func (h *Auth) login(c *gin.Context) {
+func (h *Auth) Login(c *gin.Context) {
 	var input user.User
 
 	if err := c.BindJSON(&input); err != nil {
@@ -92,7 +92,7 @@ func (h *Auth) login(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server; "
 // @Failure default {object} errorResponse
 // @Router /auth/refresh [post]
-func (h *Auth) refresh(c *gin.Context) {
+func (h *Auth) Refresh(c *gin.Context) {
 	var input user.RefreshStruct
 
 	if err := c.BindJSON(&input); err != nil {
