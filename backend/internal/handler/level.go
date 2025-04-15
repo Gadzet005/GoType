@@ -34,6 +34,12 @@ func NewLevel(service service.Level) *Level {
 // @Failure default {object} errorResponse
 // @Router /level/create-level [post]
 func (h *Level) CreateLevel(c *gin.Context) {
+	err := c.Request.ParseMultipartForm(1)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInternal)
+		return
+	}
+
 	levelFile, err := c.FormFile("level")
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)

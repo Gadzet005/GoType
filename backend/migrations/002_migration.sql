@@ -105,4 +105,7 @@ ALTER TABLE LevelTag ADD FOREIGN KEY (level_id) REFERENCES Level (id);
 
 ALTER TABLE LevelTag ADD FOREIGN KEY (tag_name) REFERENCES Tag (name);
 
+CREATE INDEX LevelCompleteOnLevelId ON LevelComplete (level_id);
+
+
 -- +goose Down

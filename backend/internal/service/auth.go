@@ -14,11 +14,13 @@ import (
 
 // TODO: Move to .env
 const (
-	salt            = "pqlpwisd5786vhdf27675da"
-	signingKey      = "wiu8s7]df9s&di9230s#s894w90g2092v[d"
-	refreshTokenTTL = time.Hour * 720  //1 month
-	accessTokenTTL  = time.Minute * 15 //15 min
-	letterRunes     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#&!?&"
+	salt              = "pqlpwisd5786vhdf27675da"
+	signingKey        = "wiu8s7]df9s&di9230s#s894w90g2092v[d"
+	refreshTokenTTL   = time.Hour * 720  //1 month
+	accessTokenTTL    = time.Minute * 15 //15 min
+	letterRunes       = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#&!?&"
+	maxNameLength     = 20
+	maxPasswordLength = 20
 )
 
 type AuthService struct {
@@ -49,6 +51,11 @@ func (s *AuthService) CreateSeniorAdmin(username string, password string) error 
 }
 
 func (s *AuthService) CreateUser(user user.User) (string, string, error) {
+
+	if len(user.Name) > maxNameLength || len(user.Password) > maxPasswordLength {
+		return "", "", errors.New(gotype.ErrInvalidInput)
+	}
+
 	user.Password = s.generatePasswordHash(user.Password)
 
 	rToken := s.NewRefreshToken()

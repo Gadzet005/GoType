@@ -43,3 +43,18 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 	c.Set(userIdCtx, id)
 	c.Set(userAccessCtx, access)
 }
+
+func (h *Handler) MaxRequestSize(maxBytes int64) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxBytes)
+
+		if err := c.Request.ParseMultipartForm(maxBytes); err != nil {
+			c.AbortWithStatusJSON(http.StatusRequestEntityTooLarge, gin.H{
+				"error": "Size of the request is too large",
+			})
+			return
+		}
+
+		c.Next()
+	}
+}

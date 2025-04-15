@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"bytes"
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -11,6 +13,12 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
+	"sort"
+	"time"
+)
+
+const (
+	ratingTTl = time.Minute * 2
 )
 
 type StatsPostgres struct {
@@ -45,6 +53,14 @@ func (sp *StatsPostgres) GetUserStats(id int) (statistics.PlayerStats, error) {
 }
 
 func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistics.PlayerStats, error) {
+	//Reading from cache
+	cached, err := sp.GetUserTopFromCache(params)
+
+	if err == nil {
+		return cached, nil
+	}
+
+	//if did not find value in cache, going to postgres
 	var stats []statistics.PlayerStatsDB
 	var ret []statistics.PlayerStats
 
@@ -67,7 +83,7 @@ func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistic
 		return nil, errors.New(gotype.ErrInternal)
 	}
 
-	logrus.Println(wholeQuery)
+	//logrus.Println(wholeQuery)
 
 	for _, stat := range stats {
 		newStats, err := sp.castToJSON(stat)
@@ -79,7 +95,50 @@ func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistic
 		ret = append(ret, newStats)
 	}
 
+	//Saving result in cache
+	_ = sp.SaveUserTopInCache(params, ret)
+
 	return ret, nil
+}
+
+func (sp *StatsPostgres) GetUserTopFromCache(params map[string]interface{}) ([]statistics.PlayerStats, error) {
+	key, err := MarshalDeterministic(params)
+	if err != nil {
+		return []statistics.PlayerStats{}, errors.New(gotype.ErrInternal)
+	}
+
+	val, err := sp.client.Get(context.Background(), key).Result()
+
+	if err != nil {
+		return []statistics.PlayerStats{}, errors.New(gotype.ErrInternal)
+	} else {
+		var ret []statistics.PlayerStats
+		err := json.Unmarshal([]byte(val), &ret)
+		if err != nil {
+			return []statistics.PlayerStats{}, errors.New(gotype.ErrInternal)
+		} else {
+			logrus.Printf("GetFromCache: {%s, %s}", key, val)
+			return ret, nil
+		}
+	}
+
+}
+
+func (sp *StatsPostgres) SaveUserTopInCache(params map[string]interface{}, result []statistics.PlayerStats) error {
+	key, err := MarshalDeterministic(params)
+	if err != nil {
+		return errors.New(gotype.ErrInternal)
+	}
+
+	val, err := json.Marshal(result)
+	if err != nil {
+		return errors.New(gotype.ErrInternal)
+	}
+
+	res := sp.client.Set(context.Background(), key, val, ratingTTl)
+	logrus.Printf("Saving %s to cache. Error: %v", key, res.Err())
+
+	return nil
 }
 
 func (sp *StatsPostgres) castToJSON(statsDB statistics.PlayerStatsDB) (statistics.PlayerStats, error) {
@@ -111,4 +170,37 @@ func (sp *StatsPostgres) castToJSON(statsDB statistics.PlayerStatsDB) (statistic
 	copy(stats.NumClassesClassic[:], statsDB.NumClassesClassic)
 
 	return stats, nil
+}
+
+func MarshalDeterministic(m map[string]interface{}) (string, error) {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	buf := &bytes.Buffer{}
+	buf.WriteString("{")
+	for i, k := range keys {
+		valBytes, err1 := json.Marshal(m[k])
+
+		if err1 != nil {
+			return "", err1
+		}
+
+		keyBytes, err2 := json.Marshal(k)
+
+		if err2 != nil {
+			return "", err2
+		}
+
+		if i > 0 {
+			buf.WriteString(",")
+		}
+		buf.Write(keyBytes)
+		buf.WriteString(":")
+		buf.Write(valBytes)
+	}
+	buf.WriteString("}")
+	return buf.String(), nil
 }
