@@ -15,11 +15,12 @@ export interface StoredDraftData {
     sentences: DraftSentenceData[];
     styleClasses: StyleClassData[];
     publication: {
-        levelId: number;
-        name: string;
+        levelId: number | null;
+        levelName: string;
         description: string;
         preview: string | null;
-    } | null;
+        difficulty: number;
+    };
 }
 
 export function defaultStoredDraftData(id: number): StoredDraftData {
@@ -35,6 +36,12 @@ export function defaultStoredDraftData(id: number): StoredDraftData {
         name: getDefaultDraftName(id),
         updateTime: Date.now(),
         languageCode: "eng",
-        publication: null,
+        publication: {
+            levelId: null,
+            levelName: "",
+            description: "",
+            preview: null,
+            difficulty: 1,
+        },
     };
 }

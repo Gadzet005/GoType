@@ -10,6 +10,7 @@ import React from "react";
 import { useEditorContext } from "../../context";
 import { useSnackbar } from "@/core/hooks";
 import { TextField } from "formik-mui";
+import { sentencesByText } from "../../utils/text";
 
 interface LoadTextDialogProps {
   open?: boolean;
@@ -20,7 +21,7 @@ export const LoadTextDialog: React.FC<LoadTextDialogProps> = ({
   open = false,
   onClose = () => {},
 }) => {
-  const { draft } = useEditorContext();
+  const { draft, updateDraft } = useEditorContext();
   const snackbar = useSnackbar();
 
   return (
@@ -28,10 +29,19 @@ export const LoadTextDialog: React.FC<LoadTextDialogProps> = ({
       <DialogTitle variant="h4">Загрузка текста</DialogTitle>
       <Formik
         initialValues={{ text: "", num: 0 }}
-        onSubmit={(values, { setSubmitting }) => {
-          draft.setSentencesByText(values.text);
+        onSubmit={async (values, { setSubmitting }) => {
+          const sentences = sentencesByText(draft, values.text);
+          const success = await updateDraft({
+            sentences: sentences.map((s) => s.toDraftSentenceData()),
+          });
+
+          if (success) {
+            snackbar.show("Текст загружен", "success");
+          } else {
+            snackbar.show("Ошибка загрузки текста", "error");
+          }
+
           setSubmitting(false);
-          snackbar.show("Текст загружен", "success");
           onClose();
         }}
       >

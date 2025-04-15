@@ -2,6 +2,7 @@ import { DraftSentenceData } from "@common/draft/sentence";
 import { StyleClassStore } from "./styleClassStore";
 import { action, computed, makeObservable, observable } from "mobx";
 import { FieldSentence } from "@/core/store/game/core/fieldSentence";
+import { SentenceData } from "@common/level/sentence";
 
 export interface DraftSentenceParams extends DraftSentenceData {
     idx: number;
@@ -52,7 +53,7 @@ export class DraftSentence {
         this.styleClasses = styleClasses;
     }
 
-    toFieldSentence(): FieldSentence | null {
+    toSentenceData(): SentenceData | null {
         if (!this.showTime || !this.duration) {
             return null;
         }
@@ -62,7 +63,7 @@ export class DraftSentence {
         const outroDuration = this.duration * styleClass.outroDurationRatio;
         const activeDuration = this.duration - introDuration - outroDuration;
 
-        const data = {
+        return {
             content: this.content,
             showTime: this.showTime,
             introDuration,
@@ -80,7 +81,13 @@ export class DraftSentence {
                 colors: styleClass.colors,
             },
         };
+    }
 
+    toFieldSentence(): FieldSentence | null {
+        const data = this.toSentenceData();
+        if (!data) {
+            return null;
+        }
         return new FieldSentence(this.idx, data);
     }
 

@@ -112,7 +112,7 @@ export const SentenceView: React.FC<SentenceViewProps> = observer(
           const color = getLetterColor(letter, sentence.style.colors, isActive);
           return (
             <LetterView
-              key={i}
+              key={i} // NOSONAR
               letter={letter.char}
               color={color}
               fontSize={sentence.style.fontSize}
@@ -144,6 +144,10 @@ export const SentenceView: React.FC<SentenceViewProps> = observer(
           sx={{
             borderRadius: 5,
             height: 7,
+            bgcolor: sentence.style.colors.default,
+            "& .MuiLinearProgress-bar": {
+              bgcolor: sentence.style.colors.active,
+            },
           }}
         />
       </Box>

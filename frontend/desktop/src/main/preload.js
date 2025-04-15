@@ -37,6 +37,9 @@ contextBridge.exposeInMainWorld("levelAPI", {
     removeLevel: async (levelId) => {
         await ipcRenderer.invoke("remove-level", levelId);
     },
+    importLevel: async (levelId, levelArchive) => {
+        return await ipcRenderer.invoke("import-level", levelId, levelArchive);
+    },
 });
 
 contextBridge.exposeInMainWorld("levelDraftAPI", {
@@ -57,5 +60,8 @@ contextBridge.exposeInMainWorld("levelDraftAPI", {
     },
     showDraftDir: async (draftId) => {
         await ipcRenderer.invoke("show-draft-dir", draftId);
+    },
+    getLevelCreationData: async (draftId) => {
+        return await ipcRenderer.invoke("get-level-creation-data", draftId);
     },
 });

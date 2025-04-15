@@ -3,11 +3,11 @@ import { DraftData, DraftUpdateData } from "@common/draft";
 
 export async function updateDraft(
     updateInfo: DraftUpdateData
-): PromiseResult<DraftData, void> {
+): PromiseResult<DraftData, string> {
     try {
         const draft = await window.levelDraftAPI.updateDraft(updateInfo);
         return success(draft);
-    } catch {
-        return failure();
+    } catch (err) {
+        return failure(`${err}`);
     }
 }

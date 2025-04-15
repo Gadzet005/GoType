@@ -51,7 +51,10 @@ export class StyleClassStore {
         return this.list.some((styleClass) => styleClass.name === name);
     }
 
-    get(name: string): StyleClass {
+    get(name: string | null): StyleClass {
+        if (name === null) {
+            return this.default();
+        }
         return (
             this.list.find((styleClass) => styleClass.name === name) ??
             this.default()

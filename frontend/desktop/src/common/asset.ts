@@ -1,4 +1,4 @@
-export interface Asset {
+export interface AssetRef {
     ext: string;
     url: string;
 }

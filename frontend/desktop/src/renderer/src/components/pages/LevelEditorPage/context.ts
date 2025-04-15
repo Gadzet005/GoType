@@ -2,6 +2,7 @@ import React from "react";
 import { Draft } from "./store/draft";
 import { requireTrue } from "@/core/utils/panic";
 import { AudioPlayer } from "react-use-audio-player";
+import { DraftUpdateData } from "@common/draft";
 
 export interface UpdateDraftOptions {
     quite?: boolean;
@@ -9,9 +10,12 @@ export interface UpdateDraftOptions {
     newBackgroundFile?: string;
 }
 
+export type DraftUpdateParams = Omit<DraftUpdateData, "id">;
+
 export interface EditorContextValue {
     draft: Draft;
-    updateDraft: (options?: UpdateDraftOptions) => Promise<void>;
+    updateDraft: (params: DraftUpdateParams) => Promise<boolean>;
+    saveDraft: (options?: UpdateDraftOptions) => Promise<void>;
     audioPlayer: AudioPlayer;
 }
 

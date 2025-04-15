@@ -1,31 +1,16 @@
-import { LevelData } from "@common/level";
+import { ExternalLevelData, LevelData } from "@common/level";
 import { logError } from "../../utils/common";
-import { toStored, fromStored } from "./storedLevel";
+import { fromStored, StoredLevelData } from "./storedLevel";
 import { FileSystemStorage } from "../base/FileSystemStorage";
-import { AssetStorage } from "../assets/assetStorage";
+import { extractZipBuffer } from "../../utils/zip";
 
 export class LevelStorage extends FileSystemStorage {
     static readonly DATA_FILE = "level.json";
 
-    async saveLevel(level: LevelData) {
-        const levelDir = this.root.cwd(String(level.id));
-
-        await levelDir
-            .writeAsync(LevelStorage.DATA_FILE, toStored(level))
-            .catch(
-                logError(
-                    `Failed to save level info to file. levelId = ${level.id}`
-                )
-            );
-
-        this.mainStorage.savedLevels.add(level.id);
-    }
-
     async getLevel(levelId: number): Promise<LevelData | null> {
         const levelDir = this.root.cwd(String(levelId));
-        const assets = new AssetStorage(levelDir.path());
 
-        const storedLevel = await levelDir
+        const storedLevel: StoredLevelData = await levelDir
             .readAsync(LevelStorage.DATA_FILE, "json")
             .catch(
                 logError(
@@ -33,7 +18,7 @@ export class LevelStorage extends FileSystemStorage {
                 )
             );
 
-        return fromStored(storedLevel, assets);
+        return fromStored(storedLevel, levelDir.path());
     }
 
     async getAllLevels(): Promise<LevelData[]> {
@@ -66,5 +51,37 @@ export class LevelStorage extends FileSystemStorage {
                     `Failed to remove level directory. levelId = ${levelId}`
                 )
             );
+    }
+
+    async importLevel(levelId: number, levelArchive: string): Promise<void> {
+        const levelDir = this.root.cwd(String(levelId));
+        await levelDir.removeAsync();
+        await extractZipBuffer(levelArchive, levelDir.path()).catch(
+            logError("Failed to extract level archive.")
+        );
+
+        const externalData: ExternalLevelData = await levelDir
+            .readAsync(LevelStorage.DATA_FILE, "json")
+            .catch(
+                logError(
+                    `Failed to read level info from file. levelId = ${levelId}`
+                )
+            );
+
+        const levelData: StoredLevelData = {
+            id: levelId,
+            ...externalData,
+            duration: externalData.duration * 1000,
+        };
+
+        await levelDir
+            .writeAsync(LevelStorage.DATA_FILE, levelData)
+            .catch(
+                logError(
+                    `Failed to save level info to file. levelId = ${levelId}`
+                )
+            );
+
+        this.mainStorage.savedLevels.add(levelId);
     }
 }

@@ -46,12 +46,3 @@ export const menuList: MenuItem[] = [
     color: "error",
   },
 ];
-
-export const devMenuList: MenuItem[] = [
-  {
-    label: "Тестовый редактор",
-    href: RoutePath.testLevelEditor,
-    accessType: AccessType.forAuth,
-    color: "warning",
-  },
-];

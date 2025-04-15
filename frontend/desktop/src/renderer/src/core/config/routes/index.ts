@@ -6,21 +6,19 @@ import { LevelListPage } from "@/components/pages/LevelListPage";
 import { ProfilePage } from "@/components/pages/ProfilePage";
 import { SignInPage } from "@/components/pages/SignInPage";
 import { SignUpPage } from "@/components/pages/SignUpPage";
-import { TestLevelEditorPage } from "@/components/pages/TestLevelEditorPage";
-import React from "react";
 import { RoutePath } from "./path";
 import { LevelDraftListPage } from "@/components/pages/LevelDraftListPage";
+import { RouteNode } from "@/components/navigation/common";
 
-export const routes = new Map<string, React.ElementType>([
-    [RoutePath.default, HomePage],
-    [RoutePath.home, HomePage],
-    [RoutePath.signIn, SignInPage],
-    [RoutePath.signUp, SignUpPage],
-    [RoutePath.profile, ProfilePage],
-    [RoutePath.levelList, LevelListPage],
-    [RoutePath.game, GamePage],
-    [RoutePath.gameStatistics, GameStatisticsPage],
-    [RoutePath.levelEditor, LevelEditorPage],
-    [RoutePath.testLevelEditor, TestLevelEditorPage],
-    [RoutePath.levelDraftList, LevelDraftListPage],
+export const routes = new Map<string, RouteNode>([
+    [RoutePath.default, { page: HomePage, forAuth: false }],
+    [RoutePath.home, { page: HomePage, forAuth: false }],
+    [RoutePath.signIn, { page: SignInPage, forAuth: false }],
+    [RoutePath.signUp, { page: SignUpPage, forAuth: false }],
+    [RoutePath.profile, { page: ProfilePage }],
+    [RoutePath.levelList, { page: LevelListPage }],
+    [RoutePath.game, { page: GamePage }],
+    [RoutePath.gameStatistics, { page: GameStatisticsPage }],
+    [RoutePath.levelEditor, { page: LevelEditorPage }],
+    [RoutePath.levelDraftList, { page: LevelDraftListPage }],
 ]);

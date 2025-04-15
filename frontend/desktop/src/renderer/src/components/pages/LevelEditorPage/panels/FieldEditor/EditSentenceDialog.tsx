@@ -14,6 +14,7 @@ import { Field, Form, Formik } from "formik";
 import { NumberField } from "@/components/common/form/NumberField";
 import { Select } from "formik-mui";
 import { useEditorContext } from "../../context";
+import { round, toMilliseconds, toSeconds } from "@/core/utils/time";
 
 interface EditSentenceDialogProps {
   open: boolean;
@@ -26,18 +27,21 @@ export const EditSentenceDialog: React.FC<EditSentenceDialogProps> = ({
   open,
   onClose,
 }) => {
-  const { draft } = useEditorContext();
+  const { draft, audioPlayer } = useEditorContext();
+  const totalDuration = round(audioPlayer.duration, 2);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle variant="h5">{sentence.content}</DialogTitle>
       <Formik
         initialValues={{
           coord: {
-            x: Math.round(sentence.coord.x * 100) / 100,
-            y: Math.round(sentence.coord.y * 100) / 100,
+            x: round(sentence.coord.x, 2),
+            y: round(sentence.coord.y, 2),
           },
           styleClassName: sentence.styleClassName ?? "",
+          showTime: toSeconds(sentence.showTime!),
+          duration: toSeconds(sentence.duration!),
         }}
         onSubmit={(values, { setSubmitting }) => {
           sentence.setCoord(values.coord.x, values.coord.y);
@@ -48,13 +52,23 @@ export const EditSentenceDialog: React.FC<EditSentenceDialogProps> = ({
             sentence.setStyleClassName(values.styleClassName);
           }
 
+          sentence.setShowTime(toMilliseconds(values.showTime));
+          sentence.setDuration(toMilliseconds(values.duration));
+
           setSubmitting(false);
           onClose();
+        }}
+        validate={(values) => {
+          if (values.showTime + values.duration > totalDuration) {
+            return {
+              duration: `Общее время не может превышать длительность аудио (${totalDuration} сек)`,
+            };
+          }
         }}
       >
         <Form>
           <DialogContent>
-            <Stack gap={1}>
+            <Stack gap={2}>
               <Field name="styleClassName" label="Стиль" component={Select}>
                 <MenuItem value="">По умолчанию</MenuItem>
                 {draft.styleClasses.getAll().map((styleClass) => (
@@ -63,7 +77,26 @@ export const EditSentenceDialog: React.FC<EditSentenceDialogProps> = ({
                   </MenuItem>
                 ))}
               </Field>
-              <Typography variant="h6" sx={{ mt: 3 }}>
+              <Typography variant="h6">Время</Typography>
+              <Stack direction="row" gap={1}>
+                <Field
+                  name="showTime"
+                  label="Время повляения (сек)"
+                  component={NumberField}
+                  min={0}
+                  max={totalDuration}
+                  fullWidth
+                />
+                <Field
+                  name="duration"
+                  label="Длительность (сек)"
+                  component={NumberField}
+                  min={0}
+                  max={totalDuration}
+                  fullWidth
+                />
+              </Stack>
+              <Typography variant="h6">
                 Смещение относительно левого верхнего угла поля (%)
               </Typography>
               <Stack direction="row" gap={1}>

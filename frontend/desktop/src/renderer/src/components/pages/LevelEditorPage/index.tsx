@@ -10,7 +10,11 @@ import structuredClone from "@ungap/structured-clone";
 import { observer } from "mobx-react";
 import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { EditorContext, UpdateDraftOptions } from "./context";
+import {
+  DraftUpdateParams,
+  EditorContext,
+  UpdateDraftOptions,
+} from "./context";
 import { FieldEditor } from "./panels/FieldEditor";
 import { Settings } from "./panels/Settings";
 import { StyleEditor } from "./panels/StyleEditor";
@@ -36,6 +40,26 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
     const audioPlayer = useAutoLoadAudioPlayer(draft?.audio ?? undefined);
 
     const update = React.useCallback(
+      async (params: DraftUpdateParams): Promise<boolean> => {
+        if (!draft) {
+          return false;
+        }
+
+        const result = await updateDraft({
+          id: draft.id,
+          ...params,
+        });
+        if (result.ok) {
+          setDraft(new Draft(result.payload));
+          return true;
+        }
+        console.error(result.error);
+        return false;
+      },
+      [draft]
+    );
+
+    const save = React.useCallback(
       async (options?: UpdateDraftOptions) => {
         if (!draft) {
           return;
@@ -56,22 +80,20 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
           },
         };
 
-        const result = await updateDraft(updateInfo);
-        if (result.ok) {
-          setDraft(new Draft(result.payload));
+        const result = await update(updateInfo);
+        if (result) {
           if (!options?.quite) {
             snakbar.show("Изменения сохранены", "success");
           }
         } else {
           snakbar.show("Ошибка при сохранении изменений", "error");
-          console.error(result.error);
         }
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [draft]
     );
 
-    useHotkeys("ctrl+s", () => update(), [update]);
+    useHotkeys("ctrl+s", () => save(), [update]);
 
     React.useEffect(() => {
       const loadDraft = async () => {
@@ -97,6 +119,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
         value={{
           draft,
           updateDraft: update,
+          saveDraft: save,
           audioPlayer,
         }}
       >
@@ -138,7 +161,7 @@ export const LevelEditorPage: React.FC<LevelEditorPageProps> = observer(
               color="success"
               label="Сохранить и выйти"
               href={RoutePath.levelDraftList}
-              onBack={() => update({ quite: true })}
+              onBack={() => save({ quite: true })}
             />
           </Box>
 

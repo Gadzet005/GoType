@@ -13,12 +13,7 @@ export const SentenceList: React.FC<SentenceListProps> = ({
   onSelect,
 }) => {
   return (
-    <Box
-      sx={{
-        maxHeight: "100%",
-        overflow: "auto",
-      }}
-    >
+    <Box>
       <Stack sx={{ px: 5 }} spacing={1}>
         <ListItem left="Время" right="Текст" />
         {list.map((sentence) => {

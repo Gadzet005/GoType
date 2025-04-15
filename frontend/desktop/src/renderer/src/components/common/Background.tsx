@@ -9,60 +9,78 @@ interface BackgroundProps {
   onError?: () => void;
 }
 
-export const Background: React.FC<BackgroundProps> = ({
-  imageUrl,
-  zIndex = -100,
-  brightness = 0.5,
-  onLoad = () => {},
-  onError = () => {},
-}) => {
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const bgRef = React.useRef<HTMLImageElement | null>(null);
+export const Background: React.FC<BackgroundProps> = React.memo(
+  ({
+    imageUrl,
+    zIndex = -100,
+    brightness = 0.5,
+    onLoad = () => {},
+    onError = () => {},
+  }) => {
+    const [isLoaded, setIsLoaded] = React.useState(false);
+    const bgRef = React.useRef<HTMLImageElement | null>(null);
 
-  React.useEffect(() => {
-    const img = new Image();
-    bgRef.current = img;
+    React.useEffect(() => {
+      const img = new Image();
+      bgRef.current = img;
 
-    img.src = imageUrl;
-    img.onload = () => {
-      setIsLoaded(true);
-      onLoad();
-    };
-    img.onerror = () => {
-      onError();
-    };
+      img.src = imageUrl;
 
-    return () => {
-      if (img) {
-        img.onload = null;
-        img.onerror = null;
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageUrl]);
+      img.onload = () => {
+        setIsLoaded(true);
+        onLoad();
+      };
 
-  return (
-    <Box
-      sx={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundImage: isLoaded ? `url(${imageUrl})` : "",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        zIndex: zIndex,
-        "&::after": {
-          content: '""',
+      img.onerror = (e) => {
+        console.error(`Failed to load background image: ${imageUrl}`, e);
+        onError();
+      };
+
+      return () => {
+        if (img) {
+          img.onload = null;
+          img.onerror = null;
+          img.src = "";
+        }
+      };
+    }, [imageUrl]);
+
+    return (
+      <Box
+        sx={{
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: `rgba(0, 0, 0, ${1 - brightness})`,
-        },
-      }}
-    />
-  );
-};
+          overflow: "hidden",
+          zIndex: zIndex,
+        }}
+      >
+        {isLoaded && (
+          <img
+            src={imageUrl}
+            alt="background"
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity: brightness,
+            }}
+          />
+        )}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: `rgba(0, 0, 0, ${1 - brightness})`,
+          }}
+        />
+      </Box>
+    );
+  }
+);

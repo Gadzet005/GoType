@@ -3,17 +3,18 @@ import { observer } from "mobx-react";
 import React from "react";
 import useMeasure from "react-use-measure";
 import ResizeObserver from "resize-observer-polyfill";
-import { Asset } from "@common/asset";
+import { AssetRef } from "@common/asset";
 import { Background } from "@/components/common/Background";
 import { SentenceView } from "@/components/game/SentenceView";
 import { DraftSentence } from "../../store/draftSentence";
 import { DraggableSentenceContainer } from "./DraggableSentenceContainer";
+import { useEditorContext } from "../../context";
 
 interface EditorGameViewProps {
   sentences: DraftSentence[];
   time: number;
   background: {
-    asset: Asset;
+    asset: AssetRef;
     brightness?: number;
   };
   onReadyToStart?: () => void;
@@ -30,6 +31,7 @@ export const EditorGameView: React.FC<EditorGameViewProps> = observer(
     onReadyToStart = () => {},
     onSelect,
   }) => {
+    const { draft } = useEditorContext();
     const [ref, bounds] = useMeasure({ polyfill: ResizeObserver });
 
     const SentenceViews = React.useMemo(
@@ -58,16 +60,19 @@ export const EditorGameView: React.FC<EditorGameViewProps> = observer(
       [bounds.height, bounds.width, onSelect, sentences, time]
     );
 
+    const bgURL = background.asset.url + `?v=${draft.updateTime}`;
+
     return (
       <Box
         sx={{
           position: fullScreen ? "static" : "relative",
           height: "100%",
           p: 2,
+          overflow: "hidden",
         }}
       >
         <Background
-          imageUrl={background.asset.url}
+          imageUrl={bgURL}
           brightness={background.brightness}
           onLoad={() => onReadyToStart()}
         />

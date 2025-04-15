@@ -1,11 +1,9 @@
-import { DraftData, DraftUpdateData } from "@common/draft";
+import { DraftData, DraftUpdateData, LevelCreationData } from "@common/draft";
 import jetpack from "fs-jetpack";
 import { FSJetpack } from "fs-jetpack/types";
 import { defaultStoredDraftData, StoredDraftData } from "./storedDraftData";
 import { logError } from "../../utils/common";
-import { AssetStorage } from "../assets/assetStorage";
-import { AssetType } from "../../consts";
-import { getExt } from "../../utils/path";
+import { Asset, copyAsset } from "../../utils/asset";
 
 type UpdateParams = Omit<DraftUpdateData, "id">;
 
@@ -13,11 +11,9 @@ export class StoredDraft {
     static readonly DATA_FILE = "draft.json";
     private root: FSJetpack;
     private data_: StoredDraftData | null = null;
-    private assets: AssetStorage;
 
     constructor(path: string) {
         this.root = jetpack.cwd(path);
-        this.assets = new AssetStorage(path);
     }
 
     async loadData(): Promise<StoredDraftData> {
@@ -44,19 +40,31 @@ export class StoredDraft {
         await this.saveData(defaultStoredDraftData(id));
     }
 
-    private async updateAsset(
-        type: AssetType,
-        newAssetPath: string,
-        old: string | null
-    ): Promise<string> {
-        if (old) {
-            await this.assets.remove(type + "." + old);
+    async getAudioAsset(): Promise<Asset | null> {
+        const data = await this.loadData();
+        if (data.audio === null) {
+            return null;
         }
+        const audioFileName = "audio." + data.audio;
+        return new Asset(this.root.path(audioFileName));
+    }
 
-        const ext = getExt(newAssetPath);
-        await this.assets.save(type + "." + ext, newAssetPath);
+    async getBackgroundAsset(): Promise<Asset | null> {
+        const data = await this.loadData();
+        if (data.background.asset === null) {
+            return null;
+        }
+        const backgroundFileName = "background." + data.background.asset;
+        return new Asset(this.root.path(backgroundFileName));
+    }
 
-        return ext;
+    async getPreviewAsset(): Promise<Asset | null> {
+        const data = await this.loadData();
+        if (!data.publication?.preview) {
+            return null;
+        }
+        const previewFileName = "preview." + data.publication.preview;
+        return new Asset(this.root.path(previewFileName));
     }
 
     async update(params: UpdateParams) {
@@ -64,7 +72,14 @@ export class StoredDraft {
         const data = await this.loadData();
 
         if (audioPath) {
-            data.audio = await this.updateAsset("audio", audioPath, data.audio);
+            const audioAsset = await this.getAudioAsset();
+            await audioAsset?.remove();
+            const newAsset = await copyAsset(
+                this.root.path(),
+                "audio",
+                audioPath
+            );
+            data.audio = newAsset.getExt();
         }
 
         if (background) {
@@ -75,24 +90,30 @@ export class StoredDraft {
             };
 
             if (path) {
-                data.background.asset = await this.updateAsset(
+                const backgroundAsset = await this.getBackgroundAsset();
+                await backgroundAsset?.remove();
+                const newAsset = await copyAsset(
+                    this.root.path(),
                     "background",
-                    path,
-                    data.background.asset
+                    path
                 );
+                data.background.asset = newAsset.getExt();
             }
         }
 
         if (publication) {
             const { previewPath, ...other } = publication;
-            data.publication = { preview: null, ...data.publication, ...other };
+            data.publication = { ...data.publication, ...other };
 
             if (previewPath) {
-                data.publication.preview = await this.updateAsset(
+                const previewAsset = await this.getPreviewAsset();
+                await previewAsset?.remove();
+                const newAsset = await copyAsset(
+                    this.root.path(),
                     "preview",
-                    previewPath,
-                    data.publication.preview
+                    previewPath
                 );
+                data.publication.preview = newAsset.getExt();
             }
         }
 
@@ -101,34 +122,60 @@ export class StoredDraft {
 
     async remove() {
         this.data_ = null;
-        await this.root
-            .removeAsync()
-            .catch(logError("Failed to delete draft directory"));
+        await this.root.removeAsync();
     }
 
     async getDraftData(): Promise<DraftData> {
         const data = await this.loadData();
-
-        const getAsset = (type: AssetType, ext: string | null) => {
-            const name = ext === null ? null : type + "." + ext;
-            return name === null ? null : this.assets.get(name);
-        };
+        const audio = await this.getAudioAsset();
+        const background = await this.getBackgroundAsset();
+        const preview = await this.getPreviewAsset();
 
         return {
             ...data,
-            audio: getAsset("audio", data.audio),
+            audio: audio?.getRef() ?? null,
             background: {
                 ...data.background,
-                asset: getAsset("background", data.background.asset),
+                asset: background?.getRef() ?? null,
             },
             publication: data.publication && {
                 ...data.publication,
-                preview: getAsset("preview", data.publication.preview),
+                preview: preview?.getRef() ?? null,
             },
         };
     }
 
     path(): string {
         return this.root.path();
+    }
+
+    async getLevelCreationData(): Promise<LevelCreationData | null> {
+        const isInited = await this.isInited();
+        if (!isInited) {
+            return null;
+        }
+
+        const data = await this.getDraftData();
+
+        const audioBuffer = await this.getAudioAsset().then((audio) =>
+            audio?.getBuffer()
+        );
+        const previewBuffer = await this.getPreviewAsset().then((preview) =>
+            preview?.getBuffer()
+        );
+        const backgroundBuffer = await this.getBackgroundAsset().then(
+            (background) => background?.getBuffer()
+        );
+
+        if (!audioBuffer || !previewBuffer || !backgroundBuffer) {
+            return null;
+        }
+
+        return {
+            draft: data,
+            audio: audioBuffer.toString("base64"),
+            preview: previewBuffer.toString("base64"),
+            background: backgroundBuffer.toString("base64"),
+        };
     }
 }

@@ -1,7 +1,7 @@
 import { LevelData } from "@common/level";
 import { UserInfo } from "@common/user";
 import { FileMeta } from "@common/file";
-import { DraftUpdateData, DraftData } from "@common/draft";
+import { DraftUpdateData, DraftData, LevelCreationData } from "@common/draft";
 import { AppConfig } from "@common/config";
 
 declare global {
@@ -19,8 +19,11 @@ declare global {
         levelAPI: {
             getAllLevels: () => Promise<LevelData[]>;
             getLevel: (levelId: number) => Promise<LevelData | null>;
-            saveLevel: (level: LevelData) => Promise<void>;
             removeLevel: (levelId: number) => Promise<void>;
+            importLevel: (
+                levelId: number,
+                levelArchive: string
+            ) => Promise<void>;
         };
         levelDraftAPI: {
             getAllDrafts: () => Promise<DraftData[]>;
@@ -29,6 +32,9 @@ declare global {
             createDraft: () => Promise<DraftData>;
             updateDraft: (data: DraftUpdateData) => Promise<DraftData>;
             showDraftDir: (draftId: number) => Promise<void>;
+            getLevelCreationData: (
+                draftId: number
+            ) => Promise<LevelCreationData>;
         };
     }
 }

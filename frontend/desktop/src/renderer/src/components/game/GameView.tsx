@@ -7,7 +7,7 @@ import { SentenceView } from "./SentenceView";
 import { SentenceContainer } from "./SentenceView/container";
 import { CursorPosition } from "@/core/store/game/core/cursor";
 import { FieldSentence } from "@/core/store/game/core/fieldSentence";
-import { Asset } from "@common/asset";
+import { AssetRef } from "@common/asset";
 import { Background } from "../common/Background";
 
 interface GameViewProps {
@@ -15,7 +15,7 @@ interface GameViewProps {
   time: number;
   cursor?: CursorPosition | null;
   background: {
-    asset: Asset;
+    asset: AssetRef;
     brightness?: number;
   };
   onReadyToStart?: () => void;

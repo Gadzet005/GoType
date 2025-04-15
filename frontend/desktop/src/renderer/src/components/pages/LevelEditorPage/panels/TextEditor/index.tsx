@@ -16,6 +16,19 @@ export const TextEditor = observer(() => {
   const [selectedSentence, setSelectedSentence] =
     React.useState<DraftSentence | null>(null);
 
+  const getSentenceShowTime = () => {
+    if (!selectedSentence) {
+      return null;
+    }
+    if (selectedSentence.showTime) {
+      return selectedSentence.showTime;
+    }
+    if (selectedSentence.idx > 0) {
+      return draft.sentences[selectedSentence.idx - 1].showTime;
+    }
+    return null;
+  };
+
   if (!draft.audio) {
     return (
       <CenterBox>
@@ -38,7 +51,7 @@ export const TextEditor = observer(() => {
           onClose={() => setSelectedSentence(null)}
           player={audioPlayer}
           content={selectedSentence.content}
-          showTime={selectedSentence.showTime}
+          showTime={getSentenceShowTime()}
           duration={selectedSentence.duration}
           onSave={(showTime: number | null, duration: number | null) => {
             selectedSentence.setShowTime(showTime);
