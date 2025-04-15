@@ -1,7 +1,7 @@
 import React from "react";
 import { DEFAULT_PATH, RouteList } from "./common";
 import { NavigationContext } from "./context";
-import { useAppContext } from "@/core/hooks";
+import { useAppContext, useSnackbar } from "@/core/hooks";
 import { observer } from "mobx-react";
 
 interface AppNavigationProps {
@@ -11,6 +11,7 @@ interface AppNavigationProps {
 export const AppNavigation: React.FC<AppNavigationProps> = observer(
   ({ routes }) => {
     const ctx = useAppContext();
+    const snackbar = useSnackbar();
     const [path, setPath] = React.useState<string>(DEFAULT_PATH);
     const [params, setParams] = React.useState<Record<string, unknown>>({});
 
@@ -27,6 +28,21 @@ export const AppNavigation: React.FC<AppNavigationProps> = observer(
       },
       [routes]
     );
+
+    const currentRoute = React.useMemo(() => {
+      return routes.get(path);
+    }, [path, routes]);
+
+    React.useEffect(() => {
+      if (currentRoute && (currentRoute.forAuth ?? true) && !ctx.user.isAuth) {
+        snackbar.show(
+          "Ошибка авторизации. Пожалуйста, войдите снова.",
+          "error"
+        );
+        setPath(DEFAULT_PATH);
+        setParams({});
+      }
+    }, [ctx.user.isAuth, currentRoute, routes]);
 
     const node = React.useMemo(() => {
       const node = routes.get(path);

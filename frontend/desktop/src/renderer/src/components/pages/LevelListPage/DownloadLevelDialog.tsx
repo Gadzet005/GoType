@@ -29,7 +29,7 @@ export const DownloadLevelDialog: React.FC<DownloadLevelDialogProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle variant="h4">Загрузка уровня</DialogTitle>
       <Formik
-        initialValues={{ id: 0 }}
+        initialValues={{ id: 1 }}
         onSubmit={async ({ id }, { setSubmitting }) => {
           const result = await downloadLevel(ctx, id);
           if (result.ok) {

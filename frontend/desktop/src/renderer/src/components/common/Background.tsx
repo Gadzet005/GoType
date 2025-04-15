@@ -25,11 +25,14 @@ export const Background: React.FC<BackgroundProps> = React.memo(
       bgRef.current = img;
 
       img.src = imageUrl;
+
       img.onload = () => {
         setIsLoaded(true);
         onLoad();
       };
-      img.onerror = () => {
+
+      img.onerror = (e) => {
+        console.error(`Failed to load background image: ${imageUrl}`, e);
         onError();
       };
 
@@ -50,21 +53,34 @@ export const Background: React.FC<BackgroundProps> = React.memo(
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: isLoaded ? `url(${imageUrl})` : "",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
+          overflow: "hidden",
           zIndex: zIndex,
-          "&::after": {
-            content: '""',
+        }}
+      >
+        {isLoaded && (
+          <img
+            src={imageUrl}
+            alt="background"
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity: brightness,
+            }}
+          />
+        )}
+        <Box
+          sx={{
             position: "absolute",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
             backgroundColor: `rgba(0, 0, 0, ${1 - brightness})`,
-          },
-        }}
-      />
+          }}
+        />
+      </Box>
     );
   }
 );
