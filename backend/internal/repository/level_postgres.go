@@ -1,7 +1,9 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	gotype "github.com/Gadzet005/GoType/backend"
@@ -14,6 +16,13 @@ import (
 	"golang.org/x/exp/slices"
 	"strconv"
 	"time"
+)
+
+const (
+	getLevelUserTopPrefix = "GetLevelUserTop::"
+	getLevelStatsPrefix   = "GetLevelStats::"
+	levelUserTopTTL       = time.Duration(2 * time.Minute)
+	levelStatsTTL         = time.Duration(2 * time.Minute)
 )
 
 // TODO: Finish sorting
@@ -292,6 +301,13 @@ func (lp *LevelPostgres) GetTagsByLevelID(levelID int) ([]levels.Tag, error) {
 }
 
 func (lp *LevelPostgres) GetLevelStats(levelId int) (statistics.LevelStats, error) {
+	//Reading from cache
+	cached, err := lp.GetLevelStatsFromCache(levelId)
+
+	if err == nil {
+		return cached, nil
+	}
+
 	var stats statistics.LevelStats
 
 	query := fmt.Sprintf("SELECT COALESCE(count(*), 0) as num_played, COALESCE(AVG(accuracy), 0) as average_acc, COALESCE(MAX(max_combo), 0) as max_combo, COALESCE(MAX(points), 0) as max_points, COALESCE(AVG(points),0) as average_points, COALESCE(AVG(average_velocity),0) as average_average_velocity, COALESCE(MAX(average_velocity),0) as max_average_velocity FROM %s WHERE level_id = $1", levelCompleteTable)
@@ -300,10 +316,54 @@ func (lp *LevelPostgres) GetLevelStats(levelId int) (statistics.LevelStats, erro
 		return statistics.LevelStats{}, errors.New(gotype.ErrInternal)
 	}
 
+	//Saving result in cache
+	_ = lp.SaveLevelStatsInCache(levelId, stats)
+
 	return stats, nil
 }
 
+func (sp *LevelPostgres) GetLevelStatsFromCache(levelId int) (statistics.LevelStats, error) {
+	key := getLevelStatsPrefix + strconv.Itoa(levelId)
+
+	val, err := sp.client.Get(context.Background(), key).Result()
+
+	if err != nil {
+		return statistics.LevelStats{}, errors.New(gotype.ErrInternal)
+	} else {
+		var ret statistics.LevelStats
+		err := json.Unmarshal([]byte(val), &ret)
+		if err != nil {
+			return statistics.LevelStats{}, errors.New(gotype.ErrInternal)
+		} else {
+			logrus.Printf("GetFromCache: {%s, %s}", key, val)
+			return ret, nil
+		}
+	}
+
+}
+
+func (sp *LevelPostgres) SaveLevelStatsInCache(levelId int, result statistics.LevelStats) error {
+	key := getLevelStatsPrefix + strconv.Itoa(levelId)
+
+	val, err := json.Marshal(result)
+	if err != nil {
+		return errors.New(gotype.ErrInternal)
+	}
+
+	res := sp.client.Set(context.Background(), key, val, levelStatsTTL)
+	logrus.Printf("Saving %s to cache. Error: %v", key, res.Err())
+
+	return nil
+}
+
 func (lp *LevelPostgres) GetLevelUserTop(levelId int) ([]statistics.UserLevelCompletionInfo, error) {
+	//Reading from cache
+	cached, err := lp.GetLevelUserTopFromCache(levelId)
+
+	if err == nil {
+		return cached, nil
+	}
+
 	var ret []statistics.UserLevelCompletionInfo
 
 	query := fmt.Sprintf(fmt.Sprintf("SELECT s.level_id,s.player_id,u.name as player_name,s.time,s.accuracy,s.average_velocity,s.max_combo,s.placement,s.points FROM (SELECT * FROM %s WHERE level_id = $1 ORDER BY points, time LIMIT 10) AS s JOIN %s AS u on s.player_id = u.id", levelCompleteTable, usersTable))
@@ -312,5 +372,42 @@ func (lp *LevelPostgres) GetLevelUserTop(levelId int) ([]statistics.UserLevelCom
 		return []statistics.UserLevelCompletionInfo{}, errors.New(gotype.ErrInternal)
 	}
 
+	//Saving result in cache
+	_ = lp.SaveLevelUserTopInCache(levelId, ret)
+
 	return ret, nil
+}
+
+func (sp *LevelPostgres) GetLevelUserTopFromCache(levelId int) ([]statistics.UserLevelCompletionInfo, error) {
+	key := getLevelUserTopPrefix + strconv.Itoa(levelId)
+
+	val, err := sp.client.Get(context.Background(), key).Result()
+
+	if err != nil {
+		return []statistics.UserLevelCompletionInfo{}, errors.New(gotype.ErrInternal)
+	} else {
+		var ret []statistics.UserLevelCompletionInfo
+		err := json.Unmarshal([]byte(val), &ret)
+		if err != nil {
+			return []statistics.UserLevelCompletionInfo{}, errors.New(gotype.ErrInternal)
+		} else {
+			logrus.Printf("GetFromCache: {%s, %s}", key, val)
+			return ret, nil
+		}
+	}
+
+}
+
+func (sp *LevelPostgres) SaveLevelUserTopInCache(levelId int, result []statistics.UserLevelCompletionInfo) error {
+	key := getLevelUserTopPrefix + strconv.Itoa(levelId)
+
+	val, err := json.Marshal(result)
+	if err != nil {
+		return errors.New(gotype.ErrInternal)
+	}
+
+	res := sp.client.Set(context.Background(), key, val, levelUserTopTTL)
+	logrus.Printf("Saving %s to cache. Error: %v", key, res.Err())
+
+	return nil
 }

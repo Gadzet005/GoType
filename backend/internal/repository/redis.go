@@ -6,6 +6,11 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+const (
+	maxmemoryPolicy = "allkeys-lru"
+	maxmemory       = "512mb"
+)
+
 type RedisConfig struct {
 	Host     string
 	Port     string
@@ -21,6 +26,16 @@ func NewRedisDB(cfg RedisConfig) (*redis.Client, error) {
 
 	ping, err := client.Ping(context.Background()).Result()
 	if err != nil || ping != "PONG" {
+		return nil, err
+	}
+
+	err = client.ConfigSet(context.Background(), "maxmemory", maxmemory).Err()
+	if err != nil {
+		return nil, err
+	}
+
+	err = client.ConfigSet(context.Background(), "maxmemory-policy", maxmemoryPolicy).Err()
+	if err != nil {
 		return nil, err
 	}
 

@@ -69,7 +69,7 @@ func (h *Stat) GetUserStats(c *gin.Context) {
 func (h *Stat) GetUsersTop(c *gin.Context) {
 	var input statistics.StatSortFilterParamsJSON
 
-	if err := c.BindQuery(&input); err != nil {
+	if err := c.BindJSON(&input); err != nil {
 		logrus.Printf(err.Error())
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return

@@ -10,6 +10,10 @@ import (
 	"github.com/swaggo/gin-swagger"
 )
 
+const (
+	maxRequestBodySize = 5 * 1024 * 1024
+)
+
 type AuthorizationHandler interface {
 	Register(c *gin.Context)
 	Login(c *gin.Context)
@@ -106,7 +110,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/refresh", h.Authorization.Refresh)
 	}
 
-	userActions := router.Group("/user-actions", h.UserIdentity)
+	userActions := router.Group("/user-actions", h.UserIdentity, h.MaxRequestSize(maxRequestBodySize))
 	{
 		userActions.POST("/logout", h.UserActions.logout)
 		userActions.GET("/get-user-info", h.UserActions.getUserInfo)
@@ -134,7 +138,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		admin.GET("/get-users", h.Admin.getUsers) //
 	}
 
-	level := router.Group("/level", h.UserIdentity)
+	level := router.Group("/level", h.UserIdentity, h.MaxRequestSize(maxRequestBodySize))
 	{
 		level.POST("/create-level", h.Level.CreateLevel)
 		level.GET("/download-level/:id", h.Level.GetLevel)         //
