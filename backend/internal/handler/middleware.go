@@ -3,6 +3,7 @@ package handler
 import (
 	gotype "github.com/Gadzet005/GoType/backend"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 	"time"
@@ -49,10 +50,13 @@ func (h *Handler) MaxRequestSize(maxBytes int64) gin.HandlerFunc {
 		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxBytes)
 
 		if err := c.Request.ParseMultipartForm(maxBytes); err != nil {
-			c.AbortWithStatusJSON(http.StatusRequestEntityTooLarge, gin.H{
-				"error": "Size of the request is too large",
-			})
-			return
+			if err.Error() != "request Content-Type isn't multipart/form-data" {
+				logrus.Printf("error parsing multipart form: %v", err.Error())
+				c.AbortWithStatusJSON(http.StatusRequestEntityTooLarge, gin.H{
+					"error": "Size of the request is too large",
+				})
+				return
+			}
 		}
 
 		c.Next()

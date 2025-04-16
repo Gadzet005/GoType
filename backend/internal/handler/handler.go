@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	maxRequestBodySize = 5 * 1024 * 1024
+	maxRequestBodySize = 20 * 1024 * 1024
 )
 
 type AuthorizationHandler interface {
@@ -110,18 +110,18 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/refresh", h.Authorization.Refresh)
 	}
 
-	userActions := router.Group("/user-actions", h.UserIdentity, h.MaxRequestSize(maxRequestBodySize))
+	userActions := router.Group("/user-actions", h.UserIdentity)
 	{
 		userActions.POST("/logout", h.UserActions.logout)
 		userActions.GET("/get-user-info", h.UserActions.getUserInfo)
 		userActions.POST("/write-user-complaint", h.UserActions.WriteUserComplaint)
 		userActions.POST("/write-level-complaint", h.UserActions.WriteLevelComplaint)
-		userActions.POST("/change-avatar", h.UserActions.changeAvatar)
+		userActions.POST("/change-avatar", h.MaxRequestSize(maxRequestBodySize), h.UserActions.changeAvatar)
 	}
 
 	stats := router.Group("/stats", h.UserIdentity)
 	{
-		stats.GET("/get-user-stats/:id", h.Stats.GetUserStats) //
+		stats.GET("/get-user-stats/:id", h.Stats.GetUserStats)
 		stats.POST("/get-users-top", h.Stats.GetUsersTop)
 	}
 
@@ -135,15 +135,15 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		admin.GET("/get-level-complaints", h.Admin.getLevelComplaints)
 		admin.POST("/process-user-complaint", h.Admin.processUserComplaint)
 		admin.POST("/process-level-complaint", h.Admin.processLevelComplaint)
-		admin.GET("/get-users", h.Admin.getUsers) //
+		admin.GET("/get-users", h.Admin.getUsers)
 	}
 
-	level := router.Group("/level", h.UserIdentity, h.MaxRequestSize(maxRequestBodySize))
+	level := router.Group("/level", h.UserIdentity)
 	{
-		level.POST("/create-level", h.Level.CreateLevel)
-		level.GET("/download-level/:id", h.Level.GetLevel)         //
-		level.GET("/get-level-info/:id", h.Level.GetLevelInfoById) //
-		level.PUT("/update-level", h.Level.UpdateLevel)
+		level.POST("/create-level", h.MaxRequestSize(maxRequestBodySize), h.Level.CreateLevel)
+		level.GET("/download-level/:id", h.Level.GetLevel)
+		level.GET("/get-level-info/:id", h.Level.GetLevelInfoById)
+		level.PUT("/update-level", h.MaxRequestSize(maxRequestBodySize), h.Level.UpdateLevel)
 		level.POST("/get-level-list", h.Level.GetLevelList)
 	}
 
