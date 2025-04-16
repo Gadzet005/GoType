@@ -7,6 +7,7 @@ import (
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"
 	"net/http"
 )
@@ -184,7 +185,7 @@ func (h *UserActions) changeAvatar(c *gin.Context) {
 	}
 
 	avatarFile, err := c.FormFile("avatar")
-	if errors.Is(err, http.ErrMissingFile) {
+	if errors.Is(err, http.ErrMissingFile) || errors.Is(err, http.ErrNotMultipart) {
 		err = h.service.UpdateAvatar(intUserId, nil)
 
 		if err != nil {
@@ -192,6 +193,7 @@ func (h *UserActions) changeAvatar(c *gin.Context) {
 			return
 		}
 	} else if err != nil {
+		logrus.Printf(err.Error())
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	} else {

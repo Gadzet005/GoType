@@ -91,16 +91,20 @@ func (s *UserActionsService) UpdateAvatar(userId int, avatarFile *multipart.File
 		}
 	}
 
-	err := os.Remove(oldPath)
-	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		logrus.Printf("Failed to remove old avatar %s", oldPath)
-		return errors.New(gotype.ErrInternal)
+	logrus.Printf("avatar filename: %v", oldPath)
+
+	if oldPath != "" {
+		err := os.Remove(oldPath)
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			logrus.Printf("Failed to remove old avatar %s", oldPath)
+			return errors.New(gotype.ErrInternal)
+		}
 	}
 
 	if avatarFile != nil {
 		avatarFile.Filename = filename
 
-		err = saveFile(avatarFile, user.GenerateAvatarPath(userId))
+		err := saveFile(avatarFile, user.GenerateAvatarPath(userId))
 		if err != nil {
 			logrus.Printf("Failed to save new archive %s", user.GenerateAvatarPath(userId))
 			return errors.New(gotype.ErrInternal)

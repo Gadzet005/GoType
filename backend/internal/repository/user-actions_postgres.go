@@ -89,6 +89,7 @@ func (s *UserActionsPostgres) CreateLevelComplaint(complaint complaints.LevelCom
 func (s *UserActionsPostgres) UpdateAvatarPath(id int, newPath string) (string, error) {
 	var curId int
 	var avatarPath string
+	var preStr sql.NullString
 
 	tx, err := s.db.Beginx()
 
@@ -96,11 +97,30 @@ func (s *UserActionsPostgres) UpdateAvatarPath(id int, newPath string) (string, 
 		return "", errors.New(gotype.ErrInternal)
 	}
 
-	query := fmt.Sprintf("UPDATE %s SET avatar_path = $1 WHERE id = $2 RETURNING id, avatar_path", usersTable)
+	q := fmt.Sprintf("SELECT avatar_path FROM %s WHERE id = $1;", usersTable)
 
-	row := tx.QueryRow(query, newPath, id)
+	row := tx.QueryRow(q, id)
+	if err := row.Scan(&preStr); err != nil {
+		_ = tx.Rollback()
 
-	if err := row.Scan(&curId, &avatarPath); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", errors.New(gotype.ErrUserNotFound)
+		}
+		logrus.Errorf("Error getting avatar path: %s", err.Error())
+		return "", errors.New(gotype.ErrInternal)
+	}
+
+	if preStr.Valid {
+		avatarPath = preStr.String
+	} else {
+		avatarPath = ""
+	}
+
+	query := fmt.Sprintf("UPDATE %s SET avatar_path = $1 WHERE id = $2 RETURNING id", usersTable)
+
+	row = tx.QueryRow(query, newPath, id)
+
+	if err := row.Scan(&curId); err != nil {
 		_ = tx.Rollback()
 
 		if errors.Is(err, sql.ErrNoRows) {
