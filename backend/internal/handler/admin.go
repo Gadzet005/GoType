@@ -212,7 +212,7 @@ func (h *Admin) ChangeUserAccess(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/get-user-complaints [get]
-func (h *Admin) getUserComplaints(c *gin.Context) {
+func (h *Admin) GetUserComplaints(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
@@ -251,7 +251,7 @@ func (h *Admin) getUserComplaints(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/get-level-complaints [get]
-func (h *Admin) getLevelComplaints(c *gin.Context) {
+func (h *Admin) GetLevelComplaints(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
@@ -291,7 +291,7 @@ func (h *Admin) getLevelComplaints(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/process-user-complaint [POST]
-func (h *Admin) processUserComplaint(c *gin.Context) {
+func (h *Admin) ProcessUserComplaint(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
@@ -337,7 +337,7 @@ func (h *Admin) processUserComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/process-level-complaint [POST]
-func (h *Admin) processLevelComplaint(c *gin.Context) {
+func (h *Admin) ProcessLevelComplaint(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
@@ -386,7 +386,7 @@ func (h *Admin) processLevelComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/get-users [get]
-func (h *Admin) getUsers(c *gin.Context) {
+func (h *Admin) GetUsers(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
 	if !exists {
