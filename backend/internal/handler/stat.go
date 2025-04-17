@@ -97,4 +97,5 @@ func (h *Stat) GetUsersTop(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"users": usersTop,
 	})
+
 }

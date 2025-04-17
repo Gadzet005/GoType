@@ -21,11 +21,11 @@ type AuthorizationHandler interface {
 }
 
 type UserActionsHandler interface {
-	logout(c *gin.Context)
-	getUserInfo(c *gin.Context)
+	Logout(c *gin.Context)
+	GetUserInfo(c *gin.Context)
 	WriteUserComplaint(c *gin.Context)
 	WriteLevelComplaint(c *gin.Context)
-	changeAvatar(c *gin.Context)
+	ChangeAvatar(c *gin.Context)
 }
 
 type StatsHandler interface {
@@ -39,11 +39,11 @@ type AdminHandler interface {
 	BanLevel(c *gin.Context)
 	UnbanLevel(c *gin.Context)
 	ChangeUserAccess(c *gin.Context)
-	getUserComplaints(c *gin.Context)
-	getLevelComplaints(c *gin.Context)
-	processUserComplaint(c *gin.Context)
-	processLevelComplaint(c *gin.Context)
-	getUsers(c *gin.Context)
+	GetUserComplaints(c *gin.Context)
+	GetLevelComplaints(c *gin.Context)
+	ProcessUserComplaint(c *gin.Context)
+	ProcessLevelComplaint(c *gin.Context)
+	GetUsers(c *gin.Context)
 }
 
 type SinglePlayerHandler interface {
@@ -112,11 +112,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	userActions := router.Group("/user-actions", h.UserIdentity)
 	{
-		userActions.POST("/logout", h.UserActions.logout)
-		userActions.GET("/get-user-info", h.UserActions.getUserInfo)
+		userActions.POST("/logout", h.UserActions.Logout)
+		userActions.GET("/get-user-info", h.UserActions.GetUserInfo)
 		userActions.POST("/write-user-complaint", h.UserActions.WriteUserComplaint)
 		userActions.POST("/write-level-complaint", h.UserActions.WriteLevelComplaint)
-		userActions.POST("/change-avatar", h.MaxRequestSize(maxRequestBodySize), h.UserActions.changeAvatar)
+		userActions.POST("/change-avatar", h.MaxRequestSize(maxRequestBodySize), h.UserActions.ChangeAvatar)
 	}
 
 	stats := router.Group("/stats", h.UserIdentity)
@@ -131,11 +131,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		admin.POST("/unban-user", h.Admin.UnbanUser)
 		admin.POST("/ban-level", h.Admin.BanLevel)
 		admin.POST("/change-user-access", h.Admin.ChangeUserAccess)
-		admin.GET("/get-user-complaints", h.Admin.getUserComplaints)
-		admin.GET("/get-level-complaints", h.Admin.getLevelComplaints)
-		admin.POST("/process-user-complaint", h.Admin.processUserComplaint)
-		admin.POST("/process-level-complaint", h.Admin.processLevelComplaint)
-		admin.GET("/get-users", h.Admin.getUsers)
+		admin.GET("/get-user-complaints", h.Admin.GetUserComplaints)
+		admin.GET("/get-level-complaints", h.Admin.GetLevelComplaints)
+		admin.POST("/process-user-complaint", h.Admin.ProcessUserComplaint)
+		admin.POST("/process-level-complaint", h.Admin.ProcessLevelComplaint)
+		admin.GET("/get-users", h.Admin.GetUsers)
 	}
 
 	level := router.Group("/level", h.UserIdentity)

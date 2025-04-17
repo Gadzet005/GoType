@@ -32,7 +32,7 @@ func NewUserActions(service service.UserActions) *UserActions {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/logout [post]
-func (h *UserActions) logout(c *gin.Context) {
+func (h *UserActions) Logout(c *gin.Context) {
 	curId, exists := c.Get("id")
 
 	if !exists {
@@ -62,7 +62,7 @@ func (h *UserActions) logout(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/get-user-info [get]
-func (h *UserActions) getUserInfo(c *gin.Context) {
+func (h *UserActions) GetUserInfo(c *gin.Context) {
 	curId, exists := c.Get("id")
 
 	if !exists {
@@ -171,7 +171,7 @@ func (h *UserActions) WriteLevelComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/change-avatar [post]
-func (h *UserActions) changeAvatar(c *gin.Context) {
+func (h *UserActions) ChangeAvatar(c *gin.Context) {
 	userId, ok := c.Get(userIdCtx)
 	if !ok {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrAccessToken)
