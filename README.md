@@ -14,7 +14,7 @@
 
 ## Backend API
 
-### [Недоступно]()
+### [Ссылка на Swagger](http://158.160.179.2:8080/swagger/index.html)
 
 ## Помощь 
 
