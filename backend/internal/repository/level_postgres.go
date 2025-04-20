@@ -227,15 +227,15 @@ func (lp *LevelPostgres) FetchLevels(params map[string]interface{}) ([]levels.Le
 	q := `SELECT l.id, l.name, l.author, l.description, l.duration, l.language, l.preview_type, l.type, l.difficulty, l.preview_path, l.author_name, COALESCE( (SELECT ARRAY_AGG(lt.tag_name) FROM LevelTag lt WHERE lt.level_id = l.id), '{}') AS tags FROM %s l WHERE l.is_banned = FALSE `
 
 	if params["difficulty"].(int) >= 1 && params["difficulty"].(int) <= 10 {
-		q += " and l.difficulty = " + strconv.Itoa(params["difficulty"].(int)) + " "
+		q += ` and l.difficulty =  ` + strconv.Itoa(params["difficulty"].(int)) + " "
 	}
 
 	if slices.Index(levels.AvailableLanguages, params["language"].(string)) != -1 {
-		q += " and l.language = " + params["language"].(string) + " "
+		q += ` and l.language = '` + params["language"].(string) + `' `
 	}
 
 	if t := params["level_name"].(string); t != "" {
-		q += " and levenshtein_less_equal(l.name," + t + ", char_length(l.name)) "
+		q += ` and levenshtein(l.name,'` + t + `') < char_length(l.name) `
 	}
 
 	query := fmt.Sprintf(q+`ORDER BY CASE WHEN :sort_param = %s THEN EXTRACT(EPOCH FROM l.creation_time) ELSE l.num_played END %s LIMIT :page_size OFFSET (:page_num - 1) * :page_size;`, levelTable, "'creation_time'", params["sort_order"])

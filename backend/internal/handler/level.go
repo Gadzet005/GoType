@@ -230,7 +230,7 @@ func (h *Level) UpdateLevel(c *gin.Context) {
 // @Router /level/get-level-list [post]
 func (h *Level) GetLevelList(c *gin.Context) {
 	var fetchParams level.FetchLevelStruct
-	err := c.BindQuery(&fetchParams)
+	err := c.BindJSON(&fetchParams)
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
