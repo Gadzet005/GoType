@@ -55,7 +55,17 @@ export const AdminApi = {
     offset: number;
     pageSize: number;
   }): Promise<any[]> => {
-    const { data } = await $authHost.post('/admin/get-users', params);
+    const transformedParams = {
+      name: params.name,
+      is_banned: params.isBanned,
+      offset: params.offset,
+      page_size: params.pageSize
+    };
+    
+    const { data } = await $authHost.get('/admin/get-users', { 
+      params: transformedParams,
+      paramsSerializer: { indexes: null }
+    });
     return data.users;
   },
 };

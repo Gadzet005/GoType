@@ -21,7 +21,7 @@ export const LevelApi = {
   },
 
   getLevelInfo: async (id: number): Promise<LevelInfo> => {
-    const { data } = await $authHost.post('/level/get-level-info', { id });
+    const { data } = await $authHost.get('/level/get-level-info/' + id.toString() +'');
     return data;
   },
 

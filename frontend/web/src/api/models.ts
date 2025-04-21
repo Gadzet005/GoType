@@ -60,6 +60,10 @@ export interface LevelBan {
   export interface PlayerStats {
     user_id: number;
     user_name: string;
+    avatar_path: {
+        String: string;
+        Valid: boolean;
+    };
     sum_points: number;
     average_accuracy_classic: number;
     average_accuracy_relax: number;
@@ -70,7 +74,10 @@ export interface LevelBan {
     num_games_relax: number;
     num_chars_classic: number;
     num_chars_relax: number;
-    average_delay: number
+    average_delay: number;
+    num_level_relax: number;
+    num_level_classic: number;
+    num_classes_classic: number[];
 }
   
   export interface ErrorResponse {

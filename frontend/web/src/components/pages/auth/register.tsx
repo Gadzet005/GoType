@@ -8,7 +8,10 @@ import {
   Typography,
   Container,
   Alert,
-  CircularProgress
+  CircularProgress,
+  FormGroup,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import { AuthApi } from '@/api/authApi';
 import { RoutePath } from '@/config/routes/path';
@@ -18,11 +21,16 @@ export const Register = () => {
   const navigate = useNavigate();
   const [formError, setFormError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedToRules, setAgreedToRules] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setFormError(null);
-    setIsPending(true);
+    
+    if (!agreedToTerms) {
+      setFormError('Необходимо принять пользовательское соглашение');
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const name = formData.get('name') as string;
@@ -34,6 +42,9 @@ export const Register = () => {
       setIsPending(false);
       return;
     }
+
+    setFormError(null);
+    setIsPending(true);
 
     try {
       const tokens = await AuthApi.register({ name, password });
@@ -90,12 +101,33 @@ export const Register = () => {
             <PasswordField 
               name="password" 
               label="Пароль" 
-              
             />
             <PasswordField 
               name="passwordRepeat" 
               label="Повторите пароль" 
             />
+
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    disabled={isPending}
+                  />
+                }
+                label={
+                  <Typography variant="body2">
+                    Согласен с{' '}
+                    <Link href={RoutePath.agreement} target="_blank" rel="noopener">
+                      пользовательским соглашением
+                    </Link>
+                  </Typography>
+                }
+              />
+              
+            </FormGroup>
+
             <Button
               variant="contained"
               type="submit"

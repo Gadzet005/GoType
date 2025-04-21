@@ -44,20 +44,20 @@ export const Levels = () => {
       try {
         setLoading(true);
         const data = await LevelApi.getLevelList({
-          filter_params: {
-            difficulty: appliedFilters.difficulty,
-            language: appliedFilters.language,
-            level_name: appliedFilters.search
-          },
-          sort_params: {
-            popularity: appliedFilters.sort === 'popularity' ? 'desc' : '',
-            date: appliedFilters.sort === 'date' ? 'desc' : ''
-          },
+          //filter_params: {
+          //  difficulty: appliedFilters.difficulty,
+          //  language: '', //appliedFilters.language,
+          //  level_name: appliedFilters.search
+          //},
+          //sort_params: {
+          //  popularity: appliedFilters.sort === 'popularity' ? 'desc' : '',
+          //  date: appliedFilters.sort === 'date' ? 'desc' : ''
+          //},
           page_info: {
             offset: 1 + (page - 1) * PAGE_SIZE,
             page_size: PAGE_SIZE
           },
-          tags: appliedFilters.tags
+          tags: []//appliedFilters.tags
         });
         setLevels(data.levels || []);
       } catch (err: any) {

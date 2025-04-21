@@ -1,7 +1,6 @@
 import './css/App.css';
 import { Box } from '@mui/material';
 import { BrowserRouter } from 'react-router-dom';
-import { UserProvider } from '@/store/user/UserProvider';
 import { Header } from './components/header/Header';
 import { Footer } from './components/footer/Footer';
 import { AppNavigation } from './navigation/AppNavigation';
@@ -9,7 +8,6 @@ import {routes} from '@/config/routes';
 export const App = () => {
   return (
     <BrowserRouter>
-      <UserProvider>
         <Box sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -28,7 +26,6 @@ export const App = () => {
 
           <Footer />
         </Box>
-      </UserProvider>
     </BrowserRouter>
   );
 }

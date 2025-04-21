@@ -43,47 +43,12 @@ export const Main = () => {
       </Stack>
 
 
-      <Grid container spacing={6}>
-        <Grid item md={4}>
-          <Typography variant="h3" gutterBottom>🎮</Typography>
-          <Typography variant="h5" gutterBottom>Режимы игры</Typography>
-          <Typography>
-            • Классический ритм-режим<br/>
-            • Соревновательные дуэли<br/>
-            • Персональные тренировки
-          </Typography>
-        </Grid>
-
-        <Grid item md={4}>
-          <Typography variant="h3" gutterBottom>⚡</Typography>
-          <Typography variant="h5" gutterBottom>Особенности</Typography>
-          <Typography>
-            • Динамичная система комбо<br/>
-            • Авторские музыкальные треки<br/>
-            • Кастомизация интерфейса<br/>
-            • Ежедневные награды
-          </Typography>
-        </Grid>
-
-        <Grid item md={4}>
-          <Typography variant="h3" gutterBottom>🏆</Typography>
-          <Typography variant="h5" gutterBottom>Рейтинг</Typography>
-          <Typography>
-            • Глобальная таблица лидеров<br/>
-            • Уровни мастерства<br/>
-            • Достижения и награды<br/>
-            • Еженедельные турниры
-          </Typography>
-        </Grid>
-      </Grid>
-
-
       <Box mt={10} textAlign="center">
         <Typography variant="h2" gutterBottom>Как играть?</Typography>
         <Grid container spacing={4}>
           <Grid item md={3}>
             <Typography variant="h3">1</Typography>
-            <Typography variant="h6">Выбери трек</Typography>
+            <Typography variant="h6">Выбери уровень</Typography>
             <Typography>Из коллекции различных языков</Typography>
           </Grid>
           <Grid item md={3}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Typography, 
@@ -7,16 +7,18 @@ import {
   Avatar, 
   Stack, 
   Chip, 
-  Link,
   CircularProgress,
-  Alert
+  Alert,
+  IconButton
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SecurityIcon from '@mui/icons-material/Security';
 import PersonIcon from '@mui/icons-material/Person';
 import BlockIcon from '@mui/icons-material/Block';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { UserApi } from '@/api/userApi';
 import { RoutePath } from '@/config/routes/path';
 import { PlayerStats } from '@/api/models';
@@ -29,40 +31,116 @@ interface UserProfile {
   ban_time?: string;
   created_at: string;
   last_login?: string;
+  avatar_path?: string;
 }
+
+const transformErrorData = (errorData: Record<string, Record<string, number[]>>) => {
+  const result: Array<{ char: string; errors: number; language: string }> = [];
+
+  for (const [language, chars] of Object.entries(errorData)) {
+    for (const [char, [correct, error]] of Object.entries(chars)) {
+      if (error > 0) {
+        result.push({
+          char: `${char} (${language})`,
+          errors: error,
+          language
+        });
+      }
+    }
+  }
+
+  return result
+    .sort((a, b) => b.errors - a.errors)
+    .slice(0, 10);
+};
+
+const StatChip = ({ label, value }: { label: string; value?: number | string }) => (
+  value !== undefined && value !== null ? (
+    <Chip 
+      label={`${label}: ${value}`} 
+      variant="outlined" 
+      sx={{ m: 0.5 }}
+    />
+  ) : null
+);
 
 export const Profile = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const userData = await UserApi.getUserInfo();
         setProfile(userData);
         
-        const statsData = await UserApi.getUserStats(userData.id);
-        setStats(statsData);
-      } catch (error) {
-        console.error('Profile fetch error:', error);
+        try {
+          const statsData = await UserApi.getUserStats(userData.id);
+          console.log(statsData);
+          setStats(statsData);
+          console.log(stats);
+        } catch (statsError) {
+          console.error('Stats fetch error:', statsError);
+          setError('Не удалось загрузить статистику');
+        }
+      } catch (userError) {
+        console.error('Profile fetch error:', userError);
         setError('Ошибка загрузки профиля');
         navigate(RoutePath.login);
       } finally {
         setLoading(false);
       }
     };
-
+  
     const token = localStorage.getItem('token');
     if (!token) {
       navigate(RoutePath.login);
       return;
     }
-
+  
     fetchProfile();
   }, [navigate]);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Пожалуйста, выберите файл изображения');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      setUploadError('');
+      await UserApi.changeAvatar(file);
+      
+      // Обновляем данные профиля после успешной загрузки
+      const updatedProfile = await UserApi.getUserInfo();
+      setProfile(updatedProfile);
+    } catch (err) {
+      console.error('Avatar upload error:', err);
+      setUploadError('Ошибка загрузки аватара');
+    } finally {
+      setUploading(false);
+      event.target.value = ''; // Сброс значения input
+    }
+  };
+
+  
+  const errorChartData = stats?.num_press_err_by_char_by_lang 
+    ? transformErrorData(stats?.num_press_err_by_char_by_lang)
+    : [];
 
   if (loading) {
     return <CircularProgress sx={{ display: 'block', mx: 'auto', mt: 4 }} />;
@@ -80,22 +158,68 @@ export const Profile = () => {
     );
   }
 
-  const { username, access, ban_reason, ban_time, id, created_at, last_login } = profile;
+  const { username, access, ban_reason, ban_time, id, created_at, last_login, avatar_path } = profile;
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
         <Stack spacing={3}>
-            
           <Typography variant="h4" component="h1" gutterBottom>
             <PersonIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
             Профиль пользователя
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-            <Avatar sx={{ width: 100, height: 100 }}>
-              {username?.[0]?.toUpperCase()}
-            </Avatar>
+          <Box sx={{ position: 'relative' }}>
+	              <IconButton
+	                onClick={handleAvatarClick}
+	                sx={{ p: 0, '&:hover': { opacity: 0.8 } }}
+	                disabled={uploading}
+	              >
+	                <Avatar 
+	                  src={avatar_path ? `http://localhost:8000${avatar_path}` : undefined}
+	                  sx={{ 
+	                    width: 100, 
+	                    height: 100,
+	                    fontSize: '2.5rem',
+	                    bgcolor: avatar_path ? 'transparent' : 'primary.main'
+	                  }}
+	                >
+	                  {!avatar_path && username?.[0]?.toUpperCase()}
+	                </Avatar>
+	                {uploading && (
+	                  <CircularProgress
+	                    size={68}
+	                    sx={{
+	                      position: 'absolute',
+	                      top: '50%',
+	                      left: '50%',
+	                      marginTop: '-34px',
+	                      marginLeft: '-34px',
+	                    }}
+	                  />
+	                )}
+	              </IconButton>
+	              <CameraAltIcon
+	                sx={{
+	                  position: 'absolute',
+	                  bottom: 0,
+	                  right: 0,
+	                  bgcolor: 'primary.main',
+	                  color: 'white',
+	                  p: 0.5,
+	                  borderRadius: '50%',
+	                  fontSize: '1.5rem'
+	                }}
+	              />
+	              <input
+	                type="file"
+	                hidden
+	                ref={fileInputRef}
+	                accept="image/*"
+	                onChange={handleAvatarUpload}
+	              />
+	            </Box>
             
             <Stack spacing={1}>
               <Typography variant="h5">{username}</Typography>
@@ -148,71 +272,102 @@ export const Profile = () => {
             </Stack>
           </Box>
 
-          {stats && (
-            <Box>
-              <Typography variant="subtitle1" color="text.secondary">
-                <EqualizerIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-                Игровая статистика:
+          <Box>
+            <Typography variant="subtitle1" color="text.secondary">
+              <EqualizerIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+              Игровая статистика:
+            </Typography>
+
+            {!stats ? (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                Статистика недоступна
               </Typography>
-              
+            ) : (
               <Stack spacing={2} sx={{ mt: 2 }}>
-                <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                  {stats.sum_points !== undefined && (
-                    <Chip label={`Очки: ${stats.sum_points}`} variant="outlined" />
-                  )}
-                  {stats.win_percentage !== undefined && (
-                    <Chip 
-                      label={`Победы: ${stats.win_percentage.toFixed(1)}%`} 
-                      variant="outlined" 
-                    />
-                  )}
-                  {stats.num_games_mult !== undefined && (
-                    <Chip 
-                      label={`Мультиплеер: ${stats.num_games_mult} игр`} 
-                      variant="outlined" 
-                    />
-                  )}
-                </Stack>
+                <Box>
+                  <Typography variant="subtitle2">Основные показатели:</Typography>
+                  <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
+                    <StatChip label="Общие очки" value={stats.sum_points} />
+                    <StatChip label="Процент побед" value={stats.win_percentage?.toFixed(1)} />
+                    <StatChip label="Мультиплеер игр" value={stats.num_games_mult} />
+                  </Stack>
+                </Box>
 
-                <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                  {stats.average_accuracy_classic !== undefined && (
-                    <Chip
-                      label={`Классика: ${stats.average_accuracy_classic.toFixed(1)}%`}
-                      color="primary"
-                    />
-                  )}
-                  {stats.average_accuracy_relax !== undefined && (
-                    <Chip
-                      label={`Релакс: ${stats.average_accuracy_relax.toFixed(1)}%`}
-                      color="secondary"
-                    />
-                  )}
-                </Stack>
+                <Box>
+                  <Typography variant="subtitle2">Режимы:</Typography>
+                  <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
+                    <StatChip label="Уровней (классика)" value={stats.num_level_classic} />
+                    <StatChip label="Уровней (релакс)" value={stats.num_level_relax} />
+                    <StatChip label="Символов (классика)" value={stats.num_chars_classic} />
+                    <StatChip label="Символов (релакс)" value={stats.num_chars_relax} />
+                  </Stack>
+                </Box>
 
-                <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                  {stats.num_chars_classic !== undefined && (
-                    <Chip
-                      label={`Символов (классика): ${stats.num_chars_classic}`}
-                      variant="outlined"
+                <Box>
+                  <Typography variant="subtitle2">Точность:</Typography>
+                  <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
+                    <StatChip 
+                      label="Классика" 
+                      value={stats.average_accuracy_classic?.toFixed(1)} 
                     />
-                  )}
-                  {stats.num_chars_relax !== undefined && (
-                    <Chip
-                      label={`Символов (релакс): ${stats.num_chars_relax}`}
-                      variant="outlined"
+                    <StatChip 
+                      label="Релакс" 
+                      value={stats.average_accuracy_relax?.toFixed(1)} 
                     />
-                  )}
-                </Stack>
+                  </Stack>
+                </Box>
 
                 {stats.average_delay !== undefined && (
-                  <Chip
-                    label={`Средняя задержка: ${stats.average_delay.toFixed(1)} мс`}
-                    variant="outlined"
+                  <StatChip
+                    label="Средняя задержка" 
+                    value={`${stats.average_delay.toFixed(1)} мс`}
                   />
                 )}
+
+                {stats.num_classes_classic?.length > 0 && (
+                  <Box>
+                    <Typography variant="subtitle2">Пройденные классы сложности:</Typography>
+                    <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
+                      {stats.num_classes_classic.map((cls, index) => (
+                        <Chip
+                          key={index}
+                          label={`Класс ${cls}`}
+                          variant="outlined"
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
+
+                {errorChartData.length > 0 ? (
+                  <Box sx={{ mt: 4, height: 400 }}>
+                    <Typography variant="subtitle2">Топ-10 ошибок по символам:</Typography>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={errorChartData}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="char" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar 
+                          dataKey="errors" 
+                          fill="#ff6666" 
+                          name="Количество ошибок"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Box>
+                ) : (
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                    Нет данных об ошибках
+                  </Typography>
+                )}
               </Stack>
-            </Box>
-          )}
+            )}
+          </Box>
         </Stack>
       </Paper>
     </Box>

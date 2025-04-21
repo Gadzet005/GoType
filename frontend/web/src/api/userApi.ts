@@ -47,8 +47,9 @@ export const UserApi = {
   },
 
   getUserStats: async (userId: number): Promise<PlayerStats> => {
-    const { data } = await $authHost.post('/stats/get-user-stats', { id: userId });
-    return data.user_stats;
+    const { data } = await $authHost.get('/stats/get-user-stats/' + userId.toString());
+    console.log(data['user-stats']);
+    return data['user-stats'];
 },
 
 getUsersTop: async (params: {
@@ -59,7 +60,7 @@ getUsersTop: async (params: {
     
     const { data } = await $authHost.post('/stats/get-users-top', {
       category_params: {
-        category: String.fromCharCode(params.category_params.category), // Конвертируем число в символ
+        category: String.fromCharCode(params.category_params.category), 
         pattern: params.category_params.pattern
       },
       page_info: params.page_info,

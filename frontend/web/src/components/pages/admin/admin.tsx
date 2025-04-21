@@ -71,9 +71,9 @@ export const Admin = () => {
   const [levelComplaints, setLevelComplaints] = useState<LevelComplaint[]>([]);
   const [userComplaints, setUserComplaints] = useState<UserComplaint[]>([]);
   const [searchParams, setSearchParams] = useState({
-    name: '',
+    name: '1',
     isBanned: false,
-    offset: 0,
+    offset: 1,
     pageSize: 10,
   });
   const [loading, setLoading] = useState(false);
