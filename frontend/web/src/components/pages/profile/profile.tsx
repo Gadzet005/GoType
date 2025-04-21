@@ -288,18 +288,14 @@ export const Profile = () => {
                   <Typography variant="subtitle2">Основные показатели:</Typography>
                   <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
                     <StatChip label="Общие очки" value={stats.sum_points} />
-                    <StatChip label="Процент побед" value={stats.win_percentage?.toFixed(1)} />
-                    <StatChip label="Мультиплеер игр" value={stats.num_games_mult} />
                   </Stack>
                 </Box>
 
                 <Box>
                   <Typography variant="subtitle2">Режимы:</Typography>
                   <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
-                    <StatChip label="Уровней (классика)" value={stats.num_level_classic} />
-                    <StatChip label="Уровней (релакс)" value={stats.num_level_relax} />
-                    <StatChip label="Символов (классика)" value={stats.num_chars_classic} />
-                    <StatChip label="Символов (релакс)" value={stats.num_chars_relax} />
+                    <StatChip label="Уровней пройдено" value={stats.num_level_classic} />
+                    <StatChip label="Символов напечатано" value={stats.num_chars_classic} />
                   </Stack>
                 </Box>
 
@@ -309,10 +305,6 @@ export const Profile = () => {
                     <StatChip 
                       label="Классика" 
                       value={stats.average_accuracy_classic?.toFixed(1)} 
-                    />
-                    <StatChip 
-                      label="Релакс" 
-                      value={stats.average_accuracy_relax?.toFixed(1)} 
                     />
                   </Stack>
                 </Box>

@@ -64,13 +64,13 @@ export const Header = () => {
         </Link>
         <Box sx={{ display: 'flex', gap: 1, flexGrow: 1 }}>
           <Button component={RouterLink} to={RoutePath.download} color="inherit">
-            Download
+            Скачать
           </Button>
           <Button component={RouterLink} to={RoutePath.rating} color="inherit">
-            Rating
+            Рейтинг
           </Button>
           <Button component={RouterLink} to={RoutePath.levelList} color="inherit">
-            Levels
+            Уровни
           </Button>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -81,13 +81,13 @@ export const Header = () => {
                 to={RoutePath.profile} 
                 color="inherit"
               >
-                Profile
+                Профиль
               </Button>
               <Button 
                 onClick={handleLogout} 
                 color="inherit"
               >
-                Logout
+                Выход
               </Button>
             </>
           ) : (
