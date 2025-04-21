@@ -96,7 +96,7 @@ export const Header = () => {
               to={RoutePath.login} 
               color="inherit"
             >
-              Login
+              Логин
             </Button>
           )}
         </Box>
