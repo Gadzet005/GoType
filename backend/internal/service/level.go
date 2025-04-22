@@ -3,13 +3,11 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	gotype "github.com/Gadzet005/GoType/backend"
 	"github.com/Gadzet005/GoType/backend/internal/domain"
+	repository "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Repositories"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
-	"github.com/Gadzet005/GoType/backend/internal/repository"
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"
 	"io"
@@ -18,16 +16,16 @@ import (
 )
 
 type LevelService struct {
-	repo repository.Level
+	repo        repository.Level
+	fileStorage repository.Files
 }
 
-func NewLevelService(repo repository.Level) *LevelService {
-	return &LevelService{repo: repo}
+func NewLevelService(repo repository.Level, fileStorage repository.Files) *LevelService {
+	return &LevelService{repo: repo, fileStorage: fileStorage}
 }
 
 func (s *LevelService) CreateLevel(userId int, levelFile, infoFile, previewFile *multipart.FileHeader) (int, error) {
 	jsonFile, _ := infoFile.Open()
-
 	defer jsonFile.Close()
 
 	fileBytes, err := io.ReadAll(jsonFile)
@@ -36,8 +34,7 @@ func (s *LevelService) CreateLevel(userId int, levelFile, infoFile, previewFile 
 	}
 
 	var levelInfo level.Level
-	err = json.Unmarshal(fileBytes, &levelInfo)
-	if err != nil {
+	if err := json.Unmarshal(fileBytes, &levelInfo); err != nil {
 		return -1, errors.New(gotype.ErrInvalidInput)
 	}
 
@@ -45,28 +42,26 @@ func (s *LevelService) CreateLevel(userId int, levelFile, infoFile, previewFile 
 		return -1, errors.New(gotype.ErrPermissionDenied)
 	}
 
-	if slices.Index(level.AvailableLanguages, levelInfo.Language) == -1 {
-		return -1, errors.New(gotype.ErrInvalidInput)
-	}
-
-	if slices.Index(level.AvailableTypes, levelInfo.Type) == -1 {
+	if slices.Index(level.AvailableLanguages, levelInfo.Language) == -1 ||
+		slices.Index(level.AvailableTypes, levelInfo.Type) == -1 {
 		return -1, errors.New(gotype.ErrInvalidInput)
 	}
 
 	previewName, archiveName, id, err := s.repo.CreateLevel(levelInfo)
+	if err != nil {
+		return -1, errors.New(gotype.ErrInternal)
+	}
 
 	levelFile.Filename = archiveName
-	err = saveFile(levelFile, gotype.LevelDirName+"/"+levelFile.Filename)
-	if err != nil {
+	if err := s.fileStorage.SaveFile(levelFile, gotype.LevelDirName+"/"+levelFile.Filename); err != nil {
 		_ = s.DeleteLevel(levelInfo.Id)
 		return -1, errors.New(gotype.ErrInternal)
 	}
 
 	previewFile.Filename = previewName
-	err = saveFile(previewFile, gotype.PreviewDirName+"/"+previewFile.Filename)
-	if err != nil {
+	if err := s.fileStorage.SaveFile(previewFile, gotype.PreviewDirName+"/"+previewFile.Filename); err != nil {
 		_ = s.DeleteLevel(levelInfo.Id)
-		_ = os.Remove(gotype.LevelDirName + "/" + levelFile.Filename)
+		_ = s.fileStorage.DeleteFile(gotype.LevelDirName + "/" + levelFile.Filename)
 		return -1, errors.New(gotype.ErrInternal)
 	}
 
@@ -75,7 +70,6 @@ func (s *LevelService) CreateLevel(userId int, levelFile, infoFile, previewFile 
 
 func (s *LevelService) UpdateLevel(userId int, levelFile, infoFile, previewFile *multipart.FileHeader) (int, error) {
 	jsonFile, _ := infoFile.Open()
-
 	defer jsonFile.Close()
 
 	fileBytes, err := io.ReadAll(jsonFile)
@@ -85,16 +79,13 @@ func (s *LevelService) UpdateLevel(userId int, levelFile, infoFile, previewFile 
 	}
 
 	var levelInfo level.LevelUpdateStruct
-	err = json.Unmarshal(fileBytes, &levelInfo)
-	if err != nil {
+	if err := json.Unmarshal(fileBytes, &levelInfo); err != nil {
 		return -1, errors.New(gotype.ErrInvalidInput)
 	}
-	fmt.Println(levelInfo)
 
 	realAuthorId, _, oldArchivePath, err := s.repo.GetPathsById(levelInfo.Id)
-
 	if err != nil {
-		logrus.Printf("Error paths: %v", err)
+		logrus.Printf("Error getting paths: %v", err)
 		return -1, err
 	}
 
@@ -103,41 +94,32 @@ func (s *LevelService) UpdateLevel(userId int, levelFile, infoFile, previewFile 
 	}
 
 	newArchiveName, previewName, _, err := s.repo.UpdateLevel(levelInfo)
-
 	if err != nil {
-		logrus.Printf("level update error: %v", err)
+		logrus.Printf("Error updating level: %v", err)
 		return -1, err
 	}
 
-	err = os.Remove(oldArchivePath)
-	if err != nil {
-		logrus.Printf("Failed to remove old archive %s", oldArchivePath)
+	if err := s.fileStorage.DeleteFile(oldArchivePath); err != nil {
+		logrus.Printf("Failed to remove old archive: %v", err)
 		return -1, errors.New(gotype.ErrInternal)
 	}
 
 	levelFile.Filename = newArchiveName
-
-	err = saveFile(levelFile, gotype.LevelDirName+"/"+levelFile.Filename)
-	if err != nil {
-		logrus.Printf("Failed to save new archive %s", oldArchivePath)
+	if err := s.fileStorage.SaveFile(levelFile, gotype.LevelDirName+"/"+levelFile.Filename); err != nil {
 		_ = s.DeleteLevel(levelInfo.Id)
-		_ = os.Remove(gotype.PreviewDirName + "/" + previewName)
+		_ = s.fileStorage.DeleteFile(gotype.PreviewDirName + "/" + previewName)
 		return -1, errors.New(gotype.ErrInternal)
 	}
 
-	err = os.Remove(gotype.PreviewDirName + "/" + previewName)
-	if err != nil {
-		logrus.Printf("Failed to remove preview %s", previewName)
+	if err := s.fileStorage.DeleteFile(gotype.PreviewDirName + "/" + previewName); err != nil {
+		logrus.Printf("Failed to delete preview: %v", err)
 		return -1, errors.New(gotype.ErrInternal)
 	}
 
 	previewFile.Filename = previewName
-	err = saveFile(previewFile, gotype.PreviewDirName+"/"+previewFile.Filename)
-	if err != nil {
-
-		logrus.Printf("Failed to save new preview %s", oldArchivePath)
+	if err := s.fileStorage.SaveFile(previewFile, gotype.PreviewDirName+"/"+previewFile.Filename); err != nil {
 		_ = s.DeleteLevel(levelInfo.Id)
-		_ = os.Remove(gotype.LevelDirName + "/" + levelFile.Filename)
+		_ = s.fileStorage.DeleteFile(gotype.LevelDirName + "/" + levelFile.Filename)
 		return -1, errors.New(gotype.ErrInternal)
 	}
 
@@ -230,9 +212,4 @@ func (s *LevelService) CheckLevelExists(levId int) (string, error) {
 	}
 
 	return filePath, nil
-}
-
-func saveFile(file *multipart.FileHeader, path string) error {
-	s := &gin.Context{}
-	return s.SaveUploadedFile(file, path)
 }

@@ -119,9 +119,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		userActions.POST("/change-avatar", h.MaxRequestSize(maxRequestBodySize), h.UserActions.ChangeAvatar)
 	}
 
-	stats := router.Group("/stats", h.UserIdentity)
+	stats := router.Group("/stats")
 	{
-		stats.GET("/get-user-stats/:id", h.Stats.GetUserStats)
+		stats.GET("/get-user-stats/:id", h.UserIdentity, h.Stats.GetUserStats)
 		stats.POST("/get-users-top", h.Stats.GetUsersTop)
 	}
 
@@ -138,12 +138,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		admin.GET("/get-users", h.Admin.GetUsers)
 	}
 
-	level := router.Group("/level", h.UserIdentity)
+	level := router.Group("/level")
 	{
-		level.POST("/create-level", h.MaxRequestSize(maxRequestBodySize), h.Level.CreateLevel)
-		level.GET("/download-level/:id", h.Level.GetLevel)
-		level.GET("/get-level-info/:id", h.Level.GetLevelInfoById)
-		level.PUT("/update-level", h.MaxRequestSize(maxRequestBodySize), h.Level.UpdateLevel)
+		level.POST("/create-level", h.MaxRequestSize(maxRequestBodySize), h.UserIdentity, h.Level.CreateLevel)
+		level.GET("/download-level/:id", h.UserIdentity, h.Level.GetLevel)
+		level.GET("/get-level-info/:id", h.UserIdentity, h.Level.GetLevelInfoById)
+		level.PUT("/update-level", h.MaxRequestSize(maxRequestBodySize), h.UserIdentity, h.Level.UpdateLevel)
 		level.POST("/get-level-list", h.Level.GetLevelList)
 	}
 
