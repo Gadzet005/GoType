@@ -17,9 +17,9 @@ type Service struct {
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization:    NewAuthService(repos.Authorization),
-		UserActions:      NewUserActionsService(repos.UserActions),
+		UserActions:      NewUserActionsService(repos.UserActions, repos.Files),
 		Admin:            NewAdminService(repos.AdminActions),
-		Level:            NewLevelService(repos.Level),
+		Level:            NewLevelService(repos.Level, repos.Files),
 		Stats:            NewStatsService(repos.Stats),
 		SinglePlayerGame: NewSinglePlayerGame(repos.SinglePlayerGame),
 	}

@@ -14,11 +14,12 @@ import (
 )
 
 type UserActionsService struct {
-	repo repository.UserActions
+	repo        repository.UserActions
+	fileStorage repository.Files
 }
 
-func NewUserActionsService(repo repository.UserActions) *UserActionsService {
-	return &UserActionsService{repo: repo}
+func NewUserActionsService(repo repository.UserActions, fileStorage repository.Files) *UserActionsService {
+	return &UserActionsService{repo: repo, fileStorage: fileStorage}
 }
 
 func (s *UserActionsService) DropRefreshToken(id int) error {
@@ -66,47 +67,35 @@ func (s *UserActionsService) CreateLevelComplaint(complaint complaints.LevelComp
 }
 
 func (s *UserActionsService) UpdateAvatar(userId int, avatarFile *multipart.FileHeader) error {
-	filename := ""
+	var filename string
+	var newPath string
 
 	if avatarFile != nil {
 		filename = user.GenerateAvatarName(userId)
-	}
-
-	oldPath := ""
-	if avatarFile != nil {
-		err := errors.New("")
-		oldPath, err = s.repo.UpdateAvatarPath(userId, user.GenerateAvatarPath(userId))
-
-		if err != nil {
-			logrus.Printf("avatar update error: %v", err)
-			return err
-		}
+		newPath = user.GenerateAvatarPath(userId)
 	} else {
-		err := errors.New("")
-		oldPath, err = s.repo.UpdateAvatarPath(userId, "")
-
-		if err != nil {
-			logrus.Printf("avatar update error: %v", err)
-			return err
-		}
+		newPath = ""
 	}
 
-	logrus.Printf("avatar filename: %v", oldPath)
+	oldPath, err := s.repo.UpdateAvatarPath(userId, newPath)
+	if err != nil {
+		logrus.Printf("avatar update error: %v", err)
+		return err
+	}
 
 	if oldPath != "" {
-		err := os.Remove(oldPath)
+		err = s.fileStorage.DeleteFile(oldPath)
 		if err != nil && !errors.Is(err, os.ErrNotExist) {
-			logrus.Printf("Failed to remove old avatar %s", oldPath)
+			logrus.Printf("Failed to remove old avatar %s: %v", oldPath, err)
 			return errors.New(gotype.ErrInternal)
 		}
 	}
 
 	if avatarFile != nil {
 		avatarFile.Filename = filename
-
-		err := saveFile(avatarFile, user.GenerateAvatarPath(userId))
+		err = s.fileStorage.SaveFile(avatarFile, newPath)
 		if err != nil {
-			logrus.Printf("Failed to save new archive %s", user.GenerateAvatarPath(userId))
+			logrus.Printf("Failed to save new avatar %s: %v", newPath, err)
 			return errors.New(gotype.ErrInternal)
 		}
 	}

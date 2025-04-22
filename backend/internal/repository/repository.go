@@ -13,6 +13,7 @@ type Repository struct {
 	Level            repository.Level
 	Stats            repository.Stats
 	SinglePlayerGame repository.SinglePlayerGame
+	Files            repository.Files
 }
 
 func NewRepository(db *sqlx.DB, client *redis.Client) *Repository {
@@ -23,6 +24,7 @@ func NewRepository(db *sqlx.DB, client *redis.Client) *Repository {
 		Level:            NewLevelPostgres(db, client),
 		Stats:            NewStatsPostgres(db, client),
 		SinglePlayerGame: NewSinglePlayerGamePostgres(db),
+		Files:            NewLocalFileRepository(),
 	}
 
 	return &repo
