@@ -2,8 +2,8 @@ package handler
 
 import (
 	gotype "github.com/Gadzet005/GoType/backend"
+	service "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Services"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
-	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

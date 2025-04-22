@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/Gadzet005/GoType/backend/internal/domain"
+	repository "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Repositories"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
-	"github.com/Gadzet005/GoType/backend/internal/repository"
 	"github.com/spf13/cast"
 	"slices"
 )
