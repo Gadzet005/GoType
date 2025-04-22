@@ -37,7 +37,7 @@ func (s *UserActionsService) GetUserById(id int) (string, int, time.Time, string
 
 	if err != nil {
 		return "", -1, time.Now(), "", sql.NullString{String: ""}, err
-	} //no such user
+	}
 
 	return name, access, banTime, banReason, avatarPath, nil
 }

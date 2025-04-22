@@ -28,7 +28,7 @@ func (s *SinglePlayerGame) SendResults(senderID int, lc statistics.LevelComplete
 	totalErr := 0
 
 	for _, nums := range lc.NumPressErrByChar {
-		if nums[1] >= 0 && totalErr <= totalCount {
+		if nums[1] >= 0 && nums[1] <= nums[0] {
 			totalCount += nums[0]
 			totalErr += nums[1]
 		} else {
