@@ -1,9 +1,9 @@
 import { $authHost } from './axiosApi';
-import { ErrorResponse, PlayerStats } from './models';
+import { ErrorResponse, PlayerStats, UserInfo } from './models';
 import qs from 'qs';
 
 export const UserApi = {
-  getUserInfo: async (): Promise<any> => {
+  getUserInfo: async (): Promise<UserInfo> => {
     const { data } = await $authHost.get('/user-actions/get-user-info');
     return data;
   },

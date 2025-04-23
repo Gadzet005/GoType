@@ -135,3 +135,16 @@ export interface LevelBan {
     message: string;
     created_at: string;
   }
+
+  export interface UserInfo {
+    id: number;
+    username: string;
+    access: number;
+    ban_time: string;
+    ban_reason: string;
+    avatar_path: {
+        String: string;
+        Valid: boolean;
+    };
+    
+  }

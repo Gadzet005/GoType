@@ -21,18 +21,9 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { UserApi } from '@/api/userApi';
 import { RoutePath } from '@/config/routes/path';
-import { PlayerStats } from '@/api/models';
+import { PlayerStats, UserInfo } from '@/api/models';
 
-interface UserProfile {
-  id: number;
-  username: string;
-  access: number;
-  ban_reason?: string;
-  ban_time?: string;
-  created_at: string;
-  last_login?: string;
-  avatar_path?: string;
-}
+
 
 const transformErrorData = (errorData: Record<string, Record<string, number[]>>) => {
   const result: Array<{ char: string; errors: number; language: string }> = [];
@@ -67,7 +58,7 @@ const StatChip = ({ label, value }: { label: string; value?: number | string }) 
 export const Profile = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UserInfo>();
   const [stats, setStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -78,7 +69,9 @@ export const Profile = () => {
     const fetchProfile = async () => {
       try {
         const userData = await UserApi.getUserInfo();
+        
         setProfile(userData);
+        
         
         try {
           const statsData = await UserApi.getUserStats(userData.id);
@@ -158,8 +151,13 @@ export const Profile = () => {
     );
   }
 
-  const { username, access, ban_reason, ban_time, id, created_at, last_login, avatar_path } = profile;
-
+  const { username, access, ban_reason, ban_time, id, avatar_path } = profile;
+  if(avatar_path.Valid){
+    console.log(avatar_path.String);
+  }
+  console.log(avatar_path);
+  const backend_url = import.meta.env.VITE_BACKEND_URL  || 'http://localhost:8080';
+  console.log(backend_url);
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
@@ -177,7 +175,7 @@ export const Profile = () => {
 	                disabled={uploading}
 	              >
 	                <Avatar 
-	                  src={avatar_path ? `http://localhost:8000${avatar_path}` : undefined}
+	                  src={avatar_path.Valid ? `${backend_url}/${avatar_path.String}` : undefined}
 	                  sx={{ 
 	                    width: 100, 
 	                    height: 100,
@@ -186,6 +184,7 @@ export const Profile = () => {
 	                  }}
 	                >
 	                  {!avatar_path && username?.[0]?.toUpperCase()}
+                      console.log(avatar_path);
 	                </Avatar>
 	                {uploading && (
 	                  <CircularProgress
@@ -259,18 +258,7 @@ export const Profile = () => {
             </Box>
           )}
 
-          <Box>
-            <Typography variant="subtitle1" color="text.secondary">
-              <AccessTimeIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-              Активность:
-            </Typography>
-            <Stack direction="row" spacing={3} sx={{ mt: 1 }}>
-              <Chip label={`Регистрация: ${new Date(created_at).toLocaleDateString()}`} />
-              {last_login && (
-                <Chip label={`Последний вход: ${new Date(last_login).toLocaleDateString()}`} />
-              )}
-            </Stack>
-          </Box>
+         
 
           <Box>
             <Typography variant="subtitle1" color="text.secondary">
