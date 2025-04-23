@@ -27,7 +27,6 @@ func NewLevelService(repo repository.Level, fileStorage repository.Files) *Level
 func (s *LevelService) CreateLevel(userId int, levelFile, infoFile, previewFile *multipart.FileHeader) (int, error) {
 	jsonFile, _ := infoFile.Open()
 	defer jsonFile.Close()
-
 	fileBytes, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return -1, errors.New(gotype.ErrInternal)

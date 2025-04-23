@@ -7,10 +7,12 @@ import (
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	service2 "github.com/Gadzet005/GoType/backend/internal/service"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/repository_mocks"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/mock"
 	"github.com/swaggo/swag/testdata/enums/types"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -129,106 +131,9 @@ func TestCreateSeniorAdmin(t *testing.T) {
 
 }
 
-//func TestGenerateToken(t *testing.T) {
-//	repo := mocks.NewMockAuthorization(t)
-//	authService := service2.NewAuthService(repo)
-//
-//	authService.NewRefreshToken = func() string { return "refresh123" }
-//	authService.NewAccessToken = func(id int, access int) (string, error) {
-//		return "access123", nil
-//	}
-//
-//	hashedPassword := authService.GeneratePasswordHash("pass")
-//
-//	tests := map[string]struct {
-//		username        string
-//		password        string
-//		mockGetUser     domain.User
-//		mockGetUserErr  error
-//		mockSetTokenErr error
-//		expectedRefresh string
-//		expectedAccess  string
-//		expectedErr     error
-//	}{
-//		"success": {
-//			username: "user",
-//			password: "pass",
-//			mockGetUser: domain.User{
-//				Id: 1,
-//			},
-//			mockGetUserErr:  nil,
-//			mockSetTokenErr: nil,
-//			expectedRefresh: "refresh123",
-//			expectedAccess:  "access123",
-//			expectedErr:     nil,
-//		},
-//		"get user error": {
-//			username:        "user",
-//			password:        "pass",
-//			mockGetUser:     domain.User{},
-//			mockGetUserErr:  errors.New("user not found"),
-//			mockSetTokenErr: nil,
-//			expectedRefresh: "",
-//			expectedAccess:  "",
-//			expectedErr:     errors.New("user not found"),
-//		},
-//		"set token error": {
-//			username: "user",
-//			password: "pass",
-//			mockGetUser: domain.User{
-//				Id: 1,
-//			},
-//			mockGetUserErr:  nil,
-//			mockSetTokenErr: errors.New("db error"),
-//			expectedRefresh: "",
-//			expectedAccess:  "",
-//			expectedErr:     errors.New("db error"),
-//		},
-//	}
-//
-//	for name, tc := range tests {
-//		t.Run(name, func(t *testing.T) {
-//			repo.On("GetUser", tc.username, hashedPassword).Return(tc.mockGetUser, tc.mockGetUserErr).Once()
-//
-//			if tc.mockGetUserErr == nil {
-//				repo.On("SetUserRefreshToken", tc.mockGetUser.Id, "refresh123", mock.Anything).Return(
-//					tc.mockGetUser.Id, 1, "refresh123", tc.mockSetTokenErr,
-//				).Once()
-//			}
-//
-//			refresh, access, err := authService.GenerateToken(tc.username, tc.password)
-//
-//			if (tc.expectedErr == nil && err != nil) || (tc.expectedErr != nil && err == nil) {
-//				t.Errorf("unexpected error: got %v, expected %v", err, tc.expectedErr)
-//			}
-//
-//			if tc.expectedErr != nil && err != nil && tc.expectedErr.Error() != err.Error() {
-//				t.Errorf("error mismatch: got %v, expected %v", err.Error(), tc.expectedErr.Error())
-//			}
-//
-//			if refresh != tc.expectedRefresh || access != tc.expectedAccess {
-//				t.Errorf("unexpected tokens: got (%v, %v), expected (%v, %v)", refresh, access, tc.expectedRefresh, tc.expectedAccess)
-//			}
-//		})
-//	}
-//}
-
 func TestGenerateTokenByToken(t *testing.T) {
 	repo := mocks.NewMockAuthorization(t)
 	authService := service2.NewAuthService(repo)
-
-	//authService.ParseWithoutValidation = func(token string) (string, int, int, error) {
-	//	if token == "bad_token" {
-	//		return "", 0, 0, errors.New(gotype.ErrAccessToken)
-	//	}
-	//	return "", 1, 1, nil
-	//}
-	//
-	//authService.NewRefreshToken = func() string { return "newRefresh" }
-	//authService.NewAccessToken = func(id int, access int) (string, error) {
-	//	return "newAccess", nil
-	//}
-	//rt, _, _ := authService.GenerateToken("A", "A")
 	repo.On("SetUserRefreshToken", mock.AnythingOfType("int"), mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return("token", nil).Maybe()
 
 	tests := map[string]struct {
@@ -241,19 +146,6 @@ func TestGenerateTokenByToken(t *testing.T) {
 		expectedAccess  string
 		expectedErr     error
 	}{
-		//"success": {
-		//	accessToken:  rt,
-		//	refreshToken: "oldRefresh",
-		//	mockUser: user.User{
-		//		Id:           1,
-		//		RefreshToken: "oldRefresh",
-		//	},
-		//	mockGetUserErr:  nil,
-		//	mockSetTokenErr: nil,
-		//	expectedRefresh: "newRefresh",
-		//	expectedAccess:  "newAccess",
-		//	expectedErr:     nil,
-		//},
 		"bad access token": {
 			accessToken:     "bad_token",
 			refreshToken:    "xxx",
@@ -263,33 +155,6 @@ func TestGenerateTokenByToken(t *testing.T) {
 			expectedAccess:  "",
 			expectedErr:     errors.New(gotype.ErrAccessToken),
 		},
-		//"get user error": {
-		//	accessToken:    rt,
-		//	refreshToken:   "xxx",
-		//	mockGetUserErr: errors.New("not found"),
-		//	expectedErr:    errors.New("not found"),
-		//},
-		//"wrong refresh token": {
-		//	accessToken:  rt,
-		//	refreshToken: "mismatch",
-		//	mockUser: user.User{
-		//		Id:           1,
-		//		RefreshToken: "correct",
-		//	},
-		//	mockGetUserErr: nil,
-		//	expectedErr:    errors.New(gotype.ErrRefreshToken),
-		//},
-		//"set refresh token error": {
-		//	accessToken:  rt,
-		//	refreshToken: "oldRefresh",
-		//	mockUser: user.User{
-		//		Id:           1,
-		//		RefreshToken: "oldRefresh",
-		//	},
-		//	mockGetUserErr:  nil,
-		//	mockSetTokenErr: errors.New("db fail"),
-		//	expectedErr:     errors.New("db fail"),
-		//},
 	}
 
 	for name, tc := range tests {
@@ -316,6 +181,138 @@ func TestGenerateTokenByToken(t *testing.T) {
 
 			if refresh != tc.expectedRefresh || access != tc.expectedAccess {
 				t.Errorf("unexpected tokens: got (%v, %v), expected (%v, %v)", refresh, access, tc.expectedRefresh, tc.expectedAccess)
+			}
+		})
+	}
+}
+
+type tokenClaims struct {
+	jwt.RegisteredClaims `json:"Claims"`
+	Id                   int `json:"id"`
+	Access               int `json:"access"`
+}
+
+func TestParse(t *testing.T) {
+	tests := []struct {
+		name           string
+		accessToken    string
+		expectedErr    error
+		expectedUserId int
+		expectedLevel  int
+	}{
+		{
+			name:           "valid token",
+			accessToken:    "valid.jwt.token",
+			expectedErr:    nil,
+			expectedUserId: 1,
+			expectedLevel:  2,
+		},
+		{
+			name:        "invalid token format",
+			accessToken: "invalid.jwt.token",
+			expectedErr: errors.New("failed to parse token"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			authToken := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims{
+				jwt.RegisteredClaims{
+					ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+					IssuedAt:  jwt.NewNumericDate(time.Now()),
+				},
+				tt.expectedUserId,
+				tt.expectedLevel,
+			})
+
+			tttt, err := authToken.SignedString([]byte("wiu8s7]df9s&di9230s#s894w90g2092v[d"))
+
+			authService := service2.NewAuthService(nil)
+			expirationTime, userId, accessLevel, err := authService.Parse(tttt)
+
+			if err != nil && !strings.Contains(err.Error(), tt.expectedErr.Error()) {
+				t.Errorf("expected error %v, got %v", tt.expectedErr, err)
+			}
+
+			if userId != tt.expectedUserId {
+				t.Errorf("expected userId %d, got %d", tt.expectedUserId, userId)
+			}
+
+			if accessLevel != tt.expectedLevel {
+				t.Errorf("expected accessLevel %d, got %d", tt.expectedLevel, accessLevel)
+			}
+
+			if expirationTime.IsZero() {
+				t.Error("expected valid expirationTime, got zero time")
+			}
+		})
+	}
+}
+
+func TestParseWithoutValidation(t *testing.T) {
+	tests := []struct {
+		name           string
+		accessToken    string
+		expectedErr    error
+		expectedUserId int
+		expectedLevel  int
+	}{
+		{
+			name:           "valid token",
+			accessToken:    "valid.jwt.token",
+			expectedErr:    nil,
+			expectedUserId: 1,
+			expectedLevel:  2,
+		},
+		{
+			name:           "expired token",
+			accessToken:    "expired.jwt.token",
+			expectedErr:    nil,
+			expectedUserId: 1,
+			expectedLevel:  2,
+		},
+		{
+			name:        "invalid token format",
+			accessToken: "invalid.jwt.token",
+			expectedErr: errors.New("failed to parse token"),
+		},
+		{
+			name:        "token with unexpected signing method",
+			accessToken: "unexpected-signing-method.jwt.token",
+			expectedErr: fmt.Errorf("unexpected signing method: %v", "HS256"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			authToken := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims{
+				RegisteredClaims: jwt.RegisteredClaims{
+					ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+					IssuedAt:  jwt.NewNumericDate(time.Now()),
+				},
+				Id:     tt.expectedUserId,
+				Access: tt.expectedLevel,
+			})
+
+			tttt, err := authToken.SignedString([]byte("wiu8s7]df9s&di9230s#s894w90g2092v[d"))
+
+			authService := service2.NewAuthService(nil)
+			expirationTime, userId, accessLevel, err := authService.ParseWithoutValidation(tttt)
+
+			if err != nil && !strings.Contains(err.Error(), tt.expectedErr.Error()) {
+				t.Errorf("expected error %v, got %v", tt.expectedErr, err)
+			}
+
+			if userId != tt.expectedUserId {
+				t.Errorf("expected userId %d, got %d", tt.expectedUserId, userId)
+			}
+
+			if accessLevel != tt.expectedLevel {
+				t.Errorf("expected accessLevel %d, got %d", tt.expectedLevel, accessLevel)
+			}
+
+			if expirationTime.IsZero() {
+				t.Error("expected valid expirationTime, got zero time")
 			}
 		})
 	}

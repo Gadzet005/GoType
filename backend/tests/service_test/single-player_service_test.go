@@ -13,9 +13,7 @@ import (
 func TestSendResults(t *testing.T) {
 	repo := mocks.NewMockSinglePlayerGame(t)
 	game := service2.NewSinglePlayerGame(repo)
-
-	//now := time.Now().Unix()
-
+	
 	tests := map[string]struct {
 		senderID      int
 		inputLC       statistics.LevelComplete
