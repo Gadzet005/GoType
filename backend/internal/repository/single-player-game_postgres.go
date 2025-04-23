@@ -108,7 +108,6 @@ func (s *SinglePlayerGamePostgres) SendResults(lc statistics.LevelComplete, tota
 
 	numPressErrJson, err = json.Marshal(stats.NumPressErrByCharByLang)
 	if err != nil {
-
 		log.Fatalf("Error marshalling NumPressErrByCharByLang: %v", err)
 	}
 
@@ -132,7 +131,6 @@ func (s *SinglePlayerGamePostgres) SendResults(lc statistics.LevelComplete, tota
 
 	_, err = s.db.NamedExec(query, params)
 	if err != nil {
-		logrus.Printf("Error executing query named: %v", err)
 		return errors.New(gotype.ErrInternal)
 	}
 
@@ -145,7 +143,6 @@ func (s *SinglePlayerGamePostgres) getLevel(levelID int) (level.Level, error) {
 	query := fmt.Sprintf("SELECT id, name, author, description, duration, language, preview_type, type, difficulty, preview_path, author_name FROM %s WHERE id = $1 and is_banned = FALSE", levelTable)
 
 	if err := s.db.Get(&result, query, levelID); err != nil {
-		logrus.Printf("Error executing query get: %v", err)
 		return level.Level{}, errors.New(gotype.ErrInternal)
 	}
 
@@ -156,7 +153,6 @@ func (s *SinglePlayerGamePostgres) castToJSON1(statsDB statistics.PlayerStatsDB)
 	var numPressErrByCharByLang map[string]map[rune][2]int
 	err := json.Unmarshal(statsDB.NumPressErrByCharByLang, &numPressErrByCharByLang)
 	if err != nil {
-		logrus.Printf("Error unmarshalling num_press_err_by_char_by_lang: %v\n", err)
 		return statistics.PlayerStats{}, err
 	}
 
