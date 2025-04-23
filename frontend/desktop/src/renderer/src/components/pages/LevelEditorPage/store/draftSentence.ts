@@ -11,15 +11,16 @@ export interface DraftSentenceParams extends DraftSentenceData {
 
 export class DraftSentence {
     readonly idx: number;
-    readonly content: string;
     private readonly styleClasses: StyleClassStore;
     private coord_: {
         x: number;
         y: number;
     };
+    private content_: string;
     private showTime_: number | null;
     private duration_: number | null;
     private styleClassName_: string | null;
+    private rotation_: number;
 
     constructor(
         styleClasses: StyleClassStore,
@@ -32,23 +33,30 @@ export class DraftSentence {
             showTime_: observable,
             duration_: observable,
             styleClassName_: observable,
+            rotation_: observable,
+            content_: observable,
 
             setShowTime: action,
             setDuration: action,
             setCoord: action,
             setStyleClassName: action,
+            setRotation: action,
+            setContent: action,
 
+            rotation: computed,
             coord: computed,
             styleClassName: computed,
             showTime: computed,
             duration: computed,
+            content: computed,
         });
 
         this.idx = idx;
-        this.content = data.content;
+        this.content_ = data.content;
         this.coord_ = data.coord;
         this.showTime_ = data.showTime;
         this.duration_ = data.duration;
+        this.rotation_ = data.rotation;
         this.styleClassName_ = data.styleClassName;
         this.styleClasses = styleClasses;
     }
@@ -71,9 +79,9 @@ export class DraftSentence {
             outroDuration,
             style: {
                 coord: this.coord,
+                rotation: this.rotation,
                 bgcolor: styleClass.bgcolor,
                 padding: styleClass.padding,
-                rotation: styleClass.rotation,
                 borderRadius: styleClass.borderRadius,
                 font: styleClass.font,
                 fontSize: styleClass.fontSize,
@@ -97,6 +105,7 @@ export class DraftSentence {
             coord: this.coord_,
             showTime: this.showTime_,
             duration: this.duration_,
+            rotation: this.rotation_,
             styleClassName: this.styleClassName_,
         };
     }
@@ -124,6 +133,14 @@ export class DraftSentence {
         this.styleClassName_ = className;
     }
 
+    setRotation(rotation: number) {
+        this.rotation_ = rotation;
+    }
+
+    setContent(content: string) {
+        this.content_ = content;
+    }
+
     get coord() {
         return this.coord_;
     }
@@ -138,5 +155,13 @@ export class DraftSentence {
 
     get styleClassName() {
         return this.styleClassName_;
+    }
+
+    get rotation() {
+        return this.rotation_;
+    }
+
+    get content() {
+        return this.content_;
     }
 }

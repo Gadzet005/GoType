@@ -12,7 +12,7 @@ import { DraftSentence } from "../../store/draftSentence";
 import React from "react";
 import { Field, Form, Formik } from "formik";
 import { NumberField } from "@/components/common/form/NumberField";
-import { Select } from "formik-mui";
+import { Select, TextField } from "formik-mui";
 import { useEditorContext } from "../../context";
 import { round, toMilliseconds, toSeconds } from "@/core/utils/time";
 
@@ -32,7 +32,7 @@ export const EditSentenceDialog: React.FC<EditSentenceDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle variant="h5">{sentence.content}</DialogTitle>
+      <DialogTitle variant="h5">Редактирование предложения</DialogTitle>
       <Formik
         initialValues={{
           coord: {
@@ -42,9 +42,13 @@ export const EditSentenceDialog: React.FC<EditSentenceDialogProps> = ({
           styleClassName: sentence.styleClassName ?? "",
           showTime: toSeconds(sentence.showTime!),
           duration: toSeconds(sentence.duration!),
+          rotation: sentence.rotation,
+          content: sentence.content,
         }}
         onSubmit={(values, { setSubmitting }) => {
           sentence.setCoord(values.coord.x, values.coord.y);
+          sentence.setRotation(values.rotation);
+          sentence.setContent(values.content);
 
           if (values.styleClassName === "") {
             sentence.setStyleClassName(null);
@@ -69,14 +73,35 @@ export const EditSentenceDialog: React.FC<EditSentenceDialogProps> = ({
         <Form>
           <DialogContent>
             <Stack gap={2}>
-              <Field name="styleClassName" label="Стиль" component={Select}>
-                <MenuItem value="">По умолчанию</MenuItem>
-                {draft.styleClasses.getAll().map((styleClass) => (
-                  <MenuItem key={styleClass.name} value={styleClass.name}>
-                    {styleClass.name}
-                  </MenuItem>
-                ))}
-              </Field>
+              <Field
+                name="content"
+                label="Текст"
+                component={TextField}
+                fullWidth
+              />
+              <Stack direction="row" gap={1}>
+                <Field
+                  name="styleClassName"
+                  label="Стиль"
+                  component={Select}
+                  formControl={{ sx: { width: "100%" } }}
+                >
+                  <MenuItem value="">По умолчанию</MenuItem>
+                  {draft.styleClasses.getAll().map((styleClass) => (
+                    <MenuItem key={styleClass.name} value={styleClass.name}>
+                      {styleClass.name}
+                    </MenuItem>
+                  ))}
+                </Field>
+                <Field
+                  name="rotation"
+                  label="Поворот (градусы)"
+                  component={NumberField}
+                  min={-360}
+                  max={360}
+                  fullWidth
+                />
+              </Stack>
               <Typography variant="h6">Время</Typography>
               <Stack direction="row" gap={1}>
                 <Field

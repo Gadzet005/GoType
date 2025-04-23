@@ -10,6 +10,7 @@ import { DraftSentence } from "../../store/draftSentence";
 import { EditSentenceDialog } from "./EditSentenceDialog";
 
 export const FieldEditor = observer(() => {
+  const [shouldContinue, setShouldContinue] = React.useState(false);
   const { draft, audioPlayer } = useEditorContext();
   const time = useAudioTime(audioPlayer);
 
@@ -23,6 +24,22 @@ export const FieldEditor = observer(() => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleSelectSentence = (sentence: DraftSentence) => {
+    if (audioPlayer.playing) {
+      audioPlayer.pause();
+      setShouldContinue(true);
+    }
+    setSelectedSentence(sentence);
+  };
+
+  const handleCloseSentenceDialog = () => {
+    setSelectedSentence(null);
+    if (shouldContinue) {
+      audioPlayer.play();
+      setShouldContinue(false);
+    }
+  };
 
   if (!draft.audio || !draft.background.asset) {
     return (
@@ -39,7 +56,7 @@ export const FieldEditor = observer(() => {
       {selectedSentence && (
         <EditSentenceDialog
           open
-          onClose={() => setSelectedSentence(null)}
+          onClose={handleCloseSentenceDialog}
           sentence={selectedSentence}
         />
       )}
@@ -51,10 +68,7 @@ export const FieldEditor = observer(() => {
             asset: draft.background.asset,
             brightness: draft.background.brightness,
           }}
-          onSelect={(sentence) => {
-            audioPlayer.pause();
-            setSelectedSentence(sentence);
-          }}
+          onSelect={handleSelectSentence}
         />
       </Box>
       <Box sx={{ width: "100%", px: 3, py: 1 }}>

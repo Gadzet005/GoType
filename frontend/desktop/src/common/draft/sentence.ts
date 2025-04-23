@@ -4,6 +4,7 @@ export interface DraftSentenceData {
         x: number;
         y: number;
     };
+    rotation: number;
 
     showTime: number | null;
     duration: number | null;

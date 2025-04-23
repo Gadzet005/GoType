@@ -13,6 +13,7 @@ export function sentencesByText(draft: Draft, text: string) {
                     showTime: null,
                     duration: null,
                     styleClassName: null,
+                    rotation: 0,
                 })
         );
 }
