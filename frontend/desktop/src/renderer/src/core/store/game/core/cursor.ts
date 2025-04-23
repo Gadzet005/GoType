@@ -49,12 +49,11 @@ export class Cursor {
         );
     }
 
-    private move(time: number) {
-        if (!this.isValidAndActive(time)) {
-            return;
-        }
+    private move() {
         this.position.letter++;
-        if (!this.isValid()) {
+
+        const sentenceLength = this.sentences[this.position.sentence].length;
+        if (this.position.letter >= sentenceLength) {
             this.position.sentence++;
             this.position.letter = 0;
         }
@@ -90,7 +89,7 @@ export class Cursor {
                 break;
             }
             c.success();
-            this.move(time);
+            this.move();
         }
     }
 
@@ -99,8 +98,7 @@ export class Cursor {
             return InputResult.ignore;
         }
         const cur = this.getCurrentLetter()!;
-        this.move(time);
-        this.normalize(time);
+        this.move();
 
         if (cur.isEqual(c)) {
             cur.success();
