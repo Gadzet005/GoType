@@ -22,6 +22,10 @@ export namespace Dummy {
         ban_time: "",
         id: 1,
         username: "testUser",
+        avatar_path: {
+            String: "",
+            Valid: false,
+        },
     };
 
     export const refreshArgs: Refresh.Args = {

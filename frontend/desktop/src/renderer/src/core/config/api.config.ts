@@ -10,6 +10,7 @@ export namespace ApiRoutes {
         const ROOT = "/user-actions";
         export const GET_USER_INFO = `${ROOT}/get-user-info`;
         export const LOGOUT = `${ROOT}/logout`;
+        export const CHANGE_AVATAR = `${ROOT}/change-avatar`;
     }
 
     export namespace SingleGame {

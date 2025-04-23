@@ -22,6 +22,7 @@ export async function getUserProfile(
                 reason: data.ban_reason,
                 expiresAt: Date.parse(data.ban_time),
             },
+            avatarURL: data.avatar_path.Valid ? data.avatar_path.String : null,
         };
 
         return success(profile);

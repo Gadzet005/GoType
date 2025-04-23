@@ -51,6 +51,10 @@ export namespace GetUserInfo {
         ban_time: string;
         id: number;
         username: string;
+        avatar_path: {
+            String: string;
+            Valid: boolean;
+        };
     }
 
     export type Error =
