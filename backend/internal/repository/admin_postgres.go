@@ -210,7 +210,7 @@ func (s *AdminPostgres) GetUsers(params user.UserSearchParams) ([]user.UserInfo,
 
 	query := fmt.Sprintf("SELECT id, name, access, ban_reason FROM %s ", usersTable)
 
-	if *params.IsBanned {
+	if params.IsBanned {
 		query += fmt.Sprintf("WHERE ban_expiration > NOW() + INTERVAL '1 second' ")
 	}
 

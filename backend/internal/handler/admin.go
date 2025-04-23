@@ -8,7 +8,6 @@ import (
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	useraccess "github.com/Gadzet005/GoType/backend/internal/domain/UserAccess"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -399,8 +398,6 @@ func (h *Admin) GetUsers(c *gin.Context) {
 	err := c.ShouldBindQuery(&input)
 
 	if err != nil {
-		logrus.Printf("BindJSON error: %v; %v", err, input)
-		logrus.Println(input.Name, input.IsBanned, input.PageSize, input.Offset)
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}

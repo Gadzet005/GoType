@@ -34,7 +34,9 @@ func (s *StatsService) GetUsersTop(params statistics.StatSortFilterParams) ([]st
 			sortOrder = params.CategoryParams.Pattern
 		}
 
-		sortParam = params.CategoryParams.Pattern
+		if params.CategoryParams.Pattern != "" {
+			sortParam = params.CategoryParams.Pattern
+		}
 	}
 
 	if slices.Index(domain.SortingValues, params.Points) != -1 {

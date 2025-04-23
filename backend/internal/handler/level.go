@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	gotype "github.com/Gadzet005/GoType/backend"
 	service "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Services"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
@@ -36,7 +37,7 @@ func NewLevel(service service.Level) *Level {
 func (h *Level) CreateLevel(c *gin.Context) {
 	err := c.Request.ParseMultipartForm(1)
 	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInternal)
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
@@ -90,10 +91,8 @@ func (h *Level) CreateLevel(c *gin.Context) {
 // @Failure default {object} errorResponse
 // @Router /level/download-level [get]
 func (h *Level) GetLevel(c *gin.Context) {
-	//var levInfo level.GetLevelInfoStruct
 	var levelId int
 
-	//err := c.BindJSON(&levInfo)
 	levelId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -110,6 +109,8 @@ func (h *Level) GetLevel(c *gin.Context) {
 
 	parts := strings.Split(filePath, "/")
 	c.FileAttachment(filePath, parts[len(parts)-1])
+	c.Status(http.StatusOK)
+	return
 }
 
 // @Summary Get level info
@@ -238,7 +239,7 @@ func (h *Level) GetLevelList(c *gin.Context) {
 	}
 
 	levelList, err := h.service.GetLevelList(fetchParams)
-
+	fmt.Println(err)
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
 		return

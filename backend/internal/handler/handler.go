@@ -3,6 +3,7 @@ package handler
 import (
 	gotype "github.com/Gadzet005/GoType/backend"
 	_ "github.com/Gadzet005/GoType/backend/docs"
+	interfaces "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Handlers"
 	"github.com/Gadzet005/GoType/backend/internal/service"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -14,63 +15,15 @@ const (
 	maxRequestBodySize = 20 * 1024 * 1024
 )
 
-type AuthorizationHandler interface {
-	Register(c *gin.Context)
-	Login(c *gin.Context)
-	Refresh(c *gin.Context)
-}
-
-type UserActionsHandler interface {
-	Logout(c *gin.Context)
-	GetUserInfo(c *gin.Context)
-	WriteUserComplaint(c *gin.Context)
-	WriteLevelComplaint(c *gin.Context)
-	ChangeAvatar(c *gin.Context)
-}
-
-type StatsHandler interface {
-	GetUserStats(c *gin.Context)
-	GetUsersTop(c *gin.Context)
-}
-
-type AdminHandler interface {
-	BanUser(c *gin.Context)
-	UnbanUser(c *gin.Context)
-	BanLevel(c *gin.Context)
-	UnbanLevel(c *gin.Context)
-	ChangeUserAccess(c *gin.Context)
-	GetUserComplaints(c *gin.Context)
-	GetLevelComplaints(c *gin.Context)
-	ProcessUserComplaint(c *gin.Context)
-	ProcessLevelComplaint(c *gin.Context)
-	GetUsers(c *gin.Context)
-}
-
-type SinglePlayerHandler interface {
-	SendResults(c *gin.Context)
-}
-
-type LevelHandler interface {
-	CreateLevel(c *gin.Context)
-	GetLevel(c *gin.Context)
-	GetLevelInfoById(c *gin.Context)
-	UpdateLevel(c *gin.Context)
-	GetLevelList(c *gin.Context)
-}
-
 type Handler struct {
-	Authorization    AuthorizationHandler
-	UserActions      UserActionsHandler
-	Admin            AdminHandler
-	Level            LevelHandler
-	Stats            StatsHandler
-	SinglePlayerGame SinglePlayerHandler
+	Authorization    interfaces.AuthorizationHandler
+	UserActions      interfaces.UserActionsHandler
+	Admin            interfaces.AdminHandlerI
+	Level            interfaces.LevelHandler
+	Stats            interfaces.StatsHandler
+	SinglePlayerGame interfaces.SinglePlayerHandler
 	services         *service.Service
 }
-
-//type Handler struct {
-//	services *service.Service
-//}
 
 func NewHandler(services *service.Service) *Handler {
 	return &Handler{
@@ -83,10 +36,6 @@ func NewHandler(services *service.Service) *Handler {
 		services:         services,
 	}
 }
-
-//func NewHandler(services *service.Service) *Handler {
-//	return &Handler{services: services}
-//}
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()

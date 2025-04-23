@@ -20,12 +20,14 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 
 	if header == "" {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrAccessToken)
+		c.Abort()
 		return
 	}
 
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrAccessToken)
+		c.Abort()
 		return
 	}
 
@@ -33,11 +35,13 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusUnauthorized, gotype.ErrUnauthorized)
+		c.Abort()
 		return
 	}
 
 	if expTime.Before(time.Now()) {
 		NewErrorResponse(c, http.StatusUnauthorized, gotype.ErrUnauthorized)
+		c.Abort()
 		return
 	}
 
