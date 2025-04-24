@@ -61,13 +61,6 @@ postgres-data/
 coverage
 
 frontend/desktop/src/main/config.json
-
-
-### Backend
 backend/previews
 backend/levels
 backend/avatars
-backend/logs/
-backend/postgres-data/
-backend/.idea/
-backend/.DS_*
