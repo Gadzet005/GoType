@@ -3,11 +3,12 @@ package service_test
 import (
 	"errors"
 	"fmt"
-	gotype "github.com/Gadzet005/GoType/backend"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	service2 "github.com/Gadzet005/GoType/backend/internal/service"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/repository_mocks"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/swaggo/swag/testdata/enums/types"
 	"strings"
@@ -131,60 +132,60 @@ func TestCreateSeniorAdmin(t *testing.T) {
 
 }
 
-func TestGenerateTokenByToken(t *testing.T) {
-	repo := mocks.NewMockAuthorization(t)
-	authService := service2.NewAuthService(repo)
-	repo.On("SetUserRefreshToken", mock.AnythingOfType("int"), mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return("token", nil).Maybe()
-
-	tests := map[string]struct {
-		accessToken     string
-		refreshToken    string
-		mockUser        user.User
-		mockGetUserErr  error
-		mockSetTokenErr error
-		expectedRefresh string
-		expectedAccess  string
-		expectedErr     error
-	}{
-		"bad access token": {
-			accessToken:     "bad_token",
-			refreshToken:    "xxx",
-			mockGetUserErr:  nil,
-			mockSetTokenErr: nil,
-			expectedRefresh: "",
-			expectedAccess:  "",
-			expectedErr:     errors.New(gotype.ErrAccessToken),
-		},
-	}
-
-	for name, tc := range tests {
-		t.Run(name, func(t *testing.T) {
-			if !strings.Contains(name, "bad access token") {
-				repo.On("GetUserById", 1).Return(tc.mockUser, tc.mockGetUserErr).Maybe()
-			}
-
-			if tc.mockGetUserErr == nil && tc.mockUser.RefreshToken == tc.refreshToken {
-				repo.On("SetUserRefreshToken", tc.mockUser.Id, "newRefresh", mock.Anything).Return(
-					tc.mockUser.Id, 1, "newRefresh", tc.mockSetTokenErr,
-				).Maybe()
-			}
-
-			refresh, access, err := authService.GenerateTokenByToken(tc.accessToken, tc.refreshToken)
-
-			if (tc.expectedErr == nil && err != nil) || (tc.expectedErr != nil && err == nil) {
-				t.Errorf("unexpected error: got %v, expected %v", err, tc.expectedErr)
-			}
-
-			if tc.expectedErr != nil && err != nil && tc.expectedErr.Error() != err.Error() {
-				t.Errorf("error mismatch: got %v, expected %v", err.Error(), tc.expectedErr.Error())
-			}
-
-			if refresh != tc.expectedRefresh || access != tc.expectedAccess {
-				t.Errorf("unexpected tokens: got (%v, %v), expected (%v, %v)", refresh, access, tc.expectedRefresh, tc.expectedAccess)
-			}
-		})
-	}
-}
+//func TestGenerateTokenByToken(t *testing.T) {
+//	repo := mocks.NewMockAuthorization(t)
+//	authService := service2.NewAuthService(repo)
+//	repo.On("SetUserRefreshToken", mock.AnythingOfType("int"), mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return("token", nil).Maybe()
+//
+//	tests := map[string]struct {
+//		accessToken     string
+//		refreshToken    string
+//		mockUser        user.User
+//		mockGetUserErr  error
+//		mockSetTokenErr error
+//		expectedRefresh string
+//		expectedAccess  string
+//		expectedErr     error
+//	}{
+//		"bad access token": {
+//			accessToken:     "bad_token",
+//			refreshToken:    "xxx",
+//			mockGetUserErr:  nil,
+//			mockSetTokenErr: nil,
+//			expectedRefresh: "",
+//			expectedAccess:  "",
+//			expectedErr:     errors.New(gotype.ErrAccessToken),
+//		},
+//	}
+//
+//	for name, tc := range tests {
+//		t.Run(name, func(t *testing.T) {
+//			if !strings.Contains(name, "bad access token") {
+//				repo.On("GetUserById", 1).Return(tc.mockUser, tc.mockGetUserErr).Maybe()
+//			}
+//
+//			if tc.mockGetUserErr == nil && tc.mockUser.RefreshToken == tc.refreshToken {
+//				repo.On("SetUserRefreshToken", tc.mockUser.Id, "newRefresh", mock.Anything).Return(
+//					tc.mockUser.Id, 1, "newRefresh", tc.mockSetTokenErr,
+//				).Maybe()
+//			}
+//
+//			refresh, access, err := authService.GenerateTokenByToken(tc.accessToken, tc.refreshToken)
+//
+//			if (tc.expectedErr == nil && err != nil) || (tc.expectedErr != nil && err == nil) {
+//				t.Errorf("unexpected error: got %v, expected %v", err, tc.expectedErr)
+//			}
+//
+//			if tc.expectedErr != nil && err != nil && tc.expectedErr.Error() != err.Error() {
+//				t.Errorf("error mismatch: got %v, expected %v", err.Error(), tc.expectedErr.Error())
+//			}
+//
+//			if refresh != tc.expectedRefresh || access != tc.expectedAccess {
+//				t.Errorf("unexpected tokens: got (%v, %v), expected (%v, %v)", refresh, access, tc.expectedRefresh, tc.expectedAccess)
+//			}
+//		})
+//	}
+//}
 
 type tokenClaims struct {
 	jwt.RegisteredClaims `json:"Claims"`
@@ -316,4 +317,108 @@ func TestParseWithoutValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGenerateToken(t *testing.T) {
+	repo := new(mocks.Authorization)
+	authService := service2.NewAuthService(repo)
+
+	username := "testuser"
+	password := "securePass123"
+	hashed := authService.GeneratePasswordHash(password)
+
+	userId := 12
+	refreshToken := "valid-refresh-token"
+
+	t.Run("successfully generates tokens", func(t *testing.T) {
+		repo.On("GetUser", username, hashed).
+			Return(user.User{Id: userId, Name: username}, nil).Once()
+
+		repo.On("SetUserRefreshToken", userId, mock.AnythingOfType("string"), mock.AnythingOfType("time.Time")).
+			Return(userId, 1, refreshToken, nil).Once()
+
+		token, access, err := authService.GenerateToken(username, password)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, token)
+		assert.NotEmpty(t, access)
+
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("returns error when user not found", func(t *testing.T) {
+		repo.On("GetUser", username, mock.AnythingOfType("string")).Return(user.User{}, errors.New("not found")).Once()
+
+		_, _, err := authService.GenerateToken(username, password)
+		assert.Error(t, err)
+	})
+
+	t.Run("returns error if refresh token storage fails", func(t *testing.T) {
+		repo.On("GetUser", username, hashed).
+			Return(user.User{Id: userId, Name: username}, nil).Once()
+
+		repo.On("SetUserRefreshToken", userId, mock.AnythingOfType("string"), mock.AnythingOfType("time.Time")).
+			Return(-1, -1, "", errors.New("db fail")).Once()
+
+		_, _, err := authService.GenerateToken(username, password)
+		assert.Error(t, err)
+	})
+}
+
+func TestGenerateTokenByToken(t *testing.T) {
+	repo := new(mocks.Authorization)
+	authService := service2.NewAuthService(repo)
+
+	validAccessToken, _ := authService.NewAccessToken(1, 1)
+	validRefreshToken := authService.NewRefreshToken()
+
+	curUser := user.User{
+		Id:           1,
+		RefreshToken: validRefreshToken,
+	}
+
+	t.Run("successfully generates new tokens", func(t *testing.T) {
+		repo.On("GetUserById", curUser.Id).Return(curUser, nil).Once()
+		repo.On("SetUserRefreshToken", curUser.Id, mock.AnythingOfType("string"), mock.AnythingOfType("time.Time")).
+			Return(curUser.Id, 1, "new-refresh-token", nil).Once()
+
+		newAccessToken, _ := authService.NewAccessToken(curUser.Id, 1)
+
+		refresh, access, err := authService.GenerateTokenByToken(validAccessToken, validRefreshToken)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, refresh)
+		assert.Equal(t, newAccessToken, access)
+	})
+
+	t.Run("returns error on invalid access token", func(t *testing.T) {
+		badToken := "invalid-token"
+		_, _, err := authService.GenerateTokenByToken(badToken, validRefreshToken)
+		assert.EqualError(t, err, gotype.ErrAccessToken)
+	})
+
+	t.Run("returns error if user not found", func(t *testing.T) {
+		repo.On("GetUserById", curUser.Id).Return(user.User{}, errors.New("not found")).Once()
+
+		_, _, err := authService.GenerateTokenByToken(validAccessToken, validRefreshToken)
+		assert.Error(t, err)
+	})
+
+	t.Run("returns error if refresh tokens mismatch", func(t *testing.T) {
+		repo.On("GetUserById", curUser.Id).Return(user.User{
+			Id:           curUser.Id,
+			RefreshToken: "other-token",
+		}, nil).Once()
+
+		_, _, err := authService.GenerateTokenByToken(validAccessToken, validRefreshToken)
+		assert.EqualError(t, err, gotype.ErrRefreshToken)
+	})
+
+	t.Run("returns error if saving refresh token fails", func(t *testing.T) {
+		repo.On("GetUserById", curUser.Id).Return(curUser, nil).Once()
+		repo.On("SetUserRefreshToken", curUser.Id, mock.Anything, mock.Anything).
+			Return(-1, -1, "", errors.New("db error")).Once()
+
+		_, _, err := authService.GenerateTokenByToken(validAccessToken, validRefreshToken)
+		assert.Error(t, err)
+	})
 }

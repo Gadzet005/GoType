@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/Gadzet005/GoType/backend/internal/domain"
 	repository "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Repositories"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
@@ -28,6 +29,8 @@ func (s *StatsService) GetUserStats(id int) (statistics.PlayerStats, error) {
 
 func (s *StatsService) GetUsersTop(params statistics.StatSortFilterParams) ([]statistics.PlayerStats, error) {
 	sortOrder, sortParam, sortIndex := "desc", "sum_points", -1
+
+	fmt.Printf("%v", params)
 
 	if sortIndex = slices.Index(statistics.AvailableClasses, params.CategoryParams.Category); sortIndex != -1 {
 		if slices.Index(domain.SortingValues, params.CategoryParams.Pattern) != -1 {

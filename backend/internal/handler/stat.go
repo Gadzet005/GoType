@@ -1,9 +1,9 @@
 package handler
 
 import (
-	gotype "github.com/Gadzet005/GoType/backend"
 	service "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Services"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -81,10 +81,13 @@ func (h *Stat) GetUsersTop(c *gin.Context) {
 	inpReal.Points = input.Points
 
 	runes := []rune(input.CategoryParams.Category)
-	firstRune := runes[0]
-	inpReal.CategoryParams = statistics.CategoryParams{
-		Category: ([]rune{firstRune})[0],
-		Pattern:  input.CategoryParams.Pattern,
+
+	if len(runes) != 0 {
+		firstRune := runes[0]
+		inpReal.CategoryParams = statistics.CategoryParams{
+			Category: ([]rune{firstRune})[0],
+			Pattern:  input.CategoryParams.Pattern,
+		}
 	}
 
 	usersTop, err := h.service.GetUsersTop(inpReal)

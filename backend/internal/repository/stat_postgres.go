@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	gotype "github.com/Gadzet005/GoType/backend"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/jmoiron/sqlx"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
@@ -83,8 +83,6 @@ func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistic
 		return nil, errors.New(gotype.ErrInternal)
 	}
 
-	//logrus.Println(wholeQuery)
-
 	for _, stat := range stats {
 		newStats, err := sp.castToJSON(stat)
 
@@ -95,7 +93,6 @@ func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistic
 		ret = append(ret, newStats)
 	}
 
-	//Saving result in cache
 	_ = sp.SaveUserTopInCache(params, ret)
 
 	return ret, nil

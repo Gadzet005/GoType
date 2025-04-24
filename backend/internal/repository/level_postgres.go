@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	gotype "github.com/Gadzet005/GoType/backend"
 	levels "github.com/Gadzet005/GoType/backend/internal/domain/Level"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"github.com/redis/go-redis/v9"
@@ -88,12 +88,11 @@ func (lp *LevelPostgres) DeleteLevel(levelId int) error {
 		return errors.New(gotype.ErrInternal)
 	}
 
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", levelTable)
-	row := tx.QueryRow(query, levelId)
+	query := fmt.Sprintf("DELETE FROM LevelTag WHERE level_id = $1")
+	_, err = tx.Exec(query, levelId)
 
-	if err := row.Scan(); err != nil {
+	if err != nil {
 		_ = tx.Rollback()
-
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil
 		}
@@ -101,10 +100,11 @@ func (lp *LevelPostgres) DeleteLevel(levelId int) error {
 		return errors.New(gotype.ErrInternal)
 	}
 
-	query = fmt.Sprintf("DELETE FROM LevelTag WHERE level_id = $1")
-	row = tx.QueryRow(query, levelId)
+	query = fmt.Sprintf("DELETE FROM %s WHERE id = $1", levelTable)
+	_, err = tx.Exec(query, levelId)
 
-	if err := row.Scan(); err != nil {
+	if err != nil {
+		fmt.Println(err)
 		_ = tx.Rollback()
 
 		if errors.Is(err, sql.ErrNoRows) {
@@ -318,7 +318,6 @@ func (lp *LevelPostgres) GetLevelStats(levelId int) (statistics.LevelStats, erro
 
 	//Saving result in cache
 	_ = lp.SaveLevelStatsInCache(levelId, stats)
-
 	return stats, nil
 }
 

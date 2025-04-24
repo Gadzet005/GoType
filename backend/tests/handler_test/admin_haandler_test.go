@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	gotype "github.com/Gadzet005/GoType/backend"
 	bans "github.com/Gadzet005/GoType/backend/internal/domain/Bans"
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	useraccess "github.com/Gadzet005/GoType/backend/internal/domain/UserAccess"
 	"github.com/Gadzet005/GoType/backend/internal/handler"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/service_mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -888,7 +888,7 @@ func TestAdmin_GetUsers(t *testing.T) {
 				s.On("GetUsers", access, input).Return([]user.UserInfo{{Id: 1, Name: "Test User", Access: 1}}, nil).Once()
 			},
 			expectedCode: http.StatusOK,
-			expectedBody: `{"users":[{"name":"Test User","access":1, "ban_reason":""}]}`,
+			expectedBody: `{"users":[{"id":1, "name":"Test User","access":1, "ban_reason":""}]}`,
 		},
 	}
 

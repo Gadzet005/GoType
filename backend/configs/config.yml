@@ -12,3 +12,6 @@ cache:
   port: "6379"
   db: "0"
 
+logs:
+  mode: "file" #console/file
+  file: "logs/app.log" #path to file

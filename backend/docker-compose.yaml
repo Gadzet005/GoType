@@ -20,7 +20,7 @@ services:
         - ./levels:/build/levels
         - ./avatars:/build/avatars
         - ./previews:/build/previews
-
+        - ./logs:/build/logs
     db-migrator:
       build:
         dockerfile: goose/Dockerfile

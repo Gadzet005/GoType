@@ -1,12 +1,12 @@
 package service
 
 import (
-	"crypto/sha1"
+	"crypto/sha256"
 	"errors"
 	"fmt"
-	gotype "github.com/Gadzet005/GoType/backend"
 	repository "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Repositories"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/golang-jwt/jwt/v5"
 	"math/rand"
 	"time"
@@ -39,7 +39,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 
 func (s *AuthService) CreateSeniorAdmin(username string, password string) error {
 
-	password = s.generatePasswordHash(password)
+	password = s.GeneratePasswordHash(password)
 
 	err := s.repo.CreateSeniorAdmin(username, password)
 
@@ -56,7 +56,7 @@ func (s *AuthService) CreateUser(user user.User) (string, string, error) {
 		return "", "", errors.New(gotype.ErrInvalidInput)
 	}
 
-	user.Password = s.generatePasswordHash(user.Password)
+	user.Password = s.GeneratePasswordHash(user.Password)
 
 	rToken := s.NewRefreshToken()
 
@@ -79,7 +79,7 @@ func (s *AuthService) CreateUser(user user.User) (string, string, error) {
 }
 
 func (s *AuthService) GenerateToken(username, password string) (string, string, error) {
-	curUser, err := s.repo.GetUser(username, s.generatePasswordHash(password))
+	curUser, err := s.repo.GetUser(username, s.GeneratePasswordHash(password))
 
 	if err != nil {
 		return "", "", err
@@ -90,7 +90,7 @@ func (s *AuthService) GenerateToken(username, password string) (string, string, 
 	expiresAt := time.Now().UTC().Add(refreshTokenTTL)
 
 	id, access, refreshToken, err := s.repo.SetUserRefreshToken(curUser.Id, refreshToken, expiresAt)
-
+	fmt.Println(id, access, refreshToken, err)
 	if err != nil {
 		return "", "", err
 	}
@@ -111,13 +111,13 @@ func (s *AuthService) GenerateTokenByToken(accessToken, refreshToken string) (st
 		return "", "", errors.New(gotype.ErrAccessToken)
 	}
 
-	user, err := s.repo.GetUserById(id)
+	curUser, err := s.repo.GetUserById(id)
 
 	if err != nil {
 		return "", "", err
 	}
 
-	if user.RefreshToken != refreshToken {
+	if curUser.RefreshToken != refreshToken {
 		return "", "", errors.New(gotype.ErrRefreshToken)
 	}
 
@@ -125,7 +125,7 @@ func (s *AuthService) GenerateTokenByToken(accessToken, refreshToken string) (st
 
 	expiresAt := time.Now().UTC().Add(refreshTokenTTL)
 
-	retId, retAccess, newRefreshToken, err := s.repo.SetUserRefreshToken(int(user.Id), newRefreshToken, expiresAt)
+	retId, retAccess, newRefreshToken, err := s.repo.SetUserRefreshToken(curUser.Id, newRefreshToken, expiresAt)
 
 	if err != nil {
 		return "", "", err
@@ -223,8 +223,8 @@ func (s *AuthService) ParseWithoutValidation(accessToken string) (time.Time, int
 	return expirationTime.Time, userId, accessLevel, nil
 }
 
-func (s *AuthService) generatePasswordHash(password string) string {
-	hash := sha1.New()
+func (s *AuthService) GeneratePasswordHash(password string) string {
+	hash := sha256.New()
 	hash.Write([]byte(password))
 
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))

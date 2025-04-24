@@ -2,12 +2,12 @@ package service
 
 import (
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	bans "github.com/Gadzet005/GoType/backend/internal/domain/Bans"
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	useraccess "github.com/Gadzet005/GoType/backend/internal/domain/UserAccess"
 	service2 "github.com/Gadzet005/GoType/backend/internal/service"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/repository_mocks"
 	"github.com/stretchr/testify/mock"
 	"reflect"

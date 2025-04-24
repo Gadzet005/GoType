@@ -2,9 +2,9 @@ package handler
 
 import (
 	"fmt"
-	gotype "github.com/Gadzet005/GoType/backend"
 	service "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Services"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

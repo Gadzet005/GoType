@@ -3,10 +3,10 @@ package service
 import (
 	"bytes"
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
 	service2 "github.com/Gadzet005/GoType/backend/internal/service"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/repository_mocks"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"

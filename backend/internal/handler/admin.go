@@ -1,12 +1,12 @@
 package handler
 
 import (
-	gotype "github.com/Gadzet005/GoType/backend"
 	bans "github.com/Gadzet005/GoType/backend/internal/domain/Bans"
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
 	service "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Services"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	useraccess "github.com/Gadzet005/GoType/backend/internal/domain/UserAccess"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

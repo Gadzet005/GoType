@@ -3,10 +3,10 @@ package service
 import (
 	"database/sql"
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
 	repository "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Repositories"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/sirupsen/logrus"
 	"mime/multipart"
 	"os"

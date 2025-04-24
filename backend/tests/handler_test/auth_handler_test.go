@@ -3,8 +3,8 @@ package handler_test
 import (
 	"bytes"
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	handler "github.com/Gadzet005/GoType/backend/internal/handler"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/service_mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"

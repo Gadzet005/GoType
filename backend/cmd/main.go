@@ -1,15 +1,18 @@
 package main
 
 import (
-	gotype "github.com/Gadzet005/GoType/backend"
 	"github.com/Gadzet005/GoType/backend/internal/handler"
 	"github.com/Gadzet005/GoType/backend/internal/repository"
 	"github.com/Gadzet005/GoType/backend/internal/service"
+	pkg "github.com/Gadzet005/GoType/backend/pkg"
+
+	//"github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
+	"path/filepath"
 )
 
 const (
@@ -36,6 +39,8 @@ func main() {
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("Error reading config file, %s", err.Error())
 	}
+
+	initLogger()
 
 	if err := godotenv.Load(); err != nil {
 		logrus.Fatalf("Error loading .env file, %s", err.Error())
@@ -73,11 +78,11 @@ func main() {
 
 	err = services.Authorization.CreateSeniorAdmin(admName, admPwd)
 
-	if err != nil && err.Error() != gotype.ErrUserExists {
+	if err != nil && err.Error() != pkg.ErrUserExists {
 		logrus.Fatal("Failed to add Senior admin: " + err.Error())
 	}
 
-	srv := new(gotype.Server)
+	srv := new(pkg.Server)
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("Error occured while running http server: %s", err.Error())
 	}
@@ -87,4 +92,23 @@ func initConfig() error {
 	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
+}
+
+func initLogger() {
+	mode := viper.GetString("logs.mode")
+	if mode == "file" {
+		logFile := viper.GetString("logs.file")
+
+		logDir := filepath.Dir(logFile)
+		if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
+			logrus.Fatalf("Failed to create log directory: %s", err.Error())
+		}
+
+		f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		if err != nil {
+			logrus.Fatalf("Failed to open log file: %s", err.Error())
+		}
+		logrus.SetOutput(f)
+	}
+	logrus.SetFormatter(new(logrus.JSONFormatter))
 }

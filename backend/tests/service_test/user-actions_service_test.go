@@ -3,10 +3,10 @@ package service
 import (
 	"database/sql"
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	"github.com/Gadzet005/GoType/backend/internal/service"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/repository_mocks"
 	"github.com/stretchr/testify/mock"
 	"mime/multipart"
