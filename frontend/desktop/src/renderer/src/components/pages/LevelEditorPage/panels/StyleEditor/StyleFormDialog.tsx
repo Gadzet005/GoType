@@ -25,12 +25,14 @@ interface StyleFormProps {
   open: boolean;
   onClose?: () => void;
   initial?: StyleClassData;
+  creation?: boolean;
 }
 
 export const StyleFormDialog: React.FC<StyleFormProps> = ({
   open,
   onClose = () => {},
   initial,
+  creation = true,
 }) => {
   const { draft } = useEditorContext();
 
@@ -44,8 +46,10 @@ export const StyleFormDialog: React.FC<StyleFormProps> = ({
     setFieldError: (field: string, message: string | undefined) => void
   ) => {
     const styleClass = fromValues(values);
-    if (initial) {
-      draft.styleClasses.update(initial.name, styleClass);
+    if (!creation) {
+      if (initial) {
+        draft.styleClasses.update(initial.name, styleClass);
+      }
     } else {
       const r = draft.styleClasses.add(styleClass.name, styleClass);
       if (!r) {

@@ -121,9 +121,7 @@ export const EditSentenceDialog: React.FC<EditSentenceDialogProps> = ({
                   fullWidth
                 />
               </Stack>
-              <Typography variant="h6">
-                Смещение относительно левого верхнего угла поля (%)
-              </Typography>
+              <Typography variant="h6">Координаты (%)</Typography>
               <Stack direction="row" gap={1}>
                 <Field
                   name="coord.x"

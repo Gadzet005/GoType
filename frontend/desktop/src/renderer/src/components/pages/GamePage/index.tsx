@@ -35,13 +35,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   React.useEffect(() => {
     const disposer = reaction(
       () => game.isRunning(),
-      (isRunning) => {
-        if (isRunning) {
-          setCursorVisible(false);
-        } else {
-          setCursorVisible(true);
-        }
-      }
+      (isRunning) => setCursorVisible(!isRunning)
     );
     return () => {
       disposer();
@@ -60,7 +54,7 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
     if (game.isRunning()) {
       hideTimeout.current = setTimeout(() => {
         setCursorVisible(false);
-      }, 100);
+      }, 500);
     }
   }, [game]);
 

@@ -7,11 +7,15 @@ import { StyleClassItem } from "./StyleClassItem";
 import { StyleClassData } from "@common/draft/style";
 import { observer } from "mobx-react";
 
+interface StyleFormState {
+  currentStyleClass: StyleClassData | null;
+  creation: boolean;
+}
+
 export const StyleEditor = observer(() => {
   const { draft } = useEditorContext();
-  const [styleFormOpen, setStyleFormOpen] = React.useState(false);
-  const [currentStyleClass, setCurrentStyleClass] =
-    React.useState<StyleClassData | null>(null);
+  const [styleFormState, setStyleFormState] =
+    React.useState<StyleFormState | null>(null);
 
   const styleClasses = draft.styleClasses.getAll().map((styleClass) => (
     <StyleClassItem
@@ -19,10 +23,30 @@ export const StyleEditor = observer(() => {
       styleClass={styleClass}
       deleleSelf={() => {
         draft.styleClasses.remove(styleClass.name);
+        draft.sentences.forEach((sentence) => {
+          if (sentence.styleClassName === styleClass.name) {
+            sentence.setStyleClassName(null);
+          }
+        });
       }}
-      editSelf={() => {
-        setCurrentStyleClass(styleClass);
-        setStyleFormOpen(true);
+      editSelf={() =>
+        setStyleFormState({
+          currentStyleClass: styleClass,
+          creation: false,
+        })
+      }
+      copySelf={() =>
+        setStyleFormState({
+          currentStyleClass: styleClass,
+          creation: true,
+        })
+      }
+      applySelf={() => {
+        draft.sentences.forEach((sentence) => {
+          if (sentence.styleClassName === null) {
+            sentence.setStyleClassName(styleClass.name);
+          }
+        });
       }}
     />
   ));
@@ -30,23 +54,26 @@ export const StyleEditor = observer(() => {
   return (
     <Stack sx={{ alignItems: "center" }} spacing={2}>
       <StyleFormDialog
-        open={styleFormOpen}
-        onClose={() => setStyleFormOpen(false)}
-        initial={currentStyleClass ?? undefined}
+        open={styleFormState !== null}
+        onClose={() => setStyleFormState(null)}
+        initial={styleFormState?.currentStyleClass ?? undefined}
+        creation={styleFormState?.creation ?? true}
       />
       <Typography variant="h4">Внешний вид текста</Typography>
       <Button
         variant="contained"
         startIcon={<AddIcon />}
         size="large"
-        onClick={() => {
-          setCurrentStyleClass(null);
-          setStyleFormOpen(true);
-        }}
+        onClick={() =>
+          setStyleFormState({
+            currentStyleClass: null,
+            creation: true,
+          })
+        }
       >
         Добавить стиль
       </Button>
-      <Container sx={{ pt: 3 }} maxWidth="sm">
+      <Container sx={{ pt: 3 }} maxWidth="md">
         <Stack spacing={2}>{styleClasses}</Stack>
       </Container>
     </Stack>
