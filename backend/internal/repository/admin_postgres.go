@@ -201,13 +201,6 @@ func (s *AdminPostgres) DeleteLevelComplaint(moderatorId int, complaintId int) e
 func (s *AdminPostgres) GetUsers(params user.UserSearchParams) ([]user.UserInfo, error) {
 	var users []user.UserInfo
 
-	extensionQuery := fmt.Sprintf("CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;")
-	row := s.db.QueryRow(extensionQuery)
-
-	if err := row.Err(); err != nil {
-		return nil, errors.New(gotype.ErrInternal)
-	}
-
 	query := fmt.Sprintf("SELECT id, name, access, ban_reason FROM %s ", usersTable)
 
 	if params.IsBanned {

@@ -11,7 +11,7 @@ import (
 	"math/rand"
 	"time"
 )
-
+	
 // TODO: Move to .env
 const (
 	salt              = "pqlpwisd5786vhdf27675da"
