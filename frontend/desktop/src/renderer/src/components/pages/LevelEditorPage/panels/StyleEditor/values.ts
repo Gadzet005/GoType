@@ -5,7 +5,6 @@ export interface StyleFormValues {
 
     padding: number;
     bgcolor: string | null;
-    rotation: number;
     borderRadius: number;
 
     introDurationPercent: number;
@@ -28,7 +27,6 @@ export function toValues(styleClass: StyleClassData): StyleFormValues {
         name: styleClass.name,
         padding: styleClass.padding,
         bgcolor: styleClass.bgcolor ?? null,
-        rotation: styleClass.rotation,
         borderRadius: styleClass.borderRadius,
         introDurationPercent: styleClass.introDurationRatio * 100,
         outroDurationPercent: styleClass.outroDurationRatio * 100,
@@ -49,7 +47,6 @@ export function fromValues(values: StyleFormValues): StyleClassData {
         name: values.name,
         padding: values.padding,
         bgcolor: values.bgcolor ?? undefined,
-        rotation: values.rotation,
         borderRadius: values.borderRadius,
         font: values.font,
         fontSize: values.fontSize,

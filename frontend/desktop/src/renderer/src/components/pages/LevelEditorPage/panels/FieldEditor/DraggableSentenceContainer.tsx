@@ -19,10 +19,20 @@ interface SentenceViewProps {
   fieldWidth: number;
   children: React.ReactNode;
   onDoubleClick?: () => void;
+  onSelect?: () => void;
+  selected?: boolean;
 }
 
 export const DraggableSentenceContainer: React.FC<SentenceViewProps> = observer(
-  ({ sentence, fieldHeight, fieldWidth, children, onDoubleClick }) => {
+  ({
+    sentence,
+    fieldHeight,
+    fieldWidth,
+    children,
+    onDoubleClick,
+    onSelect,
+    selected = false,
+  }) => {
     const [ref, bounds] = useMeasure({ polyfill: ResizeObserver });
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -32,6 +42,10 @@ export const DraggableSentenceContainer: React.FC<SentenceViewProps> = observer(
 
     const handleMouseDown = useCallback(
       (e: React.MouseEvent) => {
+        if (e.ctrlKey) {
+          return;
+        }
+
         e.stopPropagation();
         setIsDragging(true);
         setDragStart({
@@ -40,6 +54,18 @@ export const DraggableSentenceContainer: React.FC<SentenceViewProps> = observer(
         });
       },
       [xAbs, yAbs]
+    );
+
+    const handleClick = useCallback(
+      (e: React.MouseEvent) => {
+        if (e.ctrlKey) {
+          e.stopPropagation();
+          if (onSelect) {
+            onSelect();
+          }
+        }
+      },
+      [onSelect]
     );
 
     const handleMouseMove = useCallback(
@@ -92,12 +118,13 @@ export const DraggableSentenceContainer: React.FC<SentenceViewProps> = observer(
           top: `${yAbs}px`,
           cursor: isDragging ? "grabbing" : "grab",
           userSelect: "none",
-          outline: isDragging ? "2px dashed black" : "none",
+          outline: selected || isDragging ? "2px dashed grey" : "none",
           p: 1,
         }}
         ref={ref}
         onMouseDown={handleMouseDown}
         onDoubleClick={onDoubleClick}
+        onClick={handleClick}
       >
         {children}
       </Box>

@@ -19,6 +19,7 @@ export const AudioPlayerView: React.FC<AudioPlayerViewProps> = ({
   onTimeChange,
   ...other
 }) => {
+  const [shouldContinue, setShouldContinue] = React.useState(false);
   const time = useAudioTime(player);
 
   React.useEffect(() => {
@@ -26,6 +27,22 @@ export const AudioPlayerView: React.FC<AudioPlayerViewProps> = ({
       onTimeChange(time * 1000);
     }
   }, [onTimeChange, time]);
+
+  const handleSliderChange = (value: number) => {
+    if (player.playing) {
+      player.pause();
+      setShouldContinue(true);
+    }
+    player.seek(value);
+  };
+
+  const handleSliderChangeCommitted = (value: number) => {
+    if (shouldContinue) {
+      player.play();
+      setShouldContinue(false);
+    }
+    player.seek(value);
+  };
 
   return (
     <Box
@@ -62,9 +79,10 @@ export const AudioPlayerView: React.FC<AudioPlayerViewProps> = ({
         min={0}
         max={Math.round(player.duration)}
         step={1}
-        onChange={(_, value) => {
-          player.seek(value as number);
-        }}
+        onChange={(_, value) => handleSliderChange(value as number)}
+        onChangeCommitted={(_, value) =>
+          handleSliderChangeCommitted(value as number)
+        }
         {...other}
       />
     </Box>

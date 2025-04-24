@@ -1,7 +1,17 @@
-import { SentenceStyle } from "../level/style";
+import { SentenceColors } from "../level/style";
 
-export interface StyleClassData extends Omit<SentenceStyle, "coord"> {
+export interface StyleClassData {
     name: string;
     introDurationRatio: number;
     outroDurationRatio: number;
+
+    font: string;
+    fontSize: number;
+    bold: boolean;
+
+    padding: number;
+    borderRadius: number;
+    bgcolor?: string;
+
+    colors: SentenceColors;
 }

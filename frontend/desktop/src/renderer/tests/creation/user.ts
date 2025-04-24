@@ -11,6 +11,7 @@ export namespace UserDummy {
             reason: "",
             expiresAt: 0,
         },
+        avatarURL: null,
     };
 
     export const authTokens: AuthTokens = {

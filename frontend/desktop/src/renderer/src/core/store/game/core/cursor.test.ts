@@ -190,4 +190,21 @@ describe("GameField tests", () => {
         expect(cursor.input(0, "f")).toBe(InputResult.correct);
         checkCursorPosition(cursor.getPosition(0), 0, 1);
     });
+
+    it("skip non alphabet with inactive sentences", () => {
+        const cursor = new Cursor(
+            [testSentence("a..."), testSentence("...b", 1)],
+            englishLang
+        );
+
+        checkCursorPosition(cursor.getPosition(0), 0, 0);
+
+        expect(cursor.input(0, "a")).toBe(InputResult.correct);
+        expect(cursor.getPosition(0)).toBeNull();
+        expect(cursor.input(0, "b")).toBe(InputResult.ignore);
+
+        checkCursorPosition(cursor.getPosition(1), 1, 3);
+        expect(cursor.input(1, "b")).toBe(InputResult.correct);
+        expect(cursor.getPosition(1)).toBeNull();
+    });
 });

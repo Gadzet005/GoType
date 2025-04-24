@@ -9,7 +9,6 @@ export namespace Defaults {
     export const sentenceStyleClass: StyleClass = {
         padding: 0,
         borderRadius: 0,
-        rotation: 0,
         font: "Onest",
         fontSize: 50,
         bold: true,

@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { AppContext } from "./context";
 import { appConfig } from "@/core/config/app.config";
+import { getUserProfile } from "@/core/services/api/user/getUserProfile";
 
 interface AppContextProviderProps {
   initialUser?: User;
@@ -14,18 +15,19 @@ interface AppContextProviderProps {
 
 export const AppContextProvider: React.FC<AppContextProviderProps> = observer(
   ({ initialUser, children }) => {
-    if (!initialUser) {
-      initialUser = new User();
-    }
-
     const [context] = React.useState<AppCtx>(
-      new GlobalAppContext(appConfig, initialUser)
+      new GlobalAppContext(appConfig, initialUser ?? new User())
     );
 
     const loadUser = React.useCallback(async () => {
       const result = await getUserInfo();
       if (result.ok) {
         context.user.authorize(result.payload);
+
+        const userInfoResult = await getUserProfile(context);
+        if (userInfoResult.ok) {
+          context.user.setProfile(userInfoResult.payload);
+        }
       } else {
         console.error("Failed to load user info");
       }

@@ -64,15 +64,6 @@ export const StyleFormFields = () => {
           max={Constraints.maxBorderRadius}
           onlyInt
         />
-        <Field
-          name="rotation"
-          component={NumberField}
-          label="Поворот (градусы)"
-          type="number"
-          fullWidth
-          min={0}
-          max={360}
-        />
       </Stack>
       <Field
         component={OptionalField}

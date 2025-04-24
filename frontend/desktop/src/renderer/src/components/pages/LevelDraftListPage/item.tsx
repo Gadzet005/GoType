@@ -3,6 +3,7 @@ import {
   IconButton,
   ListItem,
   ListItemText,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -47,27 +48,29 @@ export const DraftListItem: React.FC<DraftListItemProps> = ({
       onClick={handleEdit}
       secondaryAction={
         <Box sx={{ px: 2 }}>
-          <IconButton
-            edge="end"
-            aria-label="редактировать"
-            onClick={(event) => {
-              event.stopPropagation();
-              handleEdit();
-            }}
-            sx={{ mr: 1 }}
-          >
-            <EditIcon fontSize="large" />
-          </IconButton>
-          <IconButton
-            edge="end"
-            aria-label="удалить"
-            onClick={(event) => {
-              event.stopPropagation();
-              deleleSelf();
-            }}
-          >
-            <DeleteIcon fontSize="large" />
-          </IconButton>
+          <Tooltip title="Редактировать" placement="top" arrow>
+            <IconButton
+              edge="end"
+              onClick={(event) => {
+                event.stopPropagation();
+                handleEdit();
+              }}
+              sx={{ mr: 1 }}
+            >
+              <EditIcon fontSize="large" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Удалить" placement="top" arrow>
+            <IconButton
+              edge="end"
+              onClick={(event) => {
+                event.stopPropagation();
+                deleleSelf();
+              }}
+            >
+              <DeleteIcon fontSize="large" />
+            </IconButton>
+          </Tooltip>
         </Box>
       }
     >

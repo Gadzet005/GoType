@@ -12,6 +12,7 @@ export interface UserProfile {
         /** timestamp */
         expiresAt: number;
     };
+    avatarURL: string | null;
 }
 
 export interface UserInfo {

@@ -7,7 +7,7 @@ import { Game } from "@/core/store/game/game";
 import { Level } from "@/core/store/game/level";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, Stack, Typography } from "@mui/material";
-import { when } from "mobx";
+import { reaction, when } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -29,6 +29,34 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   const [game] = React.useState<Game>(new Game(level));
   const [gameRunner] = React.useState<GameRunner>(new GameRunner(game));
   const [isGameReady, setIsGameReady] = React.useState<boolean>(false);
+
+  const [cursorVisible, setCursorVisible] = React.useState(true);
+
+  React.useEffect(() => {
+    const disposer = reaction(
+      () => game.isRunning(),
+      (isRunning) => setCursorVisible(!isRunning)
+    );
+    return () => {
+      disposer();
+    };
+  }, [game]);
+
+  const hideTimeout = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseMove = React.useCallback(() => {
+    setCursorVisible(true);
+
+    if (hideTimeout.current) {
+      clearTimeout(hideTimeout.current);
+    }
+
+    if (game.isRunning()) {
+      hideTimeout.current = setTimeout(() => {
+        setCursorVisible(false);
+      }, 500);
+    }
+  }, [game]);
 
   useHotkeys(
     game.language.alphabet.split(""),
@@ -100,7 +128,13 @@ export const GamePage: React.FC<GamePageProps> = observer(({ level }) => {
   }, [isGameReady, audioPlayer.isReady]);
 
   return (
-    <Stack sx={{ height: "100%" }}>
+    <Stack
+      sx={{
+        height: "100%",
+        cursor: cursorVisible ? "auto" : "none",
+      }}
+      onMouseMove={handleMouseMove}
+    >
       <Stack sx={{ p: 2, display: "flex" }}>
         <Box
           sx={{
