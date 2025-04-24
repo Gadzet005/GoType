@@ -59,7 +59,6 @@ func (s *UserActionsPostgres) GetUserById(id int) (string, int, time.Time, strin
 
 func (s *UserActionsPostgres) CreateUserComplaint(complaint complaints.UserComplaint) error {
 	var id int
-
 	query := fmt.Sprintf("INSERT INTO %s (user_id, author, time, given_to, reason, message) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id", userComplaintsTable)
 
 	row := s.db.QueryRow(query, complaint.UserId, complaint.AuthorId, complaint.CreationTime, complaint.AssignedTo, complaint.Reason, complaint.Message)

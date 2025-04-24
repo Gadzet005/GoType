@@ -45,6 +45,7 @@ func (s *UserActionsService) GetUserById(id int) (string, int, time.Time, string
 func (s *UserActionsService) CreateUserComplaint(complaint complaints.UserComplaint) error {
 	complaint.CreationTime = time.Now().UTC()
 
+	complaint.AssignedTo = -1
 	err := s.repo.CreateUserComplaint(complaint)
 
 	if err != nil {
@@ -57,6 +58,7 @@ func (s *UserActionsService) CreateUserComplaint(complaint complaints.UserCompla
 func (s *UserActionsService) CreateLevelComplaint(complaint complaints.LevelComplaint) error {
 	complaint.CreationTime = time.Now().UTC()
 
+	complaint.AssignedTo = -1
 	err := s.repo.CreateLevelComplaint(complaint)
 
 	if err != nil {

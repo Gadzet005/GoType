@@ -6,6 +6,7 @@ import (
 	"github.com/docker/go-connections/nat"
 	"github.com/jmoiron/sqlx"
 	"github.com/redis/go-redis/v9"
+	"github.com/sirupsen/logrus"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
@@ -25,7 +26,7 @@ var (
 
 func TestMain(m *testing.M) {
 	req := testcontainers.ContainerRequest{
-		Image:        "postgres:13",
+		Image:        "postgres:16",
 		ExposedPorts: []string{"5432/tcp"},
 		Env: map[string]string{
 			"POSTGRES_USER":     "postgres",
@@ -57,6 +58,9 @@ func TestMain(m *testing.M) {
 	}
 
 	_, err = db.Exec(`create extension if not exists fuzzystrmatch;`)
+	_, err = db.Exec(`create extension if not exists pg_trgm;`)
+
+	logrus.Printf("KEK: %v", err)
 
 	_, err = db.Exec(`CREATE TABLE Users (
                        id serial PRIMARY KEY,

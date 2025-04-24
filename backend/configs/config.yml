@@ -11,6 +11,17 @@ cache:
   host: "cache"
   port: "6379"
   db: "0"
+  maxmemory: "512mb"
+  maxmemory_policy: "allkeys-lru"
+  level_user_top_ttl: "2" #minutes
+  level_stats_ttl: "2" #minutes
+  rating_ttl: "2" #minutes
+
+security:
+  refreshTokenTTL: "720" #hours
+  accessTokenTTL: "15" #minutes
+  signingKey: "wiu8s7]df9s&di9230s#s894w90g2092v[d" #for jwt
+  salt: "pqlpwisd5786vhdf27675da" #to improve hashes quality
 
 logs:
   mode: "file" #console/file

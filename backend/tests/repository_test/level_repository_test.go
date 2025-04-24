@@ -13,7 +13,7 @@ import (
 )
 
 func TestLevelPostgres_CreateLevel(t *testing.T) {
-	levelRepo := repository.NewLevelPostgres(db, redisClient)
+	levelRepo := repository.NewLevelPostgresMock(db, redisClient)
 
 	t.Run("successfully creates level", func(t *testing.T) {
 		_, _ = db.Exec(`DELETE FROM LevelTag`)
@@ -84,7 +84,7 @@ func TestLevelPostgres_CreateLevel(t *testing.T) {
 }
 
 func TestDeleteLevel(t *testing.T) {
-	levelRepo := repository.NewLevelPostgres(db, redisClient)
+	levelRepo := repository.NewLevelPostgresMock(db, redisClient)
 	userRepo := repository.NewAuthPostgres(db)
 
 	t.Run("successfully deletes level and related tags", func(t *testing.T) {
@@ -142,7 +142,7 @@ func TestDeleteLevel(t *testing.T) {
 }
 
 func TestLevelPostgres_UpdateLevel(t *testing.T) {
-	levelRepo := repository.NewLevelPostgres(db, redisClient)
+	levelRepo := repository.NewLevelPostgresMock(db, redisClient)
 
 	t.Run("successfully updates existing level", func(t *testing.T) {
 		initialLevel := levels.Level{
@@ -210,7 +210,7 @@ func TestLevelPostgres_UpdateLevel(t *testing.T) {
 }
 
 func TestLevelPostgres_GetLevelById(t *testing.T) {
-	levelRepo := repository.NewLevelPostgres(db, redisClient)
+	levelRepo := repository.NewLevelPostgresMock(db, redisClient)
 
 	t.Run("successfully retrieves existing level", func(t *testing.T) {
 		testLevel := levels.Level{
@@ -247,7 +247,7 @@ func TestLevelPostgres_GetLevelById(t *testing.T) {
 }
 
 func TestLevelPostgres_GetPathsById(t *testing.T) {
-	levelRepo := repository.NewLevelPostgres(db, redisClient)
+	levelRepo := repository.NewLevelPostgresMock(db, redisClient)
 
 	t.Run("successfully retrieves paths and authorId", func(t *testing.T) {
 		testLevel := levels.Level{
@@ -280,7 +280,7 @@ func TestLevelPostgres_GetPathsById(t *testing.T) {
 }
 
 func TestLevelPostgres_FetchLevels(t *testing.T) {
-	levelRepo := repository.NewLevelPostgres(db, redisClient)
+	levelRepo := repository.NewLevelPostgresMock(db, redisClient)
 
 	t.Run("successfully fetches levels by filters", func(t *testing.T) {
 		testLevel := levels.Level{
@@ -309,12 +309,12 @@ func TestLevelPostgres_FetchLevels(t *testing.T) {
 			"page_num":   1,
 		}
 
-		levels, err := levelRepo.FetchLevels(params)
+		level, err := levelRepo.FetchLevels(params)
 		require.NoError(t, err)
-		require.NotEmpty(t, levels)
+		require.NotEmpty(t, level)
 
 		found := false
-		for _, level := range levels {
+		for _, level := range level {
 			if level.Id == levelId {
 				found = true
 				assert.Contains(t, level.Tags, "fetch_tag")
@@ -344,7 +344,7 @@ func TestLevelPostgres_FetchLevels(t *testing.T) {
 }
 
 func TestGetLevelStats(t *testing.T) {
-	levelRepo := repository.NewLevelPostgres(db, redisClient)
+	levelRepo := repository.NewLevelPostgresMock(db, redisClient)
 	userRepo := repository.NewAuthPostgres(db)
 
 	t.Run("returns stats from db and caches them", func(t *testing.T) {
@@ -417,7 +417,7 @@ func TestGetLevelStats(t *testing.T) {
 }
 
 func TestLevelPostgres_GetLevelUserTop(t *testing.T) {
-	lp := repository.NewLevelPostgres(db, redisClient)
+	lp := repository.NewLevelPostgresMock(db, redisClient)
 	userRepo := repository.NewAuthPostgres(db)
 
 	t.Run("returns top 10 users for level by points", func(t *testing.T) {

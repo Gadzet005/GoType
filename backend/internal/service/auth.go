@@ -11,20 +11,24 @@ import (
 	"math/rand"
 	"time"
 )
-	
+
 // TODO: Move to .env
 const (
-	salt              = "pqlpwisd5786vhdf27675da"
-	signingKey        = "wiu8s7]df9s&di9230s#s894w90g2092v[d"
-	refreshTokenTTL   = time.Hour * 720  //1 month
-	accessTokenTTL    = time.Minute * 15 //15 min
+	//salt              = "pqlpwisd5786vhdf27675da"
+	//signingKey        = "wiu8s7]df9s&di9230s#s894w90g2092v[d"
+	//refreshTokenTTL   = time.Hour * 720  //1 month
+	//accessTokenTTL    = time.Minute * 15 //15 min
 	letterRunes       = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#&!?&"
 	maxNameLength     = 20
 	maxPasswordLength = 20
 )
 
 type AuthService struct {
-	repo repository.Authorization
+	repo            repository.Authorization
+	refreshTokenTTL int
+	accessTokenTTL  int
+	signingKey      string
+	salt            string
 }
 
 type tokenClaims struct {
@@ -33,8 +37,8 @@ type tokenClaims struct {
 	Access               int `json:"access"`
 }
 
-func NewAuthService(repo repository.Authorization) *AuthService {
-	return &AuthService{repo: repo}
+func NewAuthService(repo repository.Authorization, rtt, att int, sk, s string) *AuthService {
+	return &AuthService{repo: repo, refreshTokenTTL: rtt, accessTokenTTL: att, signingKey: sk, salt: s}
 }
 
 func (s *AuthService) CreateSeniorAdmin(username string, password string) error {
@@ -61,7 +65,7 @@ func (s *AuthService) CreateUser(user user.User) (string, string, error) {
 	rToken := s.NewRefreshToken()
 
 	user.RefreshToken = rToken
-	user.ExpiresAt = time.Now().UTC().Add(refreshTokenTTL)
+	user.ExpiresAt = time.Now().UTC().Add(time.Duration(s.refreshTokenTTL) * time.Hour)
 
 	id, access, refreshToken, err := s.repo.CreateUser(user)
 
@@ -87,7 +91,7 @@ func (s *AuthService) GenerateToken(username, password string) (string, string, 
 
 	refreshToken := s.NewRefreshToken()
 
-	expiresAt := time.Now().UTC().Add(refreshTokenTTL)
+	expiresAt := time.Now().UTC().Add(time.Duration(s.refreshTokenTTL) * time.Hour)
 
 	id, access, refreshToken, err := s.repo.SetUserRefreshToken(curUser.Id, refreshToken, expiresAt)
 	fmt.Println(id, access, refreshToken, err)
@@ -123,7 +127,7 @@ func (s *AuthService) GenerateTokenByToken(accessToken, refreshToken string) (st
 
 	newRefreshToken := s.NewRefreshToken()
 
-	expiresAt := time.Now().UTC().Add(refreshTokenTTL)
+	expiresAt := time.Now().UTC().Add(time.Duration(s.refreshTokenTTL) * time.Hour)
 
 	retId, retAccess, newRefreshToken, err := s.repo.SetUserRefreshToken(curUser.Id, newRefreshToken, expiresAt)
 
@@ -143,14 +147,14 @@ func (s *AuthService) GenerateTokenByToken(accessToken, refreshToken string) (st
 func (s *AuthService) NewAccessToken(id, Access int) (string, error) {
 	authToken := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims{
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(accessTokenTTL)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(s.accessTokenTTL) * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 		id,
 		Access,
 	})
 
-	return authToken.SignedString([]byte(signingKey))
+	return authToken.SignedString([]byte(s.signingKey))
 }
 
 func (s *AuthService) NewRefreshToken() string {
@@ -168,7 +172,7 @@ func (s *AuthService) Parse(accessToken string) (time.Time, int, int, error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return []byte(signingKey), nil
+		return []byte(s.signingKey), nil
 	})
 
 	if err != nil {
@@ -199,7 +203,7 @@ func (s *AuthService) ParseWithoutValidation(accessToken string) (time.Time, int
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return []byte(signingKey), nil
+		return []byte(s.signingKey), nil
 	})
 
 	if err != nil && !errors.Is(err, jwt.ErrTokenExpired) {
@@ -227,5 +231,5 @@ func (s *AuthService) GeneratePasswordHash(password string) string {
 	hash := sha256.New()
 	hash.Write([]byte(password))
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
+	return fmt.Sprintf("%x", hash.Sum([]byte(s.salt)))
 }

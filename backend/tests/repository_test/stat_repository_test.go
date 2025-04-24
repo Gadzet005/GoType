@@ -11,7 +11,7 @@ import (
 )
 
 func TestGetUserStats(t *testing.T) {
-	statsRepo := repository.NewStatsPostgres(db, redisClient)
+	statsRepo := repository.NewStatsPostgresMock(db, redisClient)
 	userRepo := repository.NewAuthPostgres(db)
 
 	t.Run("returns correct stats for existing user", func(t *testing.T) {
@@ -42,7 +42,7 @@ func TestGetUserStats(t *testing.T) {
 }
 
 func TestStatsPostgres_GetUsersTop(t *testing.T) {
-	statsRepo := repository.NewStatsPostgres(db, redisClient)
+	statsRepo := repository.NewStatsPostgresMock(db, redisClient)
 	userRepo := repository.NewAuthPostgres(db)
 
 	t.Run("returns top users by sum_points", func(t *testing.T) {

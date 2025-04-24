@@ -17,17 +17,22 @@ import (
 	"time"
 )
 
-const (
-	ratingTTl = time.Minute * 2
-)
+//const (
+//	ratingTTl = time.Minute * 2
+//)
 
 type StatsPostgres struct {
-	db     *sqlx.DB
-	client *redis.Client
+	db        *sqlx.DB
+	client    *redis.Client
+	ratingTtl int
 }
 
-func NewStatsPostgres(db *sqlx.DB, client *redis.Client) *StatsPostgres {
-	return &StatsPostgres{db, client}
+func NewStatsPostgres(db *sqlx.DB, client *redis.Client, ratingTtl int) *StatsPostgres {
+	return &StatsPostgres{db, client, ratingTtl}
+}
+
+func NewStatsPostgresMock(db *sqlx.DB, client *redis.Client) *StatsPostgres {
+	return &StatsPostgres{db: db, client: client, ratingTtl: 2}
 }
 
 func (sp *StatsPostgres) GetUserStats(id int) (statistics.PlayerStats, error) {
@@ -64,13 +69,9 @@ func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistic
 	var stats []statistics.PlayerStatsDB
 	var ret []statistics.PlayerStats
 
-	var query = fmt.Sprintf("%s ORDER BY ", statsTable)
+	var query = ""
 
-	if params["sort_param"] == "sum_points" {
-		query += fmt.Sprintf("sum_points %s", params["sort_order"])
-	} else {
-		query += fmt.Sprintf("num_classes_classic[%s]", params["sort_index"])
-	}
+	query += fmt.Sprintf("%s", statsTable)
 
 	var limit = cast.ToString(params["page_size"])
 	var offset = cast.ToString(params["page_size"].(int) * (params["page_num"].(int) - 1))
@@ -78,6 +79,13 @@ func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistic
 
 	var wholeQuery = fmt.Sprintf("SELECT s.user_id, u.avatar_path, s.num_press_err_by_char_by_lang, s.num_level_relax, s.num_level_classic, s.num_games_mult, s.num_chars_classic, s.num_chars_relax, s.average_accuracy_classic, s.average_accuracy_relax, s.win_percentage, s.average_delay, s.num_classes_classic, s.sum_points, u.name as user_name FROM (SELECT user_id,num_press_err_by_char_by_lang,num_level_relax,num_level_classic,num_games_mult,num_chars_classic,num_chars_relax,average_accuracy_classic,average_accuracy_relax,win_percentage,average_delay,num_classes_classic,sum_points FROM %s) AS s JOIN %s AS u ON s.user_id = u.id", query, usersTable)
 
+	if params["sort_param"] == "sum_points" {
+		wholeQuery += fmt.Sprintf(" ORDER BY sum_points %s", params["sort_order"])
+	} else {
+		wholeQuery += fmt.Sprintf(" ORDER BY num_classes_classic[%s]", params["sort_index"])
+	}
+
+	logrus.Errorf("%v", wholeQuery)
 	if err := sp.db.Select(&stats, wholeQuery); err != nil {
 		logrus.Printf(err.Error())
 		return nil, errors.New(gotype.ErrInternal)
@@ -132,7 +140,7 @@ func (sp *StatsPostgres) SaveUserTopInCache(params map[string]interface{}, resul
 		return errors.New(gotype.ErrInternal)
 	}
 
-	res := sp.client.Set(context.Background(), key, val, ratingTTl)
+	res := sp.client.Set(context.Background(), key, val, time.Minute*time.Duration(sp.ratingTtl))
 	logrus.Printf("Saving %s to cache. Error: %v", key, res.Err())
 
 	return nil

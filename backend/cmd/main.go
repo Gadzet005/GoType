@@ -60,17 +60,19 @@ func main() {
 	}
 
 	redisClient, err := repository.NewRedisDB(repository.RedisConfig{
-		Host:     viper.GetString("cache.host"),
-		Port:     viper.GetString("cache.port"),
-		Password: os.Getenv("REDIS_PASSWORD"),
+		Host:         viper.GetString("cache.host"),
+		Port:         viper.GetString("cache.port"),
+		Password:     os.Getenv("REDIS_PASSWORD"),
+		Maxmemory:    viper.GetString("cache.maxmemory"),
+		MaxMemPolicy: viper.GetString("cache.maxmemory_policy"),
 	})
 
 	if err != nil {
 		logrus.Fatalf("Error connecting to redis, %s", err.Error())
 	}
 
-	repos := repository.NewRepository(db, redisClient)
-	services := service.NewService(repos)
+	repos := repository.NewRepository(db, redisClient, viper.GetInt("cache.level_user_top_ttl"), viper.GetInt("cache.level_stats_ttl"), viper.GetInt("cache.rating_ttl"))
+	services := service.NewService(repos, viper.GetInt("security.refreshTokenTTL"), viper.GetInt("security.accessTokenTTL"), viper.GetString("security.signingKey"), viper.GetString("security.salt"))
 	handlers := handler.NewHandler(services)
 
 	admName := os.Getenv("SENIOR_ADMIN_NAME")
