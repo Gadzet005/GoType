@@ -7,6 +7,6 @@ import (
 )
 
 func TestCreateSeniorAdmin(t *testing.T) {
-	repo := repository.NewRepository(nil, nil)
-	_ = service.NewService(repo)
+	repo := repository.NewRepository(nil, nil, 1, 1, 1)
+	_ = service.NewService(repo, 1, 1, "", "")
 }

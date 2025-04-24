@@ -41,6 +41,10 @@ func NewAuthService(repo repository.Authorization, rtt, att int, sk, s string) *
 	return &AuthService{repo: repo, refreshTokenTTL: rtt, accessTokenTTL: att, signingKey: sk, salt: s}
 }
 
+func NewAuthServiceMock(repo repository.Authorization) *AuthService {
+	return &AuthService{repo: repo, refreshTokenTTL: 720, accessTokenTTL: 15, signingKey: "wiu8s7]df9s&di9230s#s894w90g2092v[d", salt: "pqlpwisd5786vhdf27675da"}
+}
+
 func (s *AuthService) CreateSeniorAdmin(username string, password string) error {
 
 	password = s.GeneratePasswordHash(password)

@@ -18,7 +18,7 @@ import (
 
 func TestCreateUser(t *testing.T) {
 	repo := mocks.NewMockAuthorization(t)
-	authService := service2.NewAuthService(repo)
+	authService := service2.NewAuthServiceMock(repo)
 
 	tests := map[string]struct {
 		expectedRefreshToken string
@@ -84,7 +84,7 @@ func TestCreateUser(t *testing.T) {
 
 func TestCreateSeniorAdmin(t *testing.T) {
 	repo := mocks.NewMockAuthorization(t)
-	authService := service2.NewAuthService(repo)
+	authService := service2.NewAuthServiceMock(repo)
 
 	tests := map[string]struct {
 		expectedRefreshToken string
@@ -228,7 +228,7 @@ func TestParse(t *testing.T) {
 
 			tttt, err := authToken.SignedString([]byte("wiu8s7]df9s&di9230s#s894w90g2092v[d"))
 
-			authService := service2.NewAuthService(nil)
+			authService := service2.NewAuthServiceMock(nil)
 			expirationTime, userId, accessLevel, err := authService.Parse(tttt)
 
 			if err != nil && !strings.Contains(err.Error(), tt.expectedErr.Error()) {
@@ -297,7 +297,7 @@ func TestParseWithoutValidation(t *testing.T) {
 
 			tttt, err := authToken.SignedString([]byte("wiu8s7]df9s&di9230s#s894w90g2092v[d"))
 
-			authService := service2.NewAuthService(nil)
+			authService := service2.NewAuthServiceMock(nil)
 			expirationTime, userId, accessLevel, err := authService.ParseWithoutValidation(tttt)
 
 			if err != nil && !strings.Contains(err.Error(), tt.expectedErr.Error()) {
@@ -321,7 +321,7 @@ func TestParseWithoutValidation(t *testing.T) {
 
 func TestGenerateToken(t *testing.T) {
 	repo := new(mocks.Authorization)
-	authService := service2.NewAuthService(repo)
+	authService := service2.NewAuthServiceMock(repo)
 
 	username := "testuser"
 	password := "securePass123"
@@ -367,7 +367,7 @@ func TestGenerateToken(t *testing.T) {
 
 func TestGenerateTokenByToken(t *testing.T) {
 	repo := new(mocks.Authorization)
-	authService := service2.NewAuthService(repo)
+	authService := service2.NewAuthServiceMock(repo)
 
 	validAccessToken, _ := authService.NewAccessToken(1, 1)
 	validRefreshToken := authService.NewRefreshToken()
