@@ -60,7 +60,7 @@ export const Levels = () => {
             date: appliedFilters.sort === "date" ? "desc" : "",
           },
           page_info: {
-            offset: 1 + (page - 1) * PAGE_SIZE,
+            offset: 1 + (page - 1),
             page_size: PAGE_SIZE,
           },
           tags: appliedFilters.tags,
@@ -77,7 +77,7 @@ export const Levels = () => {
             date: appliedFilters.sort === "date" ? "desc" : "",
           },
           page_info: {
-            offset: 1 + page * PAGE_SIZE,
+            offset: 1 + page,
             page_size: PAGE_SIZE,
           },
           tags: appliedFilters.tags,
