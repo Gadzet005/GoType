@@ -37,6 +37,7 @@ import {
   ComplaintID,
   LevelComplaint,
   UserComplaint,
+  UserSimpleInfo
 } from '@/api/models';
 
 interface TabPanelProps {
@@ -67,7 +68,7 @@ function TabPanel(props: TabPanelProps) {
 
 export const Admin = () => {
   const [activeTab, setActiveTab] = useState('users');
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserSimpleInfo[]>([]);
   const [levelComplaints, setLevelComplaints] = useState<LevelComplaint[]>([]);
   const [userComplaints, setUserComplaints] = useState<UserComplaint[]>([]);
   const [searchParams, setSearchParams] = useState({
@@ -92,7 +93,9 @@ export const Admin = () => {
       switch (activeTab) {
         case 'users':
           const usersData = await AdminApi.getUsers(searchParams);
+          console.log(usersData);
           setUsers(usersData);
+          console.log(users);
           break;
         case 'level-complaints':
           const levelComplaintsData = await AdminApi.getLevelComplaints();
@@ -225,19 +228,19 @@ export const Admin = () => {
               {users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.id}</TableCell>
-                  <TableCell>{user.username}</TableCell>
-                  <TableCell>{user.isBanned ? 'Забанен' : 'Активен'}</TableCell>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.ban_reason ? 'Забанен' : 'Активен'}</TableCell>
                   <TableCell sx={{ display: 'flex', gap: 1 }}>
                     <Button
                       variant="contained"
-                      color={user.isBanned ? 'success' : 'error'}
+                      color={user.ban_reason ? 'success' : 'error'}
                       size="small"
                       onClick={() => {
                         setSelectedUser(user);
                         setBanModalOpen(true);
                       }}
                     >
-                      {user.isBanned ? 'Разбанить' : 'Забанить'}
+                      {user.ban_reasons ? 'Разбанить' : 'Забанить'}
                     </Button>
                     <Select
                       value={user.access}
@@ -258,7 +261,7 @@ export const Admin = () => {
             component="div"
             count={users.length}
             rowsPerPage={searchParams.pageSize}
-            page={searchParams.offset / searchParams.pageSize}
+            page={Math.floor(searchParams.offset / searchParams.pageSize)}
             onPageChange={(_, newPage) => setSearchParams(prev => ({
               ...prev,
               offset: newPage * prev.pageSize
@@ -266,7 +269,7 @@ export const Admin = () => {
             onRowsPerPageChange={(e) => setSearchParams(prev => ({
               ...prev,
               pageSize: parseInt(e.target.value, 10),
-              offset: 0
+              offset: 1
             }))}
           />
         </TableContainer>
@@ -285,7 +288,7 @@ export const Admin = () => {
             </TableHead>
             <TableBody>
               {levelComplaints.map((complaint) => (
-                <TableRow key={complaint.id}>
+                <TableRow key={`level-${complaint.id}`}>
                   <TableCell>{complaint.level_id}</TableCell>
                   <TableCell>{complaint.reason}</TableCell>
                   <TableCell>{complaint.message}</TableCell>
@@ -318,7 +321,7 @@ export const Admin = () => {
             </TableHead>
             <TableBody>
               {userComplaints.map((complaint) => (
-                <TableRow key={complaint.id}>
+                <TableRow key={`user-${complaint.id}`}>
                   <TableCell>{complaint.user_id}</TableCell>
                   <TableCell>{complaint.reason}</TableCell>
                   <TableCell>{complaint.message}</TableCell>

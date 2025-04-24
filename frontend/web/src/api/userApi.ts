@@ -1,6 +1,5 @@
 import { $authHost } from './axiosApi';
 import { ErrorResponse, PlayerStats, UserInfo } from './models';
-import qs from 'qs';
 
 export const UserApi = {
   getUserInfo: async (): Promise<UserInfo> => {
@@ -31,6 +30,7 @@ export const UserApi = {
   },
 
   writeLevelComplaint: async (data: {
+    author_id:number;
     level_id: number;
     reason: string;
     message: string;
@@ -39,6 +39,7 @@ export const UserApi = {
   },
 
   writeUserComplaint: async (data: {
+    author_id:number;
     user_id: number;
     reason: string;
     message: string;
@@ -53,14 +54,14 @@ export const UserApi = {
 },
 
 getUsersTop: async (params: {
-    category_params: { category: number; pattern: string };
+    category_params: { category: string; pattern: string };
     page_info: { offset: number; page_size: number };
     points: string;
   }): Promise<PlayerStats[]> => {
     
     const { data } = await $authHost.post('/stats/get-users-top', {
       category_params: {
-        category: String.fromCharCode(params.category_params.category), 
+        category: params.category_params.category, 
         pattern: params.category_params.pattern
       },
       page_info: params.page_info,

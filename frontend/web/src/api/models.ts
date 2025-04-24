@@ -18,6 +18,7 @@ export interface LevelBan {
   }
   
   export interface LevelComplaint {
+    id: number;
     author_id: number;
     level_id: number;
     message: string;
@@ -25,6 +26,7 @@ export interface LevelBan {
   }
   
   export interface UserComplaint {
+    id: number;
     author_id: number;
     user_id: number;
     message: string;
@@ -147,4 +149,10 @@ export interface LevelBan {
         Valid: boolean;
     };
     
+  }
+
+  export interface UserSimpleInfo{
+    name: string;
+    access: number;
+    ban_reason: string;
   }

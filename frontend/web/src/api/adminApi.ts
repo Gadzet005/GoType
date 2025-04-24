@@ -7,6 +7,7 @@ import {
   LevelComplaint,
   UserComplaint,
   ErrorResponse,
+  UserSimpleInfo
 } from './models';
 
 export const AdminApi = {
@@ -54,7 +55,7 @@ export const AdminApi = {
     isBanned?: boolean;
     offset: number;
     pageSize: number;
-  }): Promise<any[]> => {
+  }): Promise<UserSimpleInfo[]> => {
     const transformedParams = {
       name: params.name,
       is_banned: params.isBanned,
