@@ -21,18 +21,24 @@ import (
 const (
 	getLevelUserTopPrefix = "GetLevelUserTop::"
 	getLevelStatsPrefix   = "GetLevelStats::"
-	levelUserTopTTL       = time.Duration(2 * time.Minute)
-	levelStatsTTL         = time.Duration(2 * time.Minute)
+	//levelUserTopTTL       = time.Duration(2 * time.Minute)
+	//levelStatsTTL         = time.Duration(2 * time.Minute)
 )
 
 // TODO: Finish sorting
 type LevelPostgres struct {
-	db     *sqlx.DB
-	client *redis.Client
+	db              *sqlx.DB
+	client          *redis.Client
+	levelUserTopTTL int
+	levelStatsTTL   int
 }
 
-func NewLevelPostgres(db *sqlx.DB, client *redis.Client) *LevelPostgres {
-	return &LevelPostgres{db: db, client: client}
+func NewLevelPostgres(db *sqlx.DB, client *redis.Client, levelUserTopTTL, levelStatsTTL int) *LevelPostgres {
+	return &LevelPostgres{db: db, client: client, levelStatsTTL: levelStatsTTL, levelUserTopTTL: levelUserTopTTL}
+}
+
+func NewLevelPostgresMock(db *sqlx.DB, client *redis.Client) *LevelPostgres {
+	return &LevelPostgres{db: db, client: client, levelStatsTTL: 2, levelUserTopTTL: 2}
 }
 
 func (lp *LevelPostgres) CreateLevel(level levels.Level) (string, string, int, error) {
@@ -235,12 +241,13 @@ func (lp *LevelPostgres) FetchLevels(params map[string]interface{}) ([]levels.Le
 	}
 
 	if t := params["level_name"].(string); t != "" {
-		q += ` and levenshtein(l.name,'` + t + `') < char_length(l.name) `
+		q += "AND " + "'" + t + "'" + " %% name "
 	}
 
 	query := fmt.Sprintf(q+`ORDER BY CASE WHEN :sort_param = %s THEN EXTRACT(EPOCH FROM l.creation_time) ELSE l.num_played END %s LIMIT :page_size OFFSET (:page_num - 1) * :page_size;`, levelTable, "'creation_time'", params["sort_order"])
 
 	query = lp.db.Rebind(query)
+	logrus.Printf("Query: %s", query)
 	rows, err := lp.db.NamedQuery(query, params)
 
 	if err != nil {
@@ -349,7 +356,7 @@ func (sp *LevelPostgres) SaveLevelStatsInCache(levelId int, result statistics.Le
 		return errors.New(gotype.ErrInternal)
 	}
 
-	res := sp.client.Set(context.Background(), key, val, levelStatsTTL)
+	res := sp.client.Set(context.Background(), key, val, time.Minute*time.Duration(sp.levelStatsTTL))
 	logrus.Printf("Saving %s to cache. Error: %v", key, res.Err())
 
 	return nil
@@ -405,7 +412,7 @@ func (sp *LevelPostgres) SaveLevelUserTopInCache(levelId int, result []statistic
 		return errors.New(gotype.ErrInternal)
 	}
 
-	res := sp.client.Set(context.Background(), key, val, levelUserTopTTL)
+	res := sp.client.Set(context.Background(), key, val, time.Minute*time.Duration(sp.levelUserTopTTL))
 	logrus.Printf("Saving %s to cache. Error: %v", key, res.Err())
 
 	return nil

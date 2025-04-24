@@ -384,7 +384,7 @@ func TestGetUsers(t *testing.T) {
 		require.NoError(t, err)
 
 		params := user.UserSearchParams{
-			Name:     "Bob",
+			Name:     "",
 			IsBanned: false,
 			PageSize: 10,
 			Offset:   1,

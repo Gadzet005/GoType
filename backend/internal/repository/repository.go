@@ -16,13 +16,13 @@ type Repository struct {
 	Files            repository.Files
 }
 
-func NewRepository(db *sqlx.DB, client *redis.Client) *Repository {
+func NewRepository(db *sqlx.DB, client *redis.Client, levelUserTopTTL, levelStatsTTL, ratingTTL int) *Repository {
 	repo := Repository{
 		Authorization:    NewAuthPostgres(db),
 		UserActions:      NewUserActionsPostgres(db),
 		AdminActions:     NewAdminPostgres(db),
-		Level:            NewLevelPostgres(db, client),
-		Stats:            NewStatsPostgres(db, client),
+		Level:            NewLevelPostgres(db, client, levelUserTopTTL, levelStatsTTL),
+		Stats:            NewStatsPostgres(db, client, ratingTTL),
 		SinglePlayerGame: NewSinglePlayerGamePostgres(db),
 		Files:            NewLocalFileRepository(),
 	}

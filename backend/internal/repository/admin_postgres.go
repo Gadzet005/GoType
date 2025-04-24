@@ -200,14 +200,27 @@ func (s *AdminPostgres) DeleteLevelComplaint(moderatorId int, complaintId int) e
 
 func (s *AdminPostgres) GetUsers(params user.UserSearchParams) ([]user.UserInfo, error) {
 	var users []user.UserInfo
+	logrus.Errorf("LOL")
 
 	query := fmt.Sprintf("SELECT id, name, access, ban_reason FROM %s ", usersTable)
 
 	if params.IsBanned {
 		query += fmt.Sprintf("WHERE ban_expiration > NOW() + INTERVAL '1 second' ")
 	}
+	logrus.Errorf("%v", params)
 
-	query += fmt.Sprintf("ORDER BY levenshtein(name, %s) LIMIT %s OFFSET %s", "'"+params.Name+"'", cast.ToString(params.PageSize), cast.ToString(params.PageSize*(params.Offset-1)))
+	if params.Name != "" {
+		if params.IsBanned {
+			query += "AND '" + params.Name + "'::text %% name::text "
+		} else {
+			query += "WHERE '" + params.Name + "'::text %% name::text "
+		}
+
+		query += fmt.Sprintf(" ORDER BY similarity(name, %s) ", "'"+params.Name+"'")
+	}
+
+	query += fmt.Sprintf(" LIMIT %s OFFSET %s", cast.ToString(params.PageSize), cast.ToString(params.PageSize*(params.Offset-1)))
+
 	logrus.Printf(query)
 	if err := s.db.Select(&users, query); err != nil {
 		logrus.Printf(err.Error())

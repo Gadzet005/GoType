@@ -25,15 +25,19 @@ func TestNewPostgresDB_InvalidConfig(t *testing.T) {
 
 func TestNewRedisDB(t *testing.T) {
 	validCfg := repo.RedisConfig{
-		Host:     redisHost,
-		Port:     redisPort.Port(),
-		Password: "",
+		Host:         redisHost,
+		Port:         redisPort.Port(),
+		Password:     "",
+		Maxmemory:    "512mb",
+		MaxMemPolicy: "allkeys-lru",
 	}
 
 	invalidCfg := repo.RedisConfig{
-		Host:     "invalidhost",
-		Port:     "1234",
-		Password: "wrong",
+		Host:         "invalidhost",
+		Port:         "1234",
+		Password:     "wrong",
+		Maxmemory:    "512mb",
+		MaxMemPolicy: "allkeys-lru",
 	}
 
 	tests := []struct {
@@ -77,6 +81,6 @@ func TestNewRedisDB(t *testing.T) {
 }
 
 func TestNewRepo(t *testing.T) {
-	r := repo.NewRepository(nil, nil)
+	r := repo.NewRepository(nil, nil, 1, 1, 1)
 	assert.NotNil(t, r)
 }

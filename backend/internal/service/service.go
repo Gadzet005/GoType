@@ -14,9 +14,9 @@ type Service struct {
 	SinglePlayerGame services.SinglePlayer
 }
 
-func NewService(repos *repository.Repository) *Service {
+func NewService(repos *repository.Repository, refreshTokenTTL, accessTokenTTL int, signingKey, salt string) *Service {
 	return &Service{
-		Authorization:    NewAuthService(repos.Authorization),
+		Authorization:    NewAuthService(repos.Authorization, refreshTokenTTL, accessTokenTTL, signingKey, salt),
 		UserActions:      NewUserActionsService(repos.UserActions, repos.Files),
 		Admin:            NewAdminService(repos.AdminActions),
 		Level:            NewLevelService(repos.Level, repos.Files),

@@ -8,6 +8,7 @@ import (
 	useraccess "github.com/Gadzet005/GoType/backend/internal/domain/UserAccess"
 	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -387,8 +388,9 @@ func (h *Admin) ProcessLevelComplaint(c *gin.Context) {
 // @Router /admin/get-users [get]
 func (h *Admin) GetUsers(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
-
+	logrus.Errorf("LOLq")
 	if !exists {
+		logrus.Errorf("LOL")
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrAccessToken)
 		return
 	}
@@ -398,6 +400,7 @@ func (h *Admin) GetUsers(c *gin.Context) {
 	err := c.ShouldBindQuery(&input)
 
 	if err != nil {
+		logrus.Printf("ShouldBindQuery err: %v", err)
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
