@@ -61,7 +61,7 @@ export const Rating = () => {
               pattern: filters.pattern
             },
             page_info: {
-              offset: 1 + (page - 1) * PAGE_SIZE,
+              offset: 1 + (page) * PAGE_SIZE,
               page_size: PAGE_SIZE
             },
             points: filters.points
