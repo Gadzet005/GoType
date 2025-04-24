@@ -129,15 +129,6 @@ export interface LevelBan {
     total_pages: number;
   }
 
-  export interface LevelComplaint {
-    id: number;
-    level_id: number;
-    author_id: number;
-    reason: string;
-    message: string;
-    created_at: string;
-  }
-
   export interface UserInfo {
     id: number;
     username: string;
@@ -152,6 +143,7 @@ export interface LevelBan {
   }
 
   export interface UserSimpleInfo{
+    id:number,
     name: string;
     access: number;
     ban_reason: string;

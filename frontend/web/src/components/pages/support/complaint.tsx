@@ -22,8 +22,8 @@ import { RoutePath } from '@/config/routes/path';
 type ComplaintType = 'user' | 'level';
 
 const reasonsMap = {
-  user: ['Читерство', 'Нарушение цензуры', 'Нарушение авторского права'],
-  level: ['Нарушение цензуры', 'Нарушение авторского права']
+  user: ['Cheating', 'Offencive nickname', 'Unsportsmanlike conduct'],
+  level: ['Offencive name', 'Offencive video', 'Offencive audio', 'Offencive text']
 };
 
 export const Complaint = () => {

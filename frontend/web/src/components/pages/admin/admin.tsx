@@ -94,16 +94,23 @@ export const Admin = () => {
         case 'users':
           const usersData = await AdminApi.getUsers(searchParams);
           console.log(usersData);
-          setUsers(usersData);
+          
+          const processedUsers = usersData.map((user, index) => ({
+            ...user,
+            id: index,
+          }));
+          setUsers(processedUsers);
           console.log(users);
           break;
         case 'level-complaints':
-          const levelComplaintsData = await AdminApi.getLevelComplaints();
-          setLevelComplaints(levelComplaintsData.level_complaints);
+          const levelComplaintsData = await AdminApi.getLevelComplaints() ;
+          console.log(levelComplaintsData);
+          setLevelComplaints(levelComplaintsData);
           break;
         case 'user-complaints':
           const userComplaintsData = await AdminApi.getUserComplaints();
-          setUserComplaints(userComplaintsData);
+          console.log(userComplaintsData);
+          setUserComplaints(userComplaintsData || []);
           break;
       }
     } catch (err: any) {

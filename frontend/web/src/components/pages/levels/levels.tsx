@@ -244,6 +244,11 @@ export const Levels = () => {
                         size="small"
                       />
                       <Chip
+                        label={`Id: ${level.id}`}
+                        color="primary"
+                        size="small"
+                      />
+                      <Chip
                         label={level.language.toUpperCase()}
                         variant="outlined"
                         size="small"

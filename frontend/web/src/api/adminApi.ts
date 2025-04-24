@@ -31,14 +31,14 @@ export const AdminApi = {
     await $authHost.post('/admin/change-user-access', data);
   },
 
-  getLevelComplaints: async (): Promise<{ level_complaints: LevelComplaint[] }> => {
+  getLevelComplaints: async (): Promise<LevelComplaint[]> => {
     const { data } = await $authHost.get('/admin/get-level-complaints');
-    return data;
+    return data.level_complaints || [];
   },
 
   getUserComplaints: async (): Promise<UserComplaint[]> => {
     const { data } = await $authHost.get('/admin/get-user-complaints');
-    return data.user_complaints;
+    return data.user_complaints || [];
   },
 
   processLevelComplaint: async (data: ComplaintID): Promise<void> => {
