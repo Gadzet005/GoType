@@ -1,10 +1,10 @@
 package handler
 
 import (
-	gotype "github.com/Gadzet005/GoType/backend"
 	_ "github.com/Gadzet005/GoType/backend/docs"
 	interfaces "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Handlers"
 	"github.com/Gadzet005/GoType/backend/internal/service"
+	"github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"

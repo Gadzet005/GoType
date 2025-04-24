@@ -2,10 +2,10 @@ package repository_test
 
 import (
 	"fmt"
-	gotype "github.com/Gadzet005/GoType/backend"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	"github.com/Gadzet005/GoType/backend/internal/repository"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"

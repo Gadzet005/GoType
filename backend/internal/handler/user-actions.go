@@ -2,10 +2,10 @@ package handler
 
 import (
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
 	service "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Services"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"

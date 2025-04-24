@@ -1,9 +1,9 @@
 package handler
 
 import (
-	gotype "github.com/Gadzet005/GoType/backend"
 	service "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Services"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

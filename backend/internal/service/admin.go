@@ -2,12 +2,12 @@ package service
 
 import (
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	bans "github.com/Gadzet005/GoType/backend/internal/domain/Bans"
 	complaints "github.com/Gadzet005/GoType/backend/internal/domain/Complaints"
 	repository "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Repositories"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	useraccess "github.com/Gadzet005/GoType/backend/internal/domain/UserAccess"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"time"
 )
 

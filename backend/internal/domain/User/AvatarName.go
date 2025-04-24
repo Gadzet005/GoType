@@ -2,7 +2,7 @@ package domain
 
 import (
 	"fmt"
-	gotype "github.com/Gadzet005/GoType/backend"
+	"github.com/Gadzet005/GoType/backend/pkg"
 )
 
 func GenerateAvatarName(userID int) string {

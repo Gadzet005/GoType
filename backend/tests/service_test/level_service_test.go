@@ -7,6 +7,7 @@ import (
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
 	service2 "github.com/Gadzet005/GoType/backend/internal/service"
+	"github.com/Gadzet005/GoType/backend/pkg"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/repository_mocks"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -235,7 +236,7 @@ func TestCheckLevelExists(t *testing.T) {
 			mockPath:     "/non/existing/path.zip",
 			mockErr:      nil,
 			expectedPath: "",
-			expectedErr:  errors.New(gotype.ErrEntityNotFound),
+			expectedErr:  errors.New(pkg.ErrEntityNotFound),
 			setupFile:    false,
 		},
 	}
@@ -474,7 +475,7 @@ func TestCreateLevel(t *testing.T) {
 			previewFile:       &multipart.FileHeader{Filename: "preview.png"},
 			mockErr:           nil,
 			mockCreateErr:     nil,
-			expectedErr:       errors.New(gotype.ErrInvalidInput),
+			expectedErr:       errors.New(pkg.ErrInvalidInput),
 			expectedId:        -1,
 			doCallCreateLevel: false,
 		},
@@ -488,8 +489,8 @@ func TestCreateLevel(t *testing.T) {
 				Language: "Go",
 				Type:     "Puzzle",
 			},
-			mockErr:           errors.New(gotype.ErrPermissionDenied),
-			expectedErr:       errors.New(gotype.ErrPermissionDenied),
+			mockErr:           errors.New(pkg.ErrPermissionDenied),
+			expectedErr:       errors.New(pkg.ErrPermissionDenied),
 			expectedId:        -1,
 			doCallCreateLevel: false,
 		},
@@ -512,7 +513,7 @@ func TestCreateLevel(t *testing.T) {
 			},
 			mockErr:           nil,
 			mockCreateErr:     nil,
-			expectedErr:       errors.New(gotype.ErrInvalidInput),
+			expectedErr:       errors.New(pkg.ErrInvalidInput),
 			expectedId:        -1,
 			doCallCreateLevel: false,
 		},
@@ -535,7 +536,7 @@ func TestCreateLevel(t *testing.T) {
 			},
 			mockErr:           nil,
 			mockCreateErr:     nil,
-			expectedErr:       errors.New(gotype.ErrInvalidInput),
+			expectedErr:       errors.New(pkg.ErrInvalidInput),
 			expectedId:        -1,
 			doCallCreateLevel: false,
 		},
@@ -556,9 +557,9 @@ func TestCreateLevel(t *testing.T) {
 				Difficulty:  5,
 				ImageType:   "jpg",
 			},
-			mockErr:           errors.New(gotype.ErrInternal),
+			mockErr:           errors.New(pkg.ErrInternal),
 			mockCreateErr:     errors.New("db error"),
-			expectedErr:       errors.New(gotype.ErrInternal),
+			expectedErr:       errors.New(pkg.ErrInternal),
 			expectedId:        -1,
 			doCallCreateLevel: true,
 		},
@@ -586,9 +587,9 @@ func TestCreateLevel(t *testing.T) {
 			},
 			mockCreateErr:     nil,
 			mockErr:           nil,
-			expectedErr:       errors.New(gotype.ErrInternal),
+			expectedErr:       errors.New(pkg.ErrInternal),
 			expectedId:        -1,
-			saveLevelErr:      errors.New(gotype.ErrInternal),
+			saveLevelErr:      errors.New(pkg.ErrInternal),
 			doCallCreateLevel: true,
 			doSaveLevel:       true,
 		},
@@ -616,12 +617,12 @@ func TestCreateLevel(t *testing.T) {
 			},
 			mockCreateErr:     nil,
 			mockErr:           nil,
-			expectedErr:       errors.New(gotype.ErrInternal),
+			expectedErr:       errors.New(pkg.ErrInternal),
 			expectedId:        -1,
 			doCallCreateLevel: true,
 			doSaveLevel:       true,
 			doSavePreview:     true,
-			savePrevErr:       errors.New(gotype.ErrInternal),
+			savePrevErr:       errors.New(pkg.ErrInternal),
 		},
 	}
 
@@ -721,7 +722,7 @@ func TestUpdateLevel(t *testing.T) {
 			infoFile:    createMultipartFile(t, "info.json", []byte("invalid")),
 			levelFile:   levelFile,
 			previewFile: previewFile,
-			expectedErr: errors.New(gotype.ErrInvalidInput),
+			expectedErr: errors.New(pkg.ErrInvalidInput),
 			expectedId:  -1,
 		},
 		"unauthorized": {
@@ -734,7 +735,7 @@ func TestUpdateLevel(t *testing.T) {
 				Author: 1,
 			},
 			mockGetPathsErr: nil,
-			expectedErr:     errors.New(gotype.ErrPermissionDenied),
+			expectedErr:     errors.New(pkg.ErrPermissionDenied),
 			expectedId:      -1,
 			setupMocks: func() {
 				mockRepo.On("GetPathsById", 42).Return(1, "", "old/path.zip", nil).Once()
@@ -757,14 +758,14 @@ func TestUpdateLevel(t *testing.T) {
 			infoFile:     infoFile,
 			levelFile:    levelFile,
 			previewFile:  previewFile,
-			saveLevelErr: errors.New(gotype.ErrInternal),
-			expectedErr:  errors.New(gotype.ErrInternal),
+			saveLevelErr: errors.New(pkg.ErrInternal),
+			expectedErr:  errors.New(pkg.ErrInternal),
 			expectedId:   -1,
 			setupMocks: func() {
 				mockRepo.On("GetPathsById", 42).Return(1, "", "old/path.zip", nil).Once()
 				mockRepo.On("UpdateLevel", mock.Anything).Return("level_new.zip", "preview_new.jpg", 42, nil).Once()
 				mockFileStorage.On("DeleteFile", "old/path.zip").Return(nil).Once()
-				mockFileStorage.On("SaveFile", levelFile, gotype.LevelDirName+"/level_new.zip").Return(errors.New(gotype.ErrInternal)).Once()
+				mockFileStorage.On("SaveFile", levelFile, gotype.LevelDirName+"/level_new.zip").Return(errors.New(pkg.ErrInternal)).Once()
 				mockRepo.On("DeleteLevel", 42).Return(nil).Once()
 				mockFileStorage.On("DeleteFile", gotype.PreviewDirName+"/preview_new.jpg").Return(nil).Once()
 			},
@@ -774,8 +775,8 @@ func TestUpdateLevel(t *testing.T) {
 			infoFile:       infoFile,
 			levelFile:      levelFile,
 			previewFile:    previewFile,
-			savePreviewErr: errors.New(gotype.ErrInternal),
-			expectedErr:    errors.New(gotype.ErrInternal),
+			savePreviewErr: errors.New(pkg.ErrInternal),
+			expectedErr:    errors.New(pkg.ErrInternal),
 			expectedId:     -1,
 			setupMocks: func() {
 				mockRepo.On("GetPathsById", 42).Return(1, "", "old/path.zip", nil).Once()
@@ -783,7 +784,7 @@ func TestUpdateLevel(t *testing.T) {
 				mockFileStorage.On("DeleteFile", "old/path.zip").Return(nil).Once()
 				mockFileStorage.On("SaveFile", levelFile, gotype.LevelDirName+"/level_new.zip").Return(nil).Once()
 				mockFileStorage.On("DeleteFile", gotype.PreviewDirName+"/preview_new.jpg").Return(nil).Once()
-				mockFileStorage.On("SaveFile", previewFile, gotype.PreviewDirName+"/preview_new.jpg").Return(errors.New(gotype.ErrInternal)).Once()
+				mockFileStorage.On("SaveFile", previewFile, gotype.PreviewDirName+"/preview_new.jpg").Return(errors.New(pkg.ErrInternal)).Once()
 				mockRepo.On("DeleteLevel", 42).Return(nil).Once()
 				mockFileStorage.On("DeleteFile", gotype.LevelDirName+"/level_new.zip").Return(nil).Once()
 			},
@@ -797,7 +798,7 @@ func TestUpdateLevel(t *testing.T) {
 				Id:     42,
 				Author: 2,
 			},
-			expectedErr: errors.New(gotype.ErrPermissionDenied),
+			expectedErr: errors.New(pkg.ErrPermissionDenied),
 			expectedId:  -1,
 			setupMocks: func() {
 				mockRepo.On("GetPathsById", 42).Return(1, "", "old/path.zip", nil).Once()
@@ -809,7 +810,7 @@ func TestUpdateLevel(t *testing.T) {
 			infoFile:    infoFile,
 			levelFile:   levelFile,
 			previewFile: previewFile,
-			expectedErr: errors.New(gotype.ErrInternal),
+			expectedErr: errors.New(pkg.ErrInternal),
 			expectedId:  -1,
 			setupMocks: func() {
 				mockRepo.On("GetPathsById", 42).Return(1, "", "old/path.zip", nil).Once()
@@ -823,7 +824,7 @@ func TestUpdateLevel(t *testing.T) {
 			infoFile:    infoFile,
 			levelFile:   levelFile,
 			previewFile: previewFile,
-			expectedErr: errors.New(gotype.ErrInternal),
+			expectedErr: errors.New(pkg.ErrInternal),
 			expectedId:  -1,
 			setupMocks: func() {
 				mockRepo.On("GetPathsById", 42).Return(1, "", "old/path.zip", nil).Once()

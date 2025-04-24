@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	repository "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Repositories"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/spf13/cast"
 	"time"
 )

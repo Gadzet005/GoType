@@ -1,11 +1,11 @@
 package repository_test
 
 import (
-	gotype "github.com/Gadzet005/GoType/backend"
 	levels "github.com/Gadzet005/GoType/backend/internal/domain/Level"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	"github.com/Gadzet005/GoType/backend/internal/repository"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"

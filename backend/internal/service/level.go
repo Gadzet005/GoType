@@ -3,11 +3,11 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	"github.com/Gadzet005/GoType/backend/internal/domain"
 	repository "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Repositories"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
+	pkg "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"
 	"io"
@@ -29,39 +29,39 @@ func (s *LevelService) CreateLevel(userId int, levelFile, infoFile, previewFile 
 	defer jsonFile.Close()
 	fileBytes, err := io.ReadAll(jsonFile)
 	if err != nil {
-		return -1, errors.New(gotype.ErrInternal)
+		return -1, errors.New(pkg.ErrInternal)
 	}
 
 	var levelInfo level.Level
 	if err := json.Unmarshal(fileBytes, &levelInfo); err != nil {
-		return -1, errors.New(gotype.ErrInvalidInput)
+		return -1, errors.New(pkg.ErrInvalidInput)
 	}
 
 	if userId != levelInfo.Author {
-		return -1, errors.New(gotype.ErrPermissionDenied)
+		return -1, errors.New(pkg.ErrPermissionDenied)
 	}
 
 	if slices.Index(level.AvailableLanguages, levelInfo.Language) == -1 ||
 		slices.Index(level.AvailableTypes, levelInfo.Type) == -1 {
-		return -1, errors.New(gotype.ErrInvalidInput)
+		return -1, errors.New(pkg.ErrInvalidInput)
 	}
 
 	previewName, archiveName, id, err := s.repo.CreateLevel(levelInfo)
 	if err != nil {
-		return -1, errors.New(gotype.ErrInternal)
+		return -1, errors.New(pkg.ErrInternal)
 	}
 
 	levelFile.Filename = archiveName
-	if err := s.fileStorage.SaveFile(levelFile, gotype.LevelDirName+"/"+levelFile.Filename); err != nil {
+	if err := s.fileStorage.SaveFile(levelFile, pkg.LevelDirName+"/"+levelFile.Filename); err != nil {
 		_ = s.DeleteLevel(levelInfo.Id)
-		return -1, errors.New(gotype.ErrInternal)
+		return -1, errors.New(pkg.ErrInternal)
 	}
 
 	previewFile.Filename = previewName
-	if err := s.fileStorage.SaveFile(previewFile, gotype.PreviewDirName+"/"+previewFile.Filename); err != nil {
+	if err := s.fileStorage.SaveFile(previewFile, pkg.PreviewDirName+"/"+previewFile.Filename); err != nil {
 		_ = s.DeleteLevel(levelInfo.Id)
-		_ = s.fileStorage.DeleteFile(gotype.LevelDirName + "/" + levelFile.Filename)
-		return -1, errors.New(gotype.ErrInternal)
+		_ = s.fileStorage.DeleteFile(pkg.LevelDirName + "/" + levelFile.Filename)
+		return -1, errors.New(pkg.ErrInternal)
 	}
 
 	return id, nil
@@ -74,12 +74,12 @@ func (s *LevelService) UpdateLevel(userId int, levelFile, infoFile, previewFile 
 	fileBytes, err := io.ReadAll(jsonFile)
 	if err != nil {
 		logrus.Printf("Error reading json: %v", err)
-		return -1, errors.New(gotype.ErrInternal)
+		return -1, errors.New(pkg.ErrInternal)
 	}
 
 	var levelInfo level.LevelUpdateStruct
 	if err := json.Unmarshal(fileBytes, &levelInfo); err != nil {
-		return -1, errors.New(gotype.ErrInvalidInput)
+		return -1, errors.New(pkg.ErrInvalidInput)
 	}
 
 	realAuthorId, _, oldArchivePath, err := s.repo.GetPathsById(levelInfo.Id)
@@ -89,7 +89,7 @@ func (s *LevelService) UpdateLevel(userId int, levelFile, infoFile, previewFile 
 	}
 
 	if realAuthorId != userId || realAuthorId != levelInfo.Author {
-		return -1, errors.New(gotype.ErrPermissionDenied)
+		return -1, errors.New(pkg.ErrPermissionDenied)
 	}
 
 	newArchiveName, previewName, _, err := s.repo.UpdateLevel(levelInfo)
@@ -100,26 +100,26 @@ func (s *LevelService) UpdateLevel(userId int, levelFile, infoFile, previewFile 
 
 	if err := s.fileStorage.DeleteFile(oldArchivePath); err != nil {
 		logrus.Printf("Failed to remove old archive: %v", err)
-		return -1, errors.New(gotype.ErrInternal)
+		return -1, errors.New(pkg.ErrInternal)
 	}
 
 	levelFile.Filename = newArchiveName
-	if err := s.fileStorage.SaveFile(levelFile, gotype.LevelDirName+"/"+levelFile.Filename); err != nil {
+	if err := s.fileStorage.SaveFile(levelFile, pkg.LevelDirName+"/"+levelFile.Filename); err != nil {
 		_ = s.DeleteLevel(levelInfo.Id)
-		_ = s.fileStorage.DeleteFile(gotype.PreviewDirName + "/" + previewName)
-		return -1, errors.New(gotype.ErrInternal)
+		_ = s.fileStorage.DeleteFile(pkg.PreviewDirName + "/" + previewName)
+		return -1, errors.New(pkg.ErrInternal)
 	}
 
-	if err := s.fileStorage.DeleteFile(gotype.PreviewDirName + "/" + previewName); err != nil {
+	if err := s.fileStorage.DeleteFile(pkg.PreviewDirName + "/" + previewName); err != nil {
 		logrus.Printf("Failed to delete preview: %v", err)
-		return -1, errors.New(gotype.ErrInternal)
+		return -1, errors.New(pkg.ErrInternal)
 	}
 
 	previewFile.Filename = previewName
-	if err := s.fileStorage.SaveFile(previewFile, gotype.PreviewDirName+"/"+previewFile.Filename); err != nil {
+	if err := s.fileStorage.SaveFile(previewFile, pkg.PreviewDirName+"/"+previewFile.Filename); err != nil {
 		_ = s.DeleteLevel(levelInfo.Id)
-		_ = s.fileStorage.DeleteFile(gotype.LevelDirName + "/" + levelFile.Filename)
-		return -1, errors.New(gotype.ErrInternal)
+		_ = s.fileStorage.DeleteFile(pkg.LevelDirName + "/" + levelFile.Filename)
+		return -1, errors.New(pkg.ErrInternal)
 	}
 
 	return levelInfo.Id, nil
@@ -207,7 +207,7 @@ func (s *LevelService) CheckLevelExists(levId int) (string, error) {
 
 	_, err = os.Open(filePath)
 	if err != nil {
-		return "", errors.New(gotype.ErrEntityNotFound)
+		return "", errors.New(pkg.ErrEntityNotFound)
 	}
 
 	return filePath, nil

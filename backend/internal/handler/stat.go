@@ -1,9 +1,9 @@
 package handler
 
 import (
-	gotype "github.com/Gadzet005/GoType/backend"
 	service "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Services"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"

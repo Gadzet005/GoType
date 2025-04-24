@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	gotype "github.com/Gadzet005/GoType/backend"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
 	service2 "github.com/Gadzet005/GoType/backend/internal/service"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/repository_mocks"
 	"github.com/stretchr/testify/mock"
 	"testing"

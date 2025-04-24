@@ -3,9 +3,9 @@ package service_test
 import (
 	"errors"
 	"fmt"
-	gotype "github.com/Gadzet005/GoType/backend"
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	service2 "github.com/Gadzet005/GoType/backend/internal/service"
+	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/repository_mocks"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
