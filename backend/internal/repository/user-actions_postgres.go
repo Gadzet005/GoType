@@ -47,7 +47,6 @@ func (s *UserActionsPostgres) GetUserById(id int) (string, int, time.Time, strin
 	row := s.db.QueryRow(query, id)
 
 	if err := row.Scan(&name, &access, &banTime, &banReason, &avatarPath); err != nil {
-		logrus.Fatalf("Error getting user by id: %s", err.Error())
 		if errors.Is(err, sql.ErrNoRows) {
 			return "", -1, banTime, banReason, sql.NullString{String: ""}, errors.New(gotype.ErrUserNotFound)
 		}

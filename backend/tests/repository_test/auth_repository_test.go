@@ -27,7 +27,7 @@ func TestCreateSeniorAdminRepository(t *testing.T) {
 		},
 		{
 			name:        "Duplicate senior admin",
-			adminName:   "SuperAdmin1", // дублируем имя
+			adminName:   "SuperAdmin1",
 			password:    "anotherPass",
 			expectError: true,
 		},

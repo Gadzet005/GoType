@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/docker/go-connections/nat"
 	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
@@ -19,6 +20,7 @@ var (
 	redisHost      string
 	redisPort      nat.Port
 	redisContainer testcontainers.Container
+	redisClient    *redis.Client
 )
 
 func TestMain(m *testing.M) {
@@ -156,7 +158,7 @@ func TestMain(m *testing.M) {
                                 given_to int DEFAULT -1,
                                 reason varchar(32) NOT NULL,
                                 message text
-);`)
+					);`)
 
 	if err != nil {
 		log.Fatalf("failed to create table: %v", err)
@@ -221,6 +223,14 @@ CREATE INDEX LevelCompleteOnLevelId ON LevelComplete (level_id);`)
 	redisP, _ := redisContainer.MappedPort(context.Background(), "6379")
 	redisHost = redisH
 	redisPort = redisP
+
+	redisClient = redis.NewClient(&redis.Options{
+		Addr: fmt.Sprintf("%s:%s", redisHost, redisPort.Port()),
+		DB:   0,
+	})
+	if err := redisClient.Ping(context.Background()).Err(); err != nil {
+		log.Fatalf("failed to ping Redis: %v", err)
+	}
 
 	code := m.Run()
 

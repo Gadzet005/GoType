@@ -42,7 +42,6 @@ func (_m *Stats) GetUserStats(id int) (domain.PlayerStats, error) {
 	return r0, r1
 }
 
-
 // GetUsersTop provides a mock function with given fields: params
 func (_m *Stats) GetUsersTop(params domain.StatSortFilterParams) ([]domain.PlayerStats, error) {
 	ret := _m.Called(params)
@@ -74,7 +73,6 @@ func (_m *Stats) GetUsersTop(params domain.StatSortFilterParams) ([]domain.Playe
 
 	return r0, r1
 }
-
 
 // NewStats creates a new instance of Stats. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.

@@ -5,7 +5,7 @@ type LevelStats struct {
 	AverageAccuracy        float32 `json:"average_acc" db:"average_acc"`
 	MaxCombo               int     `json:"max_combo" db:"max_combo"`
 	MaxPoints              int     `json:"max_points" db:"max_points"`
-	AveragePoints          int     `json:"average_points" db:"average_points"`
-	AverageAverageVelocity int     `json:"average_average_velocity" db:"average_average_velocity"`
-	MaxAverageVelocity     int     `json:"max_average_velocity" db:"max_average_velocity"`
+	AveragePoints          float64 `json:"average_points" db:"average_points"`
+	AverageAverageVelocity float64 `json:"average_average_velocity" db:"average_average_velocity"`
+	MaxAverageVelocity     float64 `json:"max_average_velocity" db:"max_average_velocity"`
 }

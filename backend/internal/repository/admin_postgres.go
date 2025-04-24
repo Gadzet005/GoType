@@ -108,7 +108,7 @@ func (s *AdminPostgres) UnbanLevel(levelId int) error {
 
 func (s *AdminPostgres) ChangeUserAccess(userId int, newAccess int) error {
 	var retId int
-	query := fmt.Sprintf("UPDATE %s SET access = $1 WHERE id = $3 RETURNING id", usersTable)
+	query := fmt.Sprintf("UPDATE %s SET access = $1 WHERE id = $2 RETURNING id", usersTable)
 
 	row := s.db.QueryRow(query, newAccess, userId)
 	if err := row.Scan(&retId); err != nil {
@@ -136,7 +136,7 @@ func (s *AdminPostgres) GetUserComplaints(moderatorId int) ([]complaints.UserCom
 	query = fmt.Sprintf("SELECT * FROM %s WHERE given_to = %s", userComplaintsTable, cast.ToString(moderatorId))
 	if err := s.db.Select(&ret, query); err != nil {
 		logrus.Printf(err.Error())
-		return nil, errors.New(gotype.ErrInternal)
+		return nil, errors.New(gotype.ErrEntityNotFound)
 	}
 
 	return ret, nil
@@ -156,7 +156,7 @@ func (s *AdminPostgres) GetLevelComplaints(moderatorId int) ([]complaints.LevelC
 	query = fmt.Sprintf("SELECT * FROM %s WHERE given_to = %s", levelComplaintsTable, cast.ToString(moderatorId))
 	if err := s.db.Select(&ret, query); err != nil {
 		logrus.Printf(err.Error())
-		return nil, errors.New(gotype.ErrInternal)
+		return nil, errors.New(gotype.ErrEntityNotFound)
 	}
 
 	return ret, nil
