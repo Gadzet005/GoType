@@ -5,7 +5,7 @@ import "time"
 var LevelComplaintReasons = [...]string{"Offencive name", "Offencive video", "Offencive audio", "Offencive text"}
 
 type LevelComplaint struct {
-	Id           int       `json:"-" db:"id"`
+	Id           int       `json:"id" db:"id" binding:"omitempty"`
 	LevelId      int       `json:"level_id" binding:"required" db:"level_id" example:"2"`
 	AuthorId     int       `json:"author_id" binding:"required"  db:"author" example:"4"`
 	CreationTime time.Time `json:"-" db:"time"`
