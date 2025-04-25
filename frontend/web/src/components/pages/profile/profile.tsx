@@ -347,7 +347,7 @@ export const Profile = () => {
                       stats.average_delay !== 1000 && (
                         <StatChip
                           label="Средняя задержка"
-                          value={`${stats.average_delay.toFixed(3)} мс`}
+                          value={`${(stats.average_delay  ).toFixed(3)} сек`}
                         />
                       )}
                   </Stack>
