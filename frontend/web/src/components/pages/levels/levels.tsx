@@ -122,8 +122,8 @@ export const Levels = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Typography variant="h2" gutterBottom>
-        Все уровни
+      <Typography variant="h3" gutterBottom>
+        Список уровней
       </Typography>
 
       <Box
