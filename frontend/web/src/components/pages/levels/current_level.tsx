@@ -146,7 +146,7 @@ export const Level: React.FC = () => {
             {levelInfo.levelInfo.description || "Описание отсутствует"}
           </Typography>
 
-          <Typography variant="h6">Теги:</Typography>
+          <Typography variant="h6">Теги</Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
             {levelInfo.levelInfo.tags?.map((tag) => (
               <Chip key={tag} label={tag} size="small" />
@@ -215,7 +215,7 @@ export const Level: React.FC = () => {
                   <TableHead>
                     <TableRow>
                       <TableCell>Игрок</TableCell>
-                      <TableCell>Id игрока</TableCell>
+                      <TableCell align="center">Id</TableCell>
                       <TableCell align="right">Очки</TableCell>
                       <TableCell align="right">Точность</TableCell>
                       <TableCell align="right">Скорость</TableCell>
@@ -226,7 +226,7 @@ export const Level: React.FC = () => {
                     {levelInfo.levelUserTop.map((user, index) => (
                       <TableRow key={`${user.player_id}-${index}`}>
                         <TableCell>{user.player_name}</TableCell>
-                        <TableCell align="right">{user.player_id}</TableCell>
+                        <TableCell align="center">{user.player_id}</TableCell>
                         <TableCell align="right">{user.points}</TableCell>
                         <TableCell align="right">
                           {(user.accuracy * 100).toFixed(1)}%
