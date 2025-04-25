@@ -1,3 +1,11 @@
 export const Logo = () => {
-    return <img width={100} src={"favicon.png"} alt="Image" />;
+    const version = Date.now();
+
+  return (
+    <img 
+      width={100} 
+      src={`/favicon.png?v=${version}`} 
+      alt="Logo" 
+    />
+  );
  }
