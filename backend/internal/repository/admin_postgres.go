@@ -211,9 +211,9 @@ func (s *AdminPostgres) GetUsers(params user.UserSearchParams) ([]user.UserInfo,
 
 	if params.Name != "" {
 		if params.IsBanned {
-			query += "AND '" + params.Name + "'::text %% name::text "
+			query += "AND '" + params.Name + "'::text % name::text "
 		} else {
-			query += "WHERE '" + params.Name + "'::text %% name::text "
+			query += "WHERE '" + params.Name + "'::text % name::text "
 		}
 
 		query += fmt.Sprintf(" ORDER BY similarity(name, %s) ", "'"+params.Name+"'")

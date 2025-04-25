@@ -31,6 +31,7 @@ func NewSinglePlayer(service service.SinglePlayer) *SinglePlayer {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /single-game/send-results [POST]
+// @Security BearerAuth
 func (h *SinglePlayer) SendResults(c *gin.Context) {
 	var inputJSON statistics.LevelCompleteJSON
 	userId, ok := c.Get(userIdCtx)
@@ -44,8 +45,9 @@ func (h *SinglePlayer) SendResults(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
-
+	logrus.Printf("inputJSON: %v", inputJSON)
 	var input = ConvertLevelCompleteJSONToLevelComplete(inputJSON)
+	logrus.Printf("input: %v", input)
 
 	err := h.service.SendResults(userId.(int), input)
 

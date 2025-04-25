@@ -8,16 +8,12 @@ import (
 	user "github.com/Gadzet005/GoType/backend/internal/domain/User"
 	gotype "github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/sirupsen/logrus"
 	"math/rand"
 	"time"
 )
 
-// TODO: Move to .env
 const (
-	//salt              = "pqlpwisd5786vhdf27675da"
-	//signingKey        = "wiu8s7]df9s&di9230s#s894w90g2092v[d"
-	//refreshTokenTTL   = time.Hour * 720  //1 month
-	//accessTokenTTL    = time.Minute * 15 //15 min
 	letterRunes       = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#&!?&"
 	maxNameLength     = 20
 	maxPasswordLength = 20
@@ -125,14 +121,14 @@ func (s *AuthService) GenerateTokenByToken(accessToken, refreshToken string) (st
 		return "", "", err
 	}
 
-	if curUser.RefreshToken != refreshToken {
+	if curUser.RefreshToken != refreshToken || curUser.ExpiresAt.Before(time.Now().UTC()) {
 		return "", "", errors.New(gotype.ErrRefreshToken)
 	}
 
 	newRefreshToken := s.NewRefreshToken()
 
 	expiresAt := time.Now().UTC().Add(time.Duration(s.refreshTokenTTL) * time.Hour)
-
+	logrus.Printf("%v", expiresAt)
 	retId, retAccess, newRefreshToken, err := s.repo.SetUserRefreshToken(curUser.Id, newRefreshToken, expiresAt)
 
 	if err != nil {

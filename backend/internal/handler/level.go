@@ -34,6 +34,7 @@ func NewLevel(service service.Level) *Level {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /level/create-level [post]
+// @Security BearerAuth
 func (h *Level) CreateLevel(c *gin.Context) {
 	err := c.Request.ParseMultipartForm(1)
 	if err != nil {
@@ -90,6 +91,7 @@ func (h *Level) CreateLevel(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /level/download-level [get]
+// @Security BearerAuth
 func (h *Level) GetLevel(c *gin.Context) {
 	var levelId int
 
@@ -109,7 +111,6 @@ func (h *Level) GetLevel(c *gin.Context) {
 
 	parts := strings.Split(filePath, "/")
 	c.FileAttachment(filePath, parts[len(parts)-1])
-	c.Status(http.StatusOK)
 	return
 }
 
@@ -126,6 +127,7 @@ func (h *Level) GetLevel(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /level/get-level-info [get]
+// @Security BearerAuth
 func (h *Level) GetLevelInfoById(c *gin.Context) {
 	var levId int
 
@@ -179,6 +181,7 @@ func (h *Level) GetLevelInfoById(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /level/update-level [put]
+// @Security BearerAuth
 func (h *Level) UpdateLevel(c *gin.Context) {
 	levelFile, err := c.FormFile("level")
 	if err != nil {

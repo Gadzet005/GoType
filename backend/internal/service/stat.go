@@ -1,10 +1,10 @@
 package service
 
 import (
-	"fmt"
 	"github.com/Gadzet005/GoType/backend/internal/domain"
 	repository "github.com/Gadzet005/GoType/backend/internal/domain/Interfaces/Repositories"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"slices"
 )
@@ -30,9 +30,7 @@ func (s *StatsService) GetUserStats(id int) (statistics.PlayerStats, error) {
 func (s *StatsService) GetUsersTop(params statistics.StatSortFilterParams) ([]statistics.PlayerStats, error) {
 	sortOrder, sortParam, sortIndex := "desc", "sum_points", -1
 
-	fmt.Printf("%v", params)
-
-	if sortIndex = slices.Index(statistics.AvailableClasses, params.CategoryParams.Category); sortIndex != -1 {
+	if sortIndex = slices.Index(statistics.AvailableClasses, params.CategoryParams.Category) + 1; sortIndex != -1 {
 		if slices.Index(domain.SortingValues, params.CategoryParams.Pattern) != -1 {
 			sortOrder = params.CategoryParams.Pattern
 		}
@@ -54,7 +52,7 @@ func (s *StatsService) GetUsersTop(params statistics.StatSortFilterParams) ([]st
 		"page_size":  params.PageInfo.PageSize,
 		"page_num":   params.PageInfo.Offset,
 	}
-
+	logrus.Printf("%v", finalParams)
 	playerStats, err := s.repo.GetUsersTop(finalParams)
 
 	if err != nil {

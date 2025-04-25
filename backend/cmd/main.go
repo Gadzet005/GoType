@@ -23,13 +23,13 @@ const (
 )
 
 // @title GoType App API
-// @version 0.0.1
+// @version 1.0.0
 // @description API Server for GoType game and website
 
-// @host localhost:8000
+// @host localhost:8080
 // @BasePath/
 
-// @securityDefinitions.apikey ApiKeyAuth
+// @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
 
