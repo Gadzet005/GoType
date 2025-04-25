@@ -26,11 +26,9 @@ export const LevelApi = {
   },
 
   downloadLevel: async (id: number): Promise<Blob> => {
-    const response = await $authHost.post(
-      '/level/download-level',
-      { id },
-      { responseType: 'blob' }
-    );
+    const response = await $authHost.get(`/level/download-level/${id}`, {
+        responseType: 'blob',
+      });
     return response.data;
   },
 
