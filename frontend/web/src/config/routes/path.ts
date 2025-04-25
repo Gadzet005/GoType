@@ -12,5 +12,5 @@ export enum RoutePath {
     complaint = "/support/complaint",
     faq = "/support/faq",
     agreement = "/support/agreement",
-    
 }
+

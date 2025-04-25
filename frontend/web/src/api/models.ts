@@ -18,6 +18,7 @@ export interface LevelBan {
   }
   
   export interface LevelComplaint {
+    id: number;
     author_id: number;
     level_id: number;
     message: string;
@@ -25,6 +26,7 @@ export interface LevelBan {
   }
   
   export interface UserComplaint {
+    id: number;
     author_id: number;
     user_id: number;
     message: string;
@@ -42,24 +44,49 @@ export interface LevelBan {
   }
   
   export interface LevelInfo {
-    level_info: {
+    levelInfo: {
       id: number;
+      author_name: string;
       name: string;
       author: number;
-      author_name: string;
       description: string;
-      difficulty: number;
       duration: number;
+      tags: string[] | null;
       language: string;
-      tags: string[];
       type: string;
+      difficulty: number;
       preview_path: string;
+      image_type: string;
     };
+    levelStats: {
+      num_played: number;
+      average_acc: number;
+      max_combo: number;
+      max_points: number;
+      average_points: number;
+      average_average_velocity: number;
+      max_average_velocity: number;
+    };
+    levelUserTop: Array<{
+      level_id: number;
+      player_id: number;
+      player_name: string;
+      num_press_err_by_char: null | number[];
+      accuracy: number;
+      average_velocity: number;
+      max_combo: number;
+      placement: number;
+      points: number;
+    }>;
   }
   
   export interface PlayerStats {
     user_id: number;
     user_name: string;
+    avatar_path: {
+        String: string;
+        Valid: boolean;
+    };
     sum_points: number;
     average_accuracy_classic: number;
     average_accuracy_relax: number;
@@ -70,10 +97,13 @@ export interface LevelBan {
     num_games_relax: number;
     num_chars_classic: number;
     num_chars_relax: number;
-    average_delay: number
+    average_delay: number;
+    num_level_relax: number;
+    num_level_classic: number;
+    num_classes_classic: number[];
 }
   
-  export interface ErrorResponse {
+  export interface ErrorResponse{
     message: string;
   }
   
@@ -120,11 +150,22 @@ export interface LevelBan {
     total_pages: number;
   }
 
-  export interface LevelComplaint {
+  export interface UserInfo {
     id: number;
-    level_id: number;
-    author_id: number;
-    reason: string;
-    message: string;
-    created_at: string;
+    username: string;
+    access: number;
+    ban_time: string;
+    ban_reason: string;
+    avatar_path: {
+        String: string;
+        Valid: boolean;
+    };
+    
+  }
+
+  export interface UserSimpleInfo{
+    id:number,
+    name: string;
+    access: number;
+    ban_reason: string;
   }

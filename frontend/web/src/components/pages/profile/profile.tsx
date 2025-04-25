@@ -1,61 +1,110 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Typography, 
-  Box, 
-  Paper, 
-  Avatar, 
-  Stack, 
-  Chip, 
-  Link,
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import {
+  Typography,
+  Box,
+  Paper,
+  Avatar,
+  Stack,
+  Chip,
   CircularProgress,
-  Alert
-} from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import SecurityIcon from '@mui/icons-material/Security';
-import PersonIcon from '@mui/icons-material/Person';
-import BlockIcon from '@mui/icons-material/Block';
-import EqualizerIcon from '@mui/icons-material/Equalizer';
-import { UserApi } from '@/api/userApi';
-import { RoutePath } from '@/config/routes/path';
-import { PlayerStats } from '@/api/models';
+  Alert,
+  IconButton,
+  Button,
+} from "@mui/material";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import SecurityIcon from "@mui/icons-material/Security";
+import PersonIcon from "@mui/icons-material/Person";
+import BlockIcon from "@mui/icons-material/Block";
+import EqualizerIcon from "@mui/icons-material/Equalizer";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
-interface UserProfile {
-  id: number;
-  username: string;
-  access: number;
-  ban_reason?: string;
-  ban_time?: string;
-  created_at: string;
-  last_login?: string;
-}
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { UserApi } from "@/api/userApi";
+import { RoutePath } from "@/config/routes/path";
+import { PlayerStats, UserInfo } from "@/api/models";
+
+const transformErrorData = (
+  errorData: Record<string, Record<string, number[]>>
+) => {
+  const result: Array<{ char: string; errors: number; language: string }> = [];
+
+  for (const [language, chars] of Object.entries(errorData)) {
+    const langCode = language;
+    for (const [char, [all, error]] of Object.entries(chars)) {
+      if (error > 0) {
+        result.push({
+          char: `${String.fromCharCode(parseInt(char))}`,
+          errors: (error / all) * 100,
+          language: langCode,
+        });
+      }
+    }
+  }
+
+  return result;
+};
+
+const StatChip = ({
+  label,
+  value,
+}: {
+  label: string;
+  value?: number | string;
+}) =>
+  value !== undefined && value !== null ? (
+    <Chip label={`${label}: ${value}`} variant="outlined" sx={{ m: 0.5 }} />
+  ) : null;
 
 export const Profile = () => {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [profile, setProfile] = useState<UserInfo>();
   const [stats, setStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState<"rus" | "eng">(
+    "eng"
+  );
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const userData = await UserApi.getUserInfo();
+
         setProfile(userData);
-        
-        const statsData = await UserApi.getUserStats(userData.id);
-        setStats(statsData);
-      } catch (error) {
-        console.error('Profile fetch error:', error);
-        setError('Ошибка загрузки профиля');
+
+        try {
+          const statsData = await UserApi.getUserStats(userData.id);
+          console.log(statsData);
+          setStats(statsData);
+          console.log(stats);
+        } catch (statsError) {
+          console.error("Stats fetch error:", statsError);
+          setError("Не удалось загрузить статистику");
+        }
+      } catch (userError) {
+        console.error("Profile fetch error:", userError);
+        setError("Ошибка загрузки профиля");
         navigate(RoutePath.login);
       } finally {
         setLoading(false);
       }
     };
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
       navigate(RoutePath.login);
       return;
@@ -64,8 +113,44 @@ export const Profile = () => {
     fetchProfile();
   }, [navigate]);
 
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Пожалуйста, выберите файл изображения");
+      return;
+    }
+
+    try {
+      setUploading(true);
+      setUploadError("");
+      await UserApi.changeAvatar(file);
+
+      // Обновляем данные профиля после успешной загрузки
+      const updatedProfile = await UserApi.getUserInfo();
+      setProfile(updatedProfile);
+    } catch (err) {
+      console.error("Avatar upload error:", err);
+      setUploadError("Ошибка загрузки аватара");
+    } finally {
+      setUploading(false);
+      event.target.value = ""; // Сброс значения input
+    }
+  };
+
+  const errorChartData = stats?.num_press_err_by_char_by_lang
+    ? transformErrorData(stats?.num_press_err_by_char_by_lang)
+    : [];
+
   if (loading) {
-    return <CircularProgress sx={{ display: 'block', mx: 'auto', mt: 4 }} />;
+    return <CircularProgress sx={{ display: "block", mx: "auto", mt: 4 }} />;
   }
 
   if (error) {
@@ -80,50 +165,135 @@ export const Profile = () => {
     );
   }
 
-  const { username, access, ban_reason, ban_time, id, created_at, last_login } = profile;
-
+  const { username, access, ban_reason, ban_time, id, avatar_path } = profile;
+  if (avatar_path.Valid) {
+    console.log(avatar_path.String);
+  }
+  console.log(avatar_path);
+  const backend_url =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
+  console.log(backend_url);
+  const classes = new Map<number, string>([
+    [0, "S"],
+    [1, "A"],
+    [2, "B"],
+    [3, "C"],
+    [4, "D"],
+  ]);
+  console.log(classes);
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+    <Box sx={{ maxWidth: 800, mx: "auto", p: 3 }}>
       <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
         <Stack spacing={3}>
-            
           <Typography variant="h4" component="h1" gutterBottom>
-            <PersonIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+            <PersonIcon sx={{ verticalAlign: "middle", mr: 1 }} />
             Профиль пользователя
           </Typography>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-            <Avatar sx={{ width: 100, height: 100 }}>
-              {username?.[0]?.toUpperCase()}
-            </Avatar>
-            
+          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+            <Box sx={{ position: "relative" }}>
+              <IconButton
+                onClick={handleAvatarClick}
+                sx={{ p: 0, "&:hover": { opacity: 0.8 } }}
+                disabled={uploading}
+              >
+                <Avatar
+                  src={
+                    avatar_path.Valid
+                      ? `${backend_url}/${avatar_path.String}`
+                      : undefined
+                  }
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    fontSize: "2.5rem",
+                    bgcolor: avatar_path.Valid ? "transparent" : "primary.main",
+                  }}
+                >
+                  {!avatar_path.Valid && (
+                    <PersonIcon
+                      sx={{
+                        fontSize: 48,
+                        color: "white",
+                        width: "60%",
+                        height: "60%",
+                      }}
+                    />
+                  )}
+                </Avatar>
+                {uploading && (
+                  <CircularProgress
+                    size={68}
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      marginTop: "-34px",
+                      marginLeft: "-34px",
+                    }}
+                  />
+                )}
+              </IconButton>
+              <CameraAltIcon
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  right: 0,
+                  bgcolor: "primary.main",
+                  color: "white",
+                  p: 0.5,
+                  borderRadius: "50%",
+                  fontSize: "1.5rem",
+                }}
+              />
+              <input
+                type="file"
+                hidden
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleAvatarUpload}
+              />
+            </Box>
+
             <Stack spacing={1}>
               <Typography variant="h5">{username}</Typography>
               <Chip
                 label={`ID: ${id}`}
                 variant="outlined"
                 size="small"
-                sx={{ alignSelf: 'flex-start' }}
+                sx={{ alignSelf: "flex-start" }}
               />
             </Stack>
           </Box>
 
           <Box>
             <Typography variant="subtitle1" color="text.secondary">
-              <SecurityIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+              <SecurityIcon sx={{ verticalAlign: "middle", mr: 1 }} />
               Уровень доступа:
             </Typography>
             <Chip
               label={getAccessLevelLabel(access)}
-              color={access >= 2 ? 'secondary' : 'default'}
+              color={access >= 2 ? "secondary" : "default"}
               sx={{ mt: 1 }}
             />
+            <br></br>
+            {access >= 2 && (
+              <Button
+                component={Link}
+                to={RoutePath.admin}
+                variant="outlined"
+                startIcon={<AdminPanelSettingsIcon />}
+                sx={{ mt: 2 }}
+              >
+                Административная панель
+              </Button>
+            )}
           </Box>
 
           {ban_reason && ban_reason !== "no ban" && (
-            <Box sx={{ backgroundColor: '#ffeeee', p: 2, borderRadius: 1 }}>
+            <Box sx={{ backgroundColor: "#ffeeee", p: 2, borderRadius: 1 }}>
               <Typography variant="subtitle1" color="error">
-                <BlockIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
+                <BlockIcon sx={{ verticalAlign: "middle", mr: 1 }} />
                 Пользователь заблокирован
               </Typography>
               <Typography>Причина: {ban_reason}</Typography>
@@ -137,82 +307,139 @@ export const Profile = () => {
 
           <Box>
             <Typography variant="subtitle1" color="text.secondary">
-              <AccessTimeIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-              Активность:
+              <EqualizerIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+              Игровая статистика:
             </Typography>
-            <Stack direction="row" spacing={3} sx={{ mt: 1 }}>
-              <Chip label={`Регистрация: ${new Date(created_at).toLocaleDateString()}`} />
-              {last_login && (
-                <Chip label={`Последний вход: ${new Date(last_login).toLocaleDateString()}`} />
-              )}
-            </Stack>
-          </Box>
 
-          {stats && (
-            <Box>
-              <Typography variant="subtitle1" color="text.secondary">
-                <EqualizerIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-                Игровая статистика:
+            {!stats ? (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                Статистика недоступна
               </Typography>
-              
+            ) : (
               <Stack spacing={2} sx={{ mt: 2 }}>
-                <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                  {stats.sum_points !== undefined && (
-                    <Chip label={`Очки: ${stats.sum_points}`} variant="outlined" />
-                  )}
-                  {stats.win_percentage !== undefined && (
-                    <Chip 
-                      label={`Победы: ${stats.win_percentage.toFixed(1)}%`} 
-                      variant="outlined" 
+                <Box>
+                  <Typography variant="subtitle2">
+                    Основные показатели:
+                  </Typography>
+                  <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
+                    <StatChip label="Общие очки" value={stats.sum_points} />
+                    <StatChip
+                      label="Уровней пройдено"
+                      value={stats.num_level_classic}
                     />
-                  )}
-                  {stats.num_games_mult !== undefined && (
-                    <Chip 
-                      label={`Мультиплеер: ${stats.num_games_mult} игр`} 
-                      variant="outlined" 
+                    <StatChip
+                      label="Символов напечатано"
+                      value={stats.num_chars_classic}
                     />
-                  )}
-                </Stack>
+                  </Stack>
+                </Box>
 
-                <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                  {stats.average_accuracy_classic !== undefined && (
-                    <Chip
-                      label={`Классика: ${stats.average_accuracy_classic.toFixed(1)}%`}
-                      color="primary"
+                <Box>
+                  <Typography variant="subtitle2">
+                    Показатели аккуратности:
+                  </Typography>
+                  <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
+                    <StatChip
+                      label="Средняя точность"
+                      value={stats.average_accuracy_classic?.toFixed(3)}
                     />
-                  )}
-                  {stats.average_accuracy_relax !== undefined && (
-                    <Chip
-                      label={`Релакс: ${stats.average_accuracy_relax.toFixed(1)}%`}
-                      color="secondary"
-                    />
-                  )}
-                </Stack>
+                    {stats.average_delay !== undefined &&
+                      stats.average_delay !== 1000 && (
+                        <StatChip
+                          label="Средняя задержка"
+                          value={`${stats.average_delay.toFixed(3)} мс`}
+                        />
+                      )}
+                  </Stack>
+                </Box>
 
-                <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-                  {stats.num_chars_classic !== undefined && (
-                    <Chip
-                      label={`Символов (классика): ${stats.num_chars_classic}`}
-                      variant="outlined"
-                    />
-                  )}
-                  {stats.num_chars_relax !== undefined && (
-                    <Chip
-                      label={`Символов (релакс): ${stats.num_chars_relax}`}
-                      variant="outlined"
-                    />
-                  )}
-                </Stack>
+                {stats.num_classes_classic?.length > 0 && (
+                  <Box>
+                    <Typography variant="subtitle2">
+                      Пройденные уровни по классам точности:
+                    </Typography>
+                    <Stack
+                      direction="row"
+                      flexWrap="wrap"
+                      gap={1}
+                      sx={{ mt: 1 }}
+                    >
+                      {stats.num_classes_classic.map((cls, index) => (
+                        <Chip
+                          key={index}
+                          label={`Класс ${classes.get(index)}: ${cls}`}
+                          variant="outlined"
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
 
-                {stats.average_delay !== undefined && (
-                  <Chip
-                    label={`Средняя задержка: ${stats.average_delay.toFixed(1)} мс`}
-                    variant="outlined"
-                  />
+                {errorChartData.length > 0 ? (
+                  <Box sx={{ mt: 4, height: 400 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography variant="subtitle2">
+                        Ошибки по символам
+                      </Typography>
+                      <Stack direction="row" spacing={1}>
+                        <Chip
+                          label="Русский"
+                          onClick={() => setSelectedLanguage("rus")}
+                          color={
+                            selectedLanguage === "rus" ? "primary" : "default"
+                          }
+                          variant="outlined"
+                          size="small"
+                        />
+                        <Chip
+                          label="Английский"
+                          onClick={() => setSelectedLanguage("eng")}
+                          color={
+                            selectedLanguage === "eng" ? "primary" : "default"
+                          }
+                          variant="outlined"
+                          size="small"
+                        />
+                      </Stack>
+                    </Box>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={errorChartData.filter(
+                          (d) => d.language === selectedLanguage
+                        )}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="char" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar
+                          dataKey="errors"
+                          fill="#ff6666"
+                          name="Процент ошибок"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Box>
+                ) : (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 2 }}
+                  >
+                    Нет данных об ошибках
+                  </Typography>
                 )}
               </Stack>
-            </Box>
-          )}
+            )}
+          </Box>
         </Stack>
       </Paper>
     </Box>
@@ -221,11 +448,17 @@ export const Profile = () => {
 
 const getAccessLevelLabel = (access: number) => {
   switch (access) {
-    case 0: return 'Забанен';
-    case 1: return 'Пользователь';
-    case 2: return 'Модератор';
-    case 3: return 'Администратор';
-    case 4: return 'Главный администратор';
-    default: return 'Гость';
+    case 0:
+      return "Забанен";
+    case 1:
+      return "Пользователь";
+    case 2:
+      return "Модератор";
+    case 3:
+      return "Администратор";
+    case 4:
+      return "Главный администратор";
+    default:
+      return "Гость";
   }
 };

@@ -21,16 +21,14 @@ export const LevelApi = {
   },
 
   getLevelInfo: async (id: number): Promise<LevelInfo> => {
-    const { data } = await $authHost.post('/level/get-level-info', { id });
+    const { data } = await $authHost.get('/level/get-level-info/' + id.toString());
     return data;
   },
 
   downloadLevel: async (id: number): Promise<Blob> => {
-    const response = await $authHost.post(
-      '/level/download-level',
-      { id },
-      { responseType: 'blob' }
-    );
+    const response = await $authHost.get(`/level/download-level/${id}`, {
+        responseType: 'blob',
+      });
     return response.data;
   },
 

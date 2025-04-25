@@ -5,13 +5,13 @@ import axios, {
     InternalAxiosRequestConfig
   } from 'axios';
   import { RoutePath } from '@/config/routes/path';
-  console.log(import.meta.env.VITE_SERVER_BASE_URL);
+
   export const $host: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_SERVER_BASE_URL  || 'http://localhost:8080',
+    baseURL: import.meta.env.VITE_BACKEND_URL  || 'http://localhost:8080',
   });
   
   export const $authHost: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_SERVER_BASE_URL  || 'http://localhost:8080',
+    baseURL: import.meta.env.VITE_BACKEND_URL  || 'http://localhost:8080',
   });
   
   const authInterceptor = (

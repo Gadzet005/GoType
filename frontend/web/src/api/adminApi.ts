@@ -7,6 +7,7 @@ import {
   LevelComplaint,
   UserComplaint,
   ErrorResponse,
+  UserSimpleInfo
 } from './models';
 
 export const AdminApi = {
@@ -30,22 +31,22 @@ export const AdminApi = {
     await $authHost.post('/admin/change-user-access', data);
   },
 
-  getLevelComplaints: async (): Promise<{ level_complaints: LevelComplaint[] }> => {
+  getLevelComplaints: async (): Promise<LevelComplaint[]> => {
     const { data } = await $authHost.get('/admin/get-level-complaints');
-    return data;
+    return data.level_complaints || [];
   },
 
   getUserComplaints: async (): Promise<UserComplaint[]> => {
     const { data } = await $authHost.get('/admin/get-user-complaints');
-    return data.user_complaints;
+    return data.user_complaints || [];
   },
 
-  processLevelComplaint: async (data: ComplaintID): Promise<void> => {
-    await $authHost.post('/admin/process-level-complaint', data);
+  processLevelComplaint: async (id:number): Promise<void> => {
+    await $authHost.post('/admin/process-level-complaint', id);
   },
 
-  processUserComplaint: async (data: ComplaintID): Promise<void> => {
-    await $authHost.post('/admin/process-user-complaint', data);
+  processUserComplaint: async (id:number): Promise<void> => {
+    await $authHost.post('/admin/process-user-complaint', id);
   },
   
 
@@ -54,8 +55,18 @@ export const AdminApi = {
     isBanned?: boolean;
     offset: number;
     pageSize: number;
-  }): Promise<any[]> => {
-    const { data } = await $authHost.post('/admin/get-users', params);
+  }): Promise<UserSimpleInfo[]> => {
+    const transformedParams = {
+      name: params.name,
+      is_banned: params.isBanned,
+      offset: params.offset,
+      page_size: params.pageSize
+    };
+    
+    const { data } = await $authHost.get('/admin/get-users', { 
+      params: transformedParams,
+      paramsSerializer: { indexes: null }
+    });
     return data.users;
   },
 };

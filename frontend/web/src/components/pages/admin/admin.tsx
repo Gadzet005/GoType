@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { 
+import { useState, useEffect } from "react";
+import {
   Box,
   Typography,
   Container,
@@ -21,23 +21,26 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TablePagination,
   InputAdornment,
-  IconButton
-} from '@mui/material';
-import { 
-  Search as SearchIcon,
-  Refresh as RefreshIcon
-} from '@mui/icons-material';
-import { AdminApi } from '@/api/adminApi';
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import {
-  LevelBan,
-  UserBan,
-  ChangeUserAccess,
-  ComplaintID,
+  Search as SearchIcon,
+  Refresh as RefreshIcon,
+} from "@mui/icons-material";
+import { AdminApi } from "@/api/adminApi";
+import { LevelApi } from "@/api/levelApi";
+import { UserApi } from "@/api/userApi";
+import {
   LevelComplaint,
   UserComplaint,
-} from '@/api/models';
+  UserSimpleInfo,
+  PlayerStats,
+  LevelInfo,
+} from "@/api/models";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -56,56 +59,100 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`admin-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
 
 export const Admin = () => {
-  const [activeTab, setActiveTab] = useState('users');
-  const [users, setUsers] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("users");
+  const [users, setUsers] = useState<UserSimpleInfo[]>([]);
+  const [nextUsers, setNextUsers] = useState<UserSimpleInfo[]>([]);
   const [levelComplaints, setLevelComplaints] = useState<LevelComplaint[]>([]);
   const [userComplaints, setUserComplaints] = useState<UserComplaint[]>([]);
   const [searchParams, setSearchParams] = useState({
-    name: '',
+    name: "",
     isBanned: false,
-    offset: 0,
+    offset: 1,
     pageSize: 10,
   });
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [banModalOpen, setBanModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<UserSimpleInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [banForm, setBanForm] = useState({
-    ban_time: '24h',
-    ban_reason: 'Нарушение правил сообщества',
+    ban_time: "24h",
+    ban_reason: "Нарушение правил сообщества",
   });
+  const [processModalOpen, setProcessModalOpen] = useState(false);
+  const [selectedComplaint, setSelectedComplaint] = useState<
+    LevelComplaint | UserComplaint | null
+  >(null);
+  const [complaintInfo, setComplaintInfo] = useState<
+    PlayerStats | LevelInfo | null
+  >(null);
+  const [processingAction, setProcessingAction] = useState<
+    "process" | "ban" | "delete" | null
+  >(null);
+  const [complaintType, setComplaintType] = useState<"level" | "user">("level");
 
-  const loadData = async () => {
+  const modalStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 600,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 2,
+    maxHeight: "90vh",
+    overflowY: "auto",
+  } as const;
+
+  const loadData = async (loadNextPage: boolean = false) => {
     setLoading(true);
     setError(null);
     try {
       switch (activeTab) {
-        case 'users':
-          const usersData = await AdminApi.getUsers(searchParams);
-          setUsers(usersData);
+        case "users":
+          const usersData = await AdminApi.getUsers({
+            ...searchParams,
+            offset: searchParams.offset,
+            pageSize: searchParams.pageSize,
+          });
+
+          const nextUsersData = await AdminApi.getUsers({
+            ...searchParams,
+            offset: searchParams.offset + searchParams.pageSize,
+            pageSize: searchParams.pageSize,
+          });
+
+          if (loadNextPage) {
+            setUsers(nextUsersData || []);
+            const newNextUsers = await AdminApi.getUsers({
+              ...searchParams,
+              offset: searchParams.offset + searchParams.pageSize * 2,
+              pageSize: searchParams.pageSize,
+            });
+            setNextUsers(newNextUsers);
+          } else {
+            setUsers(usersData || []);
+            setNextUsers(nextUsersData || []);
+          }
           break;
-        case 'level-complaints':
+        case "level-complaints":
           const levelComplaintsData = await AdminApi.getLevelComplaints();
-          setLevelComplaints(levelComplaintsData.level_complaints);
+          setLevelComplaints(levelComplaintsData);
           break;
-        case 'user-complaints':
+        case "user-complaints":
           const userComplaintsData = await AdminApi.getUserComplaints();
           setUserComplaints(userComplaintsData);
           break;
       }
     } catch (err: any) {
-      console.error('Admin data load error:', err);
-      setError(err.response?.data?.message || 'Ошибка загрузки данных');
+      setError(err.response?.data?.message || "Ошибка загрузки данных");
     } finally {
       setLoading(false);
     }
@@ -115,51 +162,181 @@ export const Admin = () => {
     loadData();
   }, [activeTab, searchParams]);
 
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    setSearchParams((prev) => ({
+      ...prev,
+      offset: (newPage - 1) * prev.pageSize + 1,
+    }));
+  };
+
   const handleBanUser = async () => {
+    if (!selectedUser) return;
+
     try {
-      if (selectedUser.isBanned) {
+      if (selectedUser.ban_reason !== "no ban") {
         await AdminApi.unbanUser({ id: selectedUser.id });
       } else {
         await AdminApi.banUser({
           id: selectedUser.id,
-          ...banForm
+          ...banForm,
         });
       }
       setBanModalOpen(false);
-      loadData();
+      await loadData();
     } catch (err: any) {
-      console.error('Ban error:', err);
-      setError(err.response?.data?.message || 'Ошибка выполнения операции');
+      setError(err.response?.data?.message || "Ошибка выполнения операции");
     }
   };
 
-  const handleChangeAccess = async (user: any, newAccess: number) => {
+  const handleChangeAccess = async (
+    user: UserSimpleInfo,
+    newAccess: number
+  ) => {
     try {
       await AdminApi.changeUserAccess({ id: user.id, new_access: newAccess });
-      loadData();
+      await loadData();
     } catch (err: any) {
-      console.error('Access change error:', err);
-      setError(err.response?.data?.message || 'Ошибка изменения прав доступа');
+      setError(err.response?.data?.message || "Ошибка изменения прав доступа");
     }
   };
 
-  const handleProcessComplaint = async (id: number, type: 'level' | 'user') => {
+  const handleProcessClick = async (
+    complaint: LevelComplaint | UserComplaint,
+    type: "level" | "user"
+  ) => {
+    setSelectedComplaint(complaint);
+    setComplaintType(type);
+    setProcessModalOpen(true);
+    setLoading(true);
+
     try {
-      if (type === 'level') {
-        await AdminApi.processLevelComplaint({ id });
+      if (type === "user") {
+        const userComplaint = complaint as UserComplaint;
+        const stats = await UserApi.getUserStats(userComplaint.user_id);
+        setComplaintInfo(stats);
       } else {
-        await AdminApi.processUserComplaint({ id });
+        const levelComplaint = complaint as LevelComplaint;
+        const levelInfo = await LevelApi.getLevelInfo(levelComplaint.level_id);
+        setComplaintInfo(levelInfo);
       }
-      loadData();
-    } catch (err: any) {
-      console.error('Complaint process error:', err);
-      setError(err.response?.data?.message || 'Ошибка обработки жалобы');
+    } catch (err) {
+      setError("Ошибка загрузки дополнительной информации");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-    setActiveTab(newValue);
+  const confirmAction = async () => {
+    if (!selectedComplaint || !processingAction) {
+      setError('Не выбрана жалоба для обработки');
+      return;
+    }
+    console.log(selectedComplaint);
+    try {
+      let response;
+      switch (processingAction) {
+        case 'process':
+          if (complaintType === 'level') {
+
+            response = await AdminApi.processLevelComplaint(
+              selectedComplaint.id  // Явно передаем объект ComplaintID
+            );
+          } else {
+            response = await AdminApi.processUserComplaint(
+              selectedComplaint.id // Явно передаем объект ComplaintID
+            );
+          }
+          break;
+  
+        case 'ban':
+          await AdminApi.banUser({
+            id: (selectedComplaint as UserComplaint).user_id,
+            ban_reason: "Жалоба пользователя",
+            ban_time: "24h"
+          });
+          break;
+  
+        case 'delete':
+          await AdminApi.banLevel(
+            { id: (selectedComplaint as LevelComplaint).level_id } // Явно передаем LevelBan
+          );
+          break;
+      }
+  
+      console.log('Action completed:', response?.data);
+      setProcessModalOpen(false);
+      await loadData();
+      
+    } catch (err: any) {
+      console.error('Action failed:', err);
+      setError(err.response?.data?.message || 'Ошибка выполнения действия');
+      setProcessingAction(null);
+    }
   };
+
+  const LevelComplaintInfo = ({
+    info,
+    complaint,
+  }: {
+    info: LevelInfo;
+    complaint: LevelComplaint;
+  }) => (
+    <div>
+      <Typography variant="subtitle1">Информация об уровне:</Typography>
+      <List dense>
+        <ListItem>
+          <ListItemText primary="Название" secondary={info.levelInfo.name} />
+        </ListItem>
+        <ListItem>
+          <ListItemText
+            primary="Автор"
+            secondary={info.levelInfo.author_name}
+          />
+        </ListItem>
+        <ListItem>
+          <ListItemText
+            primary="Сложность"
+            secondary={info.levelInfo.difficulty}
+          />
+        </ListItem>
+      </List>
+      <Typography variant="subtitle1">Жалоба:</Typography>
+      <Typography>
+        {complaint.reason}: {complaint.message}
+      </Typography>
+    </div>
+  );
+
+  const UserComplaintInfo = ({
+    stats,
+    complaint,
+  }: {
+    stats: PlayerStats;
+    complaint: UserComplaint;
+  }) => (
+    <div>
+      <Typography variant="subtitle1">Информация о пользователе:</Typography>
+      <List dense>
+        <ListItem>
+          <ListItemText primary="Имя" secondary={stats.user_name} />
+        </ListItem>
+        <ListItem>
+          <ListItemText primary="Очков" secondary={stats.sum_points} />
+        </ListItem>
+        <ListItem>
+          <ListItemText
+            primary="Точность"
+            secondary={`${(stats.average_accuracy_classic * 100).toFixed(1)}%`}
+          />
+        </ListItem>
+      </List>
+      <Typography variant="subtitle1">Жалоба:</Typography>
+      <Typography>
+        {complaint.reason}: {complaint.message}
+      </Typography>
+    </div>
+  );
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
@@ -168,13 +345,16 @@ export const Admin = () => {
       </Typography>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
           {error}
         </Alert>
       )}
 
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={activeTab} onChange={handleTabChange}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={activeTab}
+          onChange={(_, newValue) => setActiveTab(newValue)}
+        >
           <Tab label="Пользователи" value="users" />
           <Tab label="Жалобы на уровни" value="level-complaints" />
           <Tab label="Жалобы на пользователей" value="user-complaints" />
@@ -182,13 +362,15 @@ export const Admin = () => {
       </Box>
 
       <TabPanel value={activeTab} index="users">
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3, gap: 2 }}>
           <TextField
             placeholder="Поиск по имени"
             variant="outlined"
             size="small"
             value={searchParams.name}
-            onChange={(e) => setSearchParams(prev => ({ ...prev, name: e.target.value }))}
+            onChange={(e) =>
+              setSearchParams((prev) => ({ ...prev, name: e.target.value }))
+            }
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -201,12 +383,17 @@ export const Admin = () => {
             control={
               <Checkbox
                 checked={searchParams.isBanned}
-                onChange={(e) => setSearchParams(prev => ({ ...prev, isBanned: e.target.checked }))}
+                onChange={(e) =>
+                  setSearchParams((prev) => ({
+                    ...prev,
+                    isBanned: e.target.checked,
+                  }))
+                }
               />
             }
             label="Показать забаненных"
           />
-          <IconButton onClick={loadData} disabled={loading}>
+          <IconButton onClick={() => loadData()} disabled={loading}>
             <RefreshIcon />
           </IconButton>
         </Box>
@@ -225,50 +412,56 @@ export const Admin = () => {
               {users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.id}</TableCell>
-                  <TableCell>{user.username}</TableCell>
-                  <TableCell>{user.isBanned ? 'Забанен' : 'Активен'}</TableCell>
-                  <TableCell sx={{ display: 'flex', gap: 1 }}>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>
+                    {user.ban_reason !== "no ban" ? "Забанен" : "Активен"}
+                  </TableCell>
+                  <TableCell sx={{ display: "flex", gap: 1 }}>
                     <Button
                       variant="contained"
-                      color={user.isBanned ? 'success' : 'error'}
+                      color={user.ban_reason !== "no ban" ? "success" : "error"}
                       size="small"
                       onClick={() => {
                         setSelectedUser(user);
                         setBanModalOpen(true);
                       }}
                     >
-                      {user.isBanned ? 'Разбанить' : 'Забанить'}
+                      {user.ban_reason !== "no ban" ? "Разбанить" : "Забанить"}
                     </Button>
                     <Select
                       value={user.access}
                       size="small"
-                      onChange={(e) => handleChangeAccess(user, e.target.value as number)}
+                      onChange={(e) =>
+                        handleChangeAccess(user, Number(e.target.value))
+                      }
                     >
-                      <MenuItem value={0}>Пользователь</MenuItem>
-                      <MenuItem value={1}>Модератор</MenuItem>
-                      <MenuItem value={2}>Администратор</MenuItem>
+                      <MenuItem value={1}>Пользователь</MenuItem>
+                      <MenuItem value={2}>Модератор</MenuItem>
+                      <MenuItem value={3}>Администратор</MenuItem>
                     </Select>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={users.length}
-            rowsPerPage={searchParams.pageSize}
-            page={searchParams.offset / searchParams.pageSize}
-            onPageChange={(_, newPage) => setSearchParams(prev => ({
-              ...prev,
-              offset: newPage * prev.pageSize
-            }))}
-            onRowsPerPageChange={(e) => setSearchParams(prev => ({
-              ...prev,
-              pageSize: parseInt(e.target.value, 10),
-              offset: 0
-            }))}
-          />
+          <Box
+            sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}
+          >
+            <Button
+              variant="contained"
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1 || loading}
+            >
+              Предыдущая страница
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => handlePageChange(page + 1)}
+              disabled={nextUsers.length === 0 || loading}
+            >
+              Следующая страница
+            </Button>
+          </Box>
         </TableContainer>
       </TabPanel>
 
@@ -277,6 +470,7 @@ export const Admin = () => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>ID автора</TableCell>
                 <TableCell>ID уровня</TableCell>
                 <TableCell>Причина</TableCell>
                 <TableCell>Сообщение</TableCell>
@@ -285,7 +479,8 @@ export const Admin = () => {
             </TableHead>
             <TableBody>
               {levelComplaints.map((complaint) => (
-                <TableRow key={complaint.id}>
+                <TableRow key={`level-${complaint.id}`}>
+                  <TableCell>{complaint.author_id}</TableCell>
                   <TableCell>{complaint.level_id}</TableCell>
                   <TableCell>{complaint.reason}</TableCell>
                   <TableCell>{complaint.message}</TableCell>
@@ -293,7 +488,7 @@ export const Admin = () => {
                     <Button
                       variant="contained"
                       size="small"
-                      onClick={() => handleProcessComplaint(complaint.id, 'level')}
+                      onClick={() => handleProcessClick(complaint, "level")}
                     >
                       Обработать
                     </Button>
@@ -310,6 +505,7 @@ export const Admin = () => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>ID автора</TableCell>
                 <TableCell>ID пользователя</TableCell>
                 <TableCell>Причина</TableCell>
                 <TableCell>Сообщение</TableCell>
@@ -318,7 +514,8 @@ export const Admin = () => {
             </TableHead>
             <TableBody>
               {userComplaints.map((complaint) => (
-                <TableRow key={complaint.id}>
+                <TableRow key={`user-${complaint.id}`}>
+                  <TableCell>{complaint.author_id}</TableCell>
                   <TableCell>{complaint.user_id}</TableCell>
                   <TableCell>{complaint.reason}</TableCell>
                   <TableCell>{complaint.message}</TableCell>
@@ -326,7 +523,7 @@ export const Admin = () => {
                     <Button
                       variant="contained"
                       size="small"
-                      onClick={() => handleProcessComplaint(complaint.id, 'user')}
+                      onClick={() => handleProcessClick(complaint, "user")}
                     >
                       Обработать
                     </Button>
@@ -339,31 +536,108 @@ export const Admin = () => {
       </TabPanel>
 
       <Modal
+        open={processModalOpen}
+        onClose={() => setProcessModalOpen(false)}
+        aria-labelledby="process-modal-title"
+      >
+        <Box sx={modalStyle}>
+          <Typography variant="h6" gutterBottom>
+            Обработка жалобы на{" "}
+            {complaintType === "level" ? "уровень" : "пользователя"}
+          </Typography>
+
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            <>
+              {complaintType === "level" && complaintInfo && (
+                <LevelComplaintInfo
+                  info={complaintInfo as LevelInfo}
+                  complaint={selectedComplaint as LevelComplaint}
+                />
+              )}
+
+              {complaintType === "user" && complaintInfo && (
+                <UserComplaintInfo
+                  stats={complaintInfo as PlayerStats}
+                  complaint={selectedComplaint as UserComplaint}
+                />
+              )}
+
+              <Box
+                sx={{
+                  mt: 3,
+                  display: "flex",
+                  gap: 2,
+                  justifyContent: "flex-end",
+                }}
+              >
+                {complaintType === "user" && (
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => setProcessingAction("ban")}
+                  >
+                    Забанить пользователя
+                  </Button>
+                )}
+
+                {complaintType === "level" && (
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => setProcessingAction("delete")}
+                  >
+                    Удалить уровень
+                  </Button>
+                )}
+
+                <Button
+                  variant="contained"
+                  onClick={() => setProcessingAction("process")}
+                >
+                  Подтвердить обработку
+                </Button>
+              </Box>
+
+              {processingAction && (
+                <Box sx={{ mt: 2, borderTop: 1, pt: 2 }}>
+                  <Typography>
+                    Вы уверены, что хотите выполнить это действие?
+                  </Typography>
+                  <Button onClick={confirmAction} color="primary">
+                    Да
+                  </Button>
+                  <Button onClick={() => setProcessingAction(null)}>
+                    Отмена
+                  </Button>
+                </Box>
+              )}
+            </>
+          )}
+        </Box>
+      </Modal>
+
+      <Modal
         open={banModalOpen}
         onClose={() => setBanModalOpen(false)}
         aria-labelledby="ban-modal-title"
       >
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 1
-        }}>
-          <Typography id="ban-modal-title" variant="h6" component="h2" gutterBottom>
-            {selectedUser?.isBanned ? 'Разбанить пользователя' : 'Забанить пользователя'}
+        <Box sx={modalStyle}>
+          <Typography variant="h6" gutterBottom>
+            {selectedUser?.ban_reason !== "no ban"
+              ? "Разбанить пользователя"
+              : "Забанить пользователя"}
           </Typography>
-          
-          {!selectedUser?.isBanned && (
+
+          {selectedUser?.ban_reason === "no ban" && (
             <>
               <Select
                 fullWidth
                 value={banForm.ban_time}
-                onChange={(e) => setBanForm({ ...banForm, ban_time: e.target.value })}
+                onChange={(e) =>
+                  setBanForm({ ...banForm, ban_time: e.target.value })
+                }
                 sx={{ mb: 2 }}
               >
                 <MenuItem value="1h">1 час</MenuItem>
@@ -371,27 +645,30 @@ export const Admin = () => {
                 <MenuItem value="7d">7 дней</MenuItem>
                 <MenuItem value="30d">30 дней</MenuItem>
               </Select>
-              
+
               <TextField
                 fullWidth
                 multiline
                 rows={3}
                 label="Причина бана"
                 value={banForm.ban_reason}
-                onChange={(e) => setBanForm({ ...banForm, ban_reason: e.target.value })}
-                sx={{ mb: 2 }}
+                onChange={(e) =>
+                  setBanForm({ ...banForm, ban_reason: e.target.value })
+                }
               />
             </>
           )}
-          
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+
+          <Box
+            sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 1 }}
+          >
             <Button onClick={() => setBanModalOpen(false)}>Отмена</Button>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               onClick={handleBanUser}
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Подтвердить'}
+              {loading ? <CircularProgress size={24} /> : "Подтвердить"}
             </Button>
           </Box>
         </Box>

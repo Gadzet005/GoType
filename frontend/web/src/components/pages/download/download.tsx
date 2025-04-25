@@ -21,9 +21,9 @@ const DownloadIcon = styled('img')(({ theme }) => ({
 export const Download = () => {
   // Замените ссылки на актуальные URL для скачивания
   const downloadLinks = {
-    windows: 'https://example.com/download/windows',
-    mac: 'https://example.com/download/mac',
-    linux: 'https://example.com/download/linux',
+    windows: 'https://github.com/Gadzet005/GoType/releases/download/gotype-1.1/GoType-win-x64.exe',
+    mac: 'https://github.com/Gadzet005/GoType/releases/download/gotype-1.1/GoType-mac.dmg',
+    linux: 'https://github.com/Gadzet005/GoType/releases/download/gotype-1.1/GoType-linux.AppImage',
   };
 
   const handleDownload = (url: string) => {

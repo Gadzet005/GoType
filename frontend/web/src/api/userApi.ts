@@ -1,9 +1,8 @@
 import { $authHost } from './axiosApi';
-import { ErrorResponse, PlayerStats } from './models';
-import qs from 'qs';
+import { ErrorResponse, PlayerStats, UserInfo } from './models';
 
 export const UserApi = {
-  getUserInfo: async (): Promise<any> => {
+  getUserInfo: async (): Promise<UserInfo> => {
     const { data } = await $authHost.get('/user-actions/get-user-info');
     return data;
   },
@@ -31,6 +30,7 @@ export const UserApi = {
   },
 
   writeLevelComplaint: async (data: {
+    author_id:number;
     level_id: number;
     reason: string;
     message: string;
@@ -39,6 +39,7 @@ export const UserApi = {
   },
 
   writeUserComplaint: async (data: {
+    author_id:number;
     user_id: number;
     reason: string;
     message: string;
@@ -47,23 +48,26 @@ export const UserApi = {
   },
 
   getUserStats: async (userId: number): Promise<PlayerStats> => {
-    const { data } = await $authHost.post('/stats/get-user-stats', { id: userId });
-    return data.user_stats;
+    const { data } = await $authHost.get('/stats/get-user-stats/' + userId.toString());
+    console.log(data['user-stats']);
+    return data['user-stats'];
 },
 
 getUsersTop: async (params: {
-    category_params: { category: number; pattern: string };
+    category_params: { category: string; pattern: string };
     page_info: { offset: number; page_size: number };
     points: string;
   }): Promise<PlayerStats[]> => {
     
     const { data } = await $authHost.post('/stats/get-users-top', {
-      category_params: {
-        category: String.fromCharCode(params.category_params.category), // Конвертируем число в символ
-        pattern: params.category_params.pattern
-      },
+      ...(params.category_params.category && {
+        category_params: {
+          category: params.category_params.category,
+          pattern: params.category_params.pattern
+        }
+      }),
       page_info: params.page_info,
-      points: params.points
+      ...(params.points && { points: params.points })
     });
     
     return data.users;

@@ -10,12 +10,55 @@ import {
   Alert,
   Container,
   InputAdornment,
+<<<<<<< HEAD
+  IconButton,
+} from '@mui/material';
+import { EmailOutlined, LockOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
+import { AuthApi } from '@/api/authApi';
+import { RoutePath } from '@/config/routes/path';
+
+const PasswordField = ({ name, label }: { name: string; label: string }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword((show) => !show);
+  };
+
+  return (
+    <TextField
+      fullWidth
+      name={name}
+      label={label}
+      type={showPassword ? 'text' : 'password'}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <LockOutlined sx={{ color: 'action.active' }} />
+          </InputAdornment>
+        ),
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              onClick={handleClickShowPassword}
+              edge="end"
+              aria-label="toggle password visibility"
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
+  );
+};
+=======
   Grid,
 } from "@mui/material";
 import { EmailOutlined, LockOutlined } from "@mui/icons-material";
 import { AuthApi } from "@/api/authApi";
 import { RoutePath } from "@/config/routes/path";
 import { PasswordField } from "@/components/form/PasswordField";
+>>>>>>> 09cbe46b77f0f7430c479f63fc3017b94cc55ed6
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -74,10 +117,18 @@ export const Login = () => {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             onSubmit={handleSubmit}
           >
+<<<<<<< HEAD
+            <TextField 
+              name="name" 
+              variant="outlined" 
+              label="Имя" 
+              fullWidth
+=======
             <TextField
               name="name"
               variant="outlined"
               label="Имя"
+>>>>>>> 09cbe46b77f0f7430c479f63fc3017b94cc55ed6
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -86,6 +137,13 @@ export const Login = () => {
                 ),
               }}
             />
+<<<<<<< HEAD
+            
+            <PasswordField
+              name="password"
+              label="Пароль"
+            />
+=======
 
             <Grid container alignItems="flex-end" sx={{ width: "100%" }}>
               <Grid item sx={{ mr: 1, my: 0.5 }}>
@@ -97,12 +155,14 @@ export const Login = () => {
                 </Box>
               </Grid>
             </Grid>
+>>>>>>> 09cbe46b77f0f7430c479f63fc3017b94cc55ed6
 
             <Button
               variant="contained"
               type="submit"
               size="large"
               disabled={isPending}
+              fullWidth
             >
               {isPending ? <CircularProgress size={24} /> : "Вход"}
             </Button>

@@ -31,6 +31,28 @@ export const Footer = () => {
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 2, mt: { xs: 1, sm: 0 } }}>
+
+        <Link
+            component={RouterLink}
+            to={RoutePath.complaint}
+            color="text.secondary"
+            variant="body2"
+            underline="none"
+            sx={{
+              '&:hover': { color: theme.palette.text.primary }
+            }}
+          >
+            Оставить жалобу
+          </Link>
+
+        <Typography 
+            component="span" 
+            color="text.secondary"
+            sx={{ display: { xs: 'none', sm: 'block' } }}
+          >
+            |
+          </Typography>
+          
           <Link
             component={RouterLink}
             to={RoutePath.faq}
