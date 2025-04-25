@@ -26,6 +26,7 @@ export namespace ElectronAPIMock {
         quitApp: vi.fn(),
         openFileDialog: vi.fn(),
         getConfig: vi.fn(),
+        openExternalLink: vi.fn(),
     };
 }
 

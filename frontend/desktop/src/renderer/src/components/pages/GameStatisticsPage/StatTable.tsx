@@ -24,8 +24,8 @@ export const StatTable: React.FC<StatTableProps> = ({ statistics }) => {
       <StatRow label="Очки" value={statistics.score} />
       <StatRow label="Точность" value={statistics.accuracy.toFixed(2) + "%"} />
       <StatRow
-        label="Скорость"
-        value={statistics.avgVelocity.toFixed(2) + "мс."}
+        label="Скорость (символы в минуту)"
+        value={statistics.avgVelocity.toFixed(2)}
       />
       <StatRow
         label="Ошибки"

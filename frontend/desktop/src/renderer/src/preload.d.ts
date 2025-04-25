@@ -10,6 +10,7 @@ declare global {
             quitApp: () => Promise<void>;
             openFileDialog: (extensions?: string[]) => Promise<FileMeta[]>;
             getConfig: () => Promise<AppConfig>;
+            openExternalLink: (url: string) => Promise<void>;
         };
         userAPI: {
             getUserInfo: () => Promise<UserInfo>;

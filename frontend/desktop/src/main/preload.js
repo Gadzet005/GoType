@@ -10,6 +10,9 @@ contextBridge.exposeInMainWorld("appAPI", {
     getConfig: async () => {
         return await ipcRenderer.invoke("get-config");
     },
+    openExternalLink: async (url) => {
+        await ipcRenderer.invoke("open-external-link", url);
+    },
 });
 
 contextBridge.exposeInMainWorld("userAPI", {
