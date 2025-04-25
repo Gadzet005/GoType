@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/admin/ban-level": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Ban level with given id. Available only for moderators and admins",
                 "consumes": [
                     "application/json"
@@ -36,7 +41,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelBan"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Bans.LevelBan"
                         }
                     }
                 ],
@@ -47,25 +52,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - Level with such id does not exist; ERR_INVALID_INPUT - Wrong structure of input json;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -73,6 +78,11 @@ const docTemplate = `{
         },
         "/admin/ban-user": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Ban user with given id if your access is greater than theirs. Available only for moderators and admins",
                 "consumes": [
                     "application/json"
@@ -92,7 +102,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserBan"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Bans.UserBan"
                         }
                     }
                 ],
@@ -103,25 +113,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id does not exist; ERR_INVALID_INPUT - Wrong structure of input json/Wrong format of ban duration;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -129,6 +139,11 @@ const docTemplate = `{
         },
         "/admin/change-user-access": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Change access of a user if your access is greater that theirs. New value must be less than admin's one. Available only for moderators and admins",
                 "consumes": [
                     "application/json"
@@ -148,7 +163,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.ChangeUserAccess"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_UserAccess.ChangeUserAccess"
                         }
                     }
                 ],
@@ -159,25 +174,332 @@ const docTemplate = `{
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id does not exist; ERR_INVALID_INPUT - Wrong structure of input json;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/get-level-complaints": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get list of level complaints assigned to current admin. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get Level Complaints for moderator to process",
+                "operationId": "get-level-complaints",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaints"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token;",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/get-user-complaints": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get list of user complaints assigned to current admin. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get User Complaints for moderator to process",
+                "operationId": "get-user-complaints",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaints"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token;",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/get-users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get list of users with given params. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get Users with given params",
+                "operationId": "get-users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "name of user you want to find",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is user banned or not",
+                        "name": "is_banned",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size of page",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset of users",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.Users"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token;",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/process-level-complaint": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete level complaint with given id. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Delete level complaint with given id",
+                "operationId": "process-level-complaint",
+                "parameters": [
+                    {
+                        "description": "Complaint ID",
+                        "name": "complaint_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.ComplaintID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint with such id among the ones assigned to you",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/process-user-complaint": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete user complaint with given id. Available only for moderators and admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Delete user complaint with given id",
+                "operationId": "process-user-complaint",
+                "parameters": [
+                    {
+                        "description": "Complaint ID",
+                        "name": "complaint_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.ComplaintID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint with such id among the ones assigned to you",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -185,6 +507,11 @@ const docTemplate = `{
         },
         "/admin/unban-level": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Unban level with given id. Available only for moderators and admins",
                 "consumes": [
                     "application/json"
@@ -204,7 +531,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelBan"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Bans.LevelBan"
                         }
                     }
                 ],
@@ -215,25 +542,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - Level with such id does not exist; ERR_INVALID_INPUT - Wrong structure of input json;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -241,6 +568,11 @@ const docTemplate = `{
         },
         "/admin/unban-user": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Unban user with given id if your access is greater than theirs. Available only for moderators and admins",
                 "consumes": [
                     "application/json"
@@ -260,7 +592,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserUnban"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Bans.UserUnban"
                         }
                     }
                 ],
@@ -271,25 +603,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id does not exist; ERR_INVALID_INPUT - Wrong structure of input json;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -316,7 +648,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.User"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.User"
                         }
                     }
                 ],
@@ -324,25 +656,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct"
                         }
                     },
                     "400": {
                         "description": "Possible messages: ERR_INVALID_INPUT - Wrong structure of input json; ERR_NO_SUCH_USER - User with such name and password does not exist;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server; ",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -369,7 +701,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct"
                         }
                     }
                 ],
@@ -377,31 +709,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct"
                         }
                     },
                     "400": {
                         "description": "Possible messages: ERR_INVALID_INPUT - Wrong structure of input json; ERR_NO_SUCH_USER - User with id as in access token does not exist; ERR_ACCESS_TOKEN_WRONG - Wrong access token; ERR_REFRESH_TOKEN_WRONG - Wrong refresh token;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Refresh token expired;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server; ",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -428,7 +760,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.User"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.User"
                         }
                     }
                 ],
@@ -436,25 +768,601 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.refreshStruct"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct"
                         }
                     },
                     "400": {
                         "description": "Possible messages: ERR_INVALID_INPUT - Wrong structure of input json; ERR_USER_EXISTS - User with such name already exists;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server; ",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/create-level": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create level with given structure",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Create level",
+                "operationId": "create-level",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Archive with level.",
+                        "name": "level",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "JSON file with level description.",
+                        "name": "info",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File with preview image of the level",
+                        "name": "preview",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.GetLevelInfoStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/download-level": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Download level with given id from server",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Download level",
+                "operationId": "download-level",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id of user you want to find",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archive with level.",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json; ERR_ENTITY_NOT_FOUND - no such level on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/get-level-info": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get level info about level with given id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Get level info",
+                "operationId": "get-level-info",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id of user you want to find",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelInfo"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/get-level-list": {
+            "post": {
+                "description": "Get level list with given params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Get level list",
+                "operationId": "get-level-list",
+                "parameters": [
+                    {
+                        "description": "search and filter params",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.FetchLevelStruct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelsList"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/level/update-level": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update level with given structure",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "level"
+                ],
+                "summary": "Update level",
+                "operationId": "update-level",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Archive with level.",
+                        "name": "level",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "JSON file with level description.",
+                        "name": "info",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File with preview image of the level",
+                        "name": "preview",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.GetLevelInfoStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/single-game/send-results": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Send results of single player game",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "single-game"
+                ],
+                "summary": "Send results of single player game",
+                "operationId": "send-results",
+                "parameters": [
+                    {
+                        "description": "Results of the game",
+                        "name": "complaint_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.LevelComplete"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/get-user-stats": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get User Statistics by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Get User Statistics",
+                "operationId": "get-user-stats",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id of user you want to find",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.GetUserStatsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired;",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stats/get-users-top": {
+            "post": {
+                "description": "Get Users Top with given params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "stats"
+                ],
+                "summary": "Get Users Top",
+                "operationId": "get-users-top",
+                "parameters": [
+                    {
+                        "description": "Search params",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.StatSortFilterParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.GetUsersTop"
+                        }
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired;",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-actions/change-avatar": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Change avatar. In case of empty request sets default avatar.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-actions"
+                ],
+                "summary": "Change Avatar",
+                "operationId": "change-avatar",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File with new avatar image",
+                        "name": "avatar",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input files (e.g. wrong name, not \"avatar\");",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Possible messages: ERR_INTERNAL - Error on server",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -462,6 +1370,11 @@ const docTemplate = `{
         },
         "/user-actions/get-user-info": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get username by id",
                 "consumes": [
                     "application/json"
@@ -478,31 +1391,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.getUserInfoStruct"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.GetUserInfoStruct"
                         }
                     },
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - There is no id in token payload/Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id not found;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -510,6 +1423,11 @@ const docTemplate = `{
         },
         "/user-actions/logout": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Expire refreshToken manually",
                 "consumes": [
                     "application/json"
@@ -529,25 +1447,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - There is no id in token payload/Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id not found;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -555,6 +1473,11 @@ const docTemplate = `{
         },
         "/user-actions/write-level-complaint": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Send level complaint to server. Possible Reason values: Offencive name, Offencive video, Offencive audio, Offencive text",
                 "consumes": [
                     "application/json"
@@ -574,7 +1497,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.LevelComplaint"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaint"
                         }
                     }
                 ],
@@ -585,25 +1508,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json/Invalid Reason;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -611,6 +1534,11 @@ const docTemplate = `{
         },
         "/user-actions/write-user-complaint": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Send user complaint to server. Possible Reason values: Cheating, Offencive nickname, Unsportsmanlike conduct",
                 "consumes": [
                     "application/json"
@@ -630,7 +1558,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.UserComplaint"
+                            "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaint"
                         }
                     }
                 ],
@@ -641,25 +1569,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json/Invalid Reason;",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Possible messages: ERR_UNAUTHORIZED - Access Token expired",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Possible messages: ERR_INTERNAL - Error on server",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     },
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handler.errorResponse"
+                            "$ref": "#/definitions/internal_handler.errorResponse"
                         }
                     }
                 }
@@ -667,22 +1595,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "entities.ChangeUserAccess": {
-            "type": "object",
-            "required": [
-                "id",
-                "new_access"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "new_access": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entities.LevelBan": {
+        "github_com_Gadzet005_GoType_backend_internal_domain_Bans.LevelBan": {
             "type": "object",
             "required": [
                 "id"
@@ -693,7 +1606,48 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.LevelComplaint": {
+        "github_com_Gadzet005_GoType_backend_internal_domain_Bans.UserBan": {
+            "type": "object",
+            "required": [
+                "ban_reason",
+                "ban_time",
+                "id"
+            ],
+            "properties": {
+                "ban_reason": {
+                    "type": "string"
+                },
+                "ban_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Bans.UserUnban": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Complaints.ComplaintID": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaint": {
             "type": "object",
             "required": [
                 "author_id",
@@ -716,42 +1670,18 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.User": {
+        "github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaints": {
             "type": "object",
-            "required": [
-                "name",
-                "password"
-            ],
             "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "description": "hash",
-                    "type": "string"
+                "level_complaints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaint"
+                    }
                 }
             }
         },
-        "entities.UserBan": {
-            "type": "object",
-            "required": [
-                "ban_reason",
-                "ban_time",
-                "id"
-            ],
-            "properties": {
-                "ban_reason": {
-                    "type": "string"
-                },
-                "ban_time": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entities.UserComplaint": {
+        "github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaint": {
             "type": "object",
             "required": [
                 "author_id",
@@ -774,7 +1704,44 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.UserUnban": {
+        "github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaints": {
+            "type": "object",
+            "properties": {
+                "user_complaints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaint"
+                    }
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.FetchLevelStruct": {
+            "type": "object",
+            "required": [
+                "filter_params",
+                "page_info",
+                "sort_params",
+                "tags"
+            ],
+            "properties": {
+                "filter_params": {
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelFilterParams"
+                },
+                "page_info": {
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo"
+                },
+                "sort_params": {
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelSortParams"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.GetLevelInfoStruct": {
             "type": "object",
             "required": [
                 "id"
@@ -785,15 +1752,288 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.errorResponse": {
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.Level": {
             "type": "object",
+            "required": [
+                "author",
+                "author_name",
+                "description",
+                "difficulty",
+                "duration",
+                "image_type",
+                "language",
+                "name",
+                "tags",
+                "type"
+            ],
             "properties": {
-                "message": {
+                "author": {
+                    "type": "integer"
+                },
+                "author_name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "difficulty": {
+                    "type": "integer"
+                },
+                "duration": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_type": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "preview_path": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "type": {
                     "type": "string"
                 }
             }
         },
-        "handler.getUserInfoStruct": {
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelFilterParams": {
+            "type": "object",
+            "properties": {
+                "difficulty": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "level_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelInfo": {
+            "type": "object",
+            "properties": {
+                "level_info": {
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.Level"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelSortParams": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "popularity": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelsList": {
+            "type": "object",
+            "properties": {
+                "levels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.Level"
+                    }
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo": {
+            "type": "object",
+            "required": [
+                "offset",
+                "page_size"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.CategoryParams": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "integer"
+                },
+                "pattern": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.GetUserStatsRes": {
+            "type": "object",
+            "properties": {
+                "user_stats": {
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PlayerStats"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.GetUsersTop": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PlayerStats"
+                    }
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.LevelComplete": {
+            "type": "object",
+            "required": [
+                "average_velocity",
+                "level_id",
+                "max_combo",
+                "num_press_err_by_char",
+                "placement",
+                "player_id",
+                "points"
+            ],
+            "properties": {
+                "average_velocity": {
+                    "type": "number"
+                },
+                "level_id": {
+                    "type": "integer"
+                },
+                "max_combo": {
+                    "type": "integer"
+                },
+                "num_press_err_by_char": {
+                    "description": "NumPressErrByChar map[rune][2]int ` + "`" + `json:\"num_press_err_by_char\" binding:\"required\" db:\"-\"` + "`" + `",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "placement": {
+                    "type": "integer"
+                },
+                "player_id": {
+                    "type": "integer"
+                },
+                "points": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo": {
+            "type": "object",
+            "required": [
+                "page_size"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "page_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PlayerStats": {
+            "type": "object",
+            "required": [
+                "num_press_err_by_char_by_lang"
+            ],
+            "properties": {
+                "average_accuracy_classic": {
+                    "type": "number"
+                },
+                "average_accuracy_relax": {
+                    "type": "number"
+                },
+                "average_delay": {
+                    "type": "number"
+                },
+                "num_chars_classic": {
+                    "type": "integer"
+                },
+                "num_chars_relax": {
+                    "type": "integer"
+                },
+                "num_classes_classic": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "num_games_mult": {
+                    "type": "integer"
+                },
+                "num_level_classic": {
+                    "type": "integer"
+                },
+                "num_level_relax": {
+                    "type": "integer"
+                },
+                "num_press_err_by_char_by_lang": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "sum_points": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                },
+                "win_percentage": {
+                    "type": "number"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.StatSortFilterParams": {
+            "type": "object",
+            "required": [
+                "page_info"
+            ],
+            "properties": {
+                "category_params": {
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.CategoryParams"
+                },
+                "page_info": {
+                    "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo"
+                },
+                "points": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_User.GetUserInfoStruct": {
             "type": "object",
             "properties": {
                 "access": {
@@ -813,7 +2053,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.refreshStruct": {
+        "github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -823,10 +2063,60 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_User.User": {
+            "type": "object",
+            "required": [
+                "name",
+                "password"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "description": "hash",
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_User.Users": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.User"
+                    }
+                }
+            }
+        },
+        "github_com_Gadzet005_GoType_backend_internal_domain_UserAccess.ChangeUserAccess": {
+            "type": "object",
+            "required": [
+                "id",
+                "new_access"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "new_access": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_handler.errorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {
-        "ApiKeyAuth": {
+        "BearerAuth": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -836,8 +2126,8 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.0.1",
-	Host:             "localhost:8000",
+	Version:          "1.0.0",
+	Host:             "localhost:8080",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "GoType App API",

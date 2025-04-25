@@ -1,7 +1,0 @@
-{
-  "name": "go-type",
-  "private": true,
-  "version": "1.0.0",
-  "license": "MIT",
-  "workspaces": ["desktop", "web", "common"]
-}

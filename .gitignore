@@ -58,3 +58,9 @@ sketch
 .env
 
 postgres-data/
+coverage
+
+frontend/desktop/src/main/config.json
+backend/previews
+backend/levels
+backend/avatars

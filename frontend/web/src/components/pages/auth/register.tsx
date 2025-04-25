@@ -1,5 +1,5 @@
-import { useState, FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
@@ -9,6 +9,7 @@ import {
   Container,
   Alert,
   CircularProgress,
+<<<<<<< HEAD
   FormGroup,
   FormControlLabel,
   Checkbox,
@@ -54,6 +55,12 @@ const PasswordField = ({ name, label }: { name: string; label: string }) => {
       />
     );
   };
+=======
+} from "@mui/material";
+import { AuthApi } from "@/api/authApi";
+import { RoutePath } from "@/config/routes/path";
+import { PasswordField } from "@/components/form/PasswordField";
+>>>>>>> 09cbe46b77f0f7430c479f63fc3017b94cc55ed6
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -71,9 +78,9 @@ export const Register = () => {
     }
 
     const formData = new FormData(event.currentTarget);
-    const name = formData.get('name') as string;
-    const password = formData.get('password') as string;
-    const passwordRepeat = formData.get('passwordRepeat') as string;
+    const name = formData.get("name") as string;
+    const password = formData.get("password") as string;
+    const passwordRepeat = formData.get("passwordRepeat") as string;
 
     if (password !== passwordRepeat) {
       setFormError("Пароли не совпадают.");
@@ -86,13 +93,13 @@ export const Register = () => {
 
     try {
       const tokens = await AuthApi.register({ name, password });
-      localStorage.setItem('token', tokens.access_token);
+      localStorage.setItem("token", tokens.access_token);
       navigate(RoutePath.profile);
     } catch (error: any) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       setFormError(
-        error.response?.data?.message || 
-        'Ошибка регистрации. Пользователь с таким именем уже существует.'
+        error.response?.data?.message ||
+          "Ошибка регистрации. Пользователь с таким именем уже существует."
       );
     } finally {
       setIsPending(false);
@@ -130,6 +137,7 @@ export const Register = () => {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             onSubmit={handleSubmit}
           >
+<<<<<<< HEAD
             <TextField 
               name="name" 
               variant="outlined" 
@@ -166,13 +174,22 @@ export const Register = () => {
               
             </FormGroup>
 
+=======
+            <TextField name="name" variant="outlined" label="Имя" fullWidth />
+            <PasswordField name="password" label="Пароль" />
+            <PasswordField name="passwordRepeat" label="Повторите пароль" />
+>>>>>>> 09cbe46b77f0f7430c479f63fc3017b94cc55ed6
             <Button
               variant="contained"
               type="submit"
               size="large"
               disabled={isPending}
             >
-              {isPending ? <CircularProgress size={24} /> : 'Зарегистрироваться'}
+              {isPending ? (
+                <CircularProgress size={24} />
+              ) : (
+                "Зарегистрироваться"
+              )}
             </Button>
           </Box>
         </Container>
