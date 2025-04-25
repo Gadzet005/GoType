@@ -1,51 +1,88 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
-  Typography,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CircularProgress,
-  Alert,
-  Chip,
-  Stack,
-  Divider,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+    Typography,
+    Grid,
+    Card,
+    CardMedia,
+    CardContent,
+    CircularProgress,
+    Alert,
+    Chip,
+    Stack,
+    Divider,
+    Button,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    Modal,
+    Box,
+    TextField,
+    Select,
+    MenuItem,
+  } from "@mui/material";
 import { LevelApi } from "@/api/levelApi";
+import { UserApi } from "@/api/userApi";
+import { AdminApi } from "@/api/adminApi"
 import { LevelInfo, ErrorResponse } from "@/api/models";
+import { RoutePath } from "@/config/routes/path";
+
+const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 600,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 2,
+  };
 
 export const Level: React.FC = () => {
-  const { levelId } = useParams<{ levelId: string }>();
-  const [levelInfo, setLevelInfo] = useState<LevelInfo | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+    const { levelId } = useParams<{ levelId: string }>();
+    const navigate = useNavigate();
+    const [levelInfo, setLevelInfo] = useState<LevelInfo | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [userAccess, setUserAccess] = useState<number>(0);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   useEffect(() => {
-    const fetchLevel = async () => {
-      try {
-        if (!levelId) return;
+    const fetchData = async () => {
+        try {
+          // Загрузка информации о пользователе
+          const userInfo = await UserApi.getUserInfo();
+          setUserAccess(userInfo.access);
+  
+          // Загрузка информации об уровне
+          if (!levelId) return;
+          const response = await LevelApi.getLevelInfo(Number(levelId));
+          setLevelInfo(response);
+          
+        } catch (err) {
+          setError((err as ErrorResponse).message || "Failed to load data");
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, [levelId]);
 
-        const response = await LevelApi.getLevelInfo(Number(levelId));
-        setLevelInfo(response);
-        setError(null);
-      } catch (err) {
-        setError((err as ErrorResponse).message || "Failed to load level info");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleDelete = async () => {
+    if (!levelId) return;
 
-    fetchLevel();
-  }, [levelId]);
+    try {
+      await AdminApi.banLevel({ id: Number(levelId) });
+      navigate(RoutePath.levelList); 
+    } catch (err) {
+      setError((err as ErrorResponse).message || "Failed to delete level");
+    }
+  };
 
   const handleDownload = async () => {
     if (!levelId) return;
@@ -114,10 +151,46 @@ export const Level: React.FC = () => {
             >
               Скачать уровень
             </Button>
+
+            {userAccess >= 2 && (
+              <Button
+                variant="contained"
+                color="error"
+                sx={{ mt: 2 }}
+                onClick={() => setDeleteModalOpen(true)}
+                fullWidth
+              >
+                Удалить уровень
+              </Button>
+            )}
           </CardContent>
         </Card>
       </Grid>
+        
+      <Modal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        aria-labelledby="delete-modal-title"
+      >
+        <Box sx={modalStyle}>
+          <Typography variant="h6" gutterBottom>
+            Удаление уровня
+          </Typography>
 
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+            <Button onClick={() => setDeleteModalOpen(false)}>Отмена</Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleDelete}
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : "Подтвердить удаление"}
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+    
       <Grid item xs={12} md={8}>
         <Stack spacing={2}>
           <Typography variant="h4">Информация об уровне</Typography>
