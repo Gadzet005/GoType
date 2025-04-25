@@ -180,7 +180,7 @@ func TestGetUsersTop(t *testing.T) {
 			finalParams := map[string]interface{}{
 				"sort_order": sortOrder,
 				"sort_param": sortParam,
-				"sort_index": cast.ToString(sortIndex),
+				"sort_index": cast.ToString(sortIndex + 1),
 				"page_size":  tc.inputParams.PageInfo.PageSize,
 				"page_num":   tc.inputParams.PageInfo.Offset,
 			}

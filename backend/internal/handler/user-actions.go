@@ -32,6 +32,7 @@ func NewUserActions(service service.UserActions) *UserActions {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/logout [post]
+// @Security BearerAuth
 func (h *UserActions) Logout(c *gin.Context) {
 	curId, exists := c.Get("id")
 
@@ -62,6 +63,7 @@ func (h *UserActions) Logout(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/get-user-info [get]
+// @Security BearerAuth
 func (h *UserActions) GetUserInfo(c *gin.Context) {
 	curId, exists := c.Get("id")
 
@@ -101,6 +103,7 @@ func (h *UserActions) GetUserInfo(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/write-user-complaint [post]
+// @Security BearerAuth
 func (h *UserActions) WriteUserComplaint(c *gin.Context) {
 	var input complaints.UserComplaint
 
@@ -136,6 +139,7 @@ func (h *UserActions) WriteUserComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/write-level-complaint [post]
+// @Security BearerAuth
 func (h *UserActions) WriteLevelComplaint(c *gin.Context) {
 	var input complaints.LevelComplaint
 
@@ -171,6 +175,7 @@ func (h *UserActions) WriteLevelComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /user-actions/change-avatar [post]
+// @Security BearerAuth
 func (h *UserActions) ChangeAvatar(c *gin.Context) {
 	userId, ok := c.Get(userIdCtx)
 	if !ok {

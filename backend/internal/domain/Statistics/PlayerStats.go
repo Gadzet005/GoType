@@ -39,4 +39,5 @@ type PlayerStatsDB struct {
 	AverageDelay            float64        `json:"average_delay" db:"average_delay"`
 	NumClassesClassic       pq.Int32Array  `json:"num_classes_classic" db:"num_classes_classic"`
 	SumPoints               int            `json:"sum_points" db:"sum_points"`
+	Nc                      int            `json:"-" db:"nc"`
 }

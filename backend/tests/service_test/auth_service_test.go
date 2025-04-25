@@ -375,6 +375,7 @@ func TestGenerateTokenByToken(t *testing.T) {
 	curUser := user.User{
 		Id:           1,
 		RefreshToken: validRefreshToken,
+		ExpiresAt:    time.Now().Add(time.Hour),
 	}
 
 	t.Run("successfully generates new tokens", func(t *testing.T) {

@@ -1,36 +1,92 @@
 definitions:
-  domain.CategoryParams:
+  github_com_Gadzet005_GoType_backend_internal_domain_Bans.LevelBan:
     properties:
-      category:
+      id:
         type: integer
-      pattern:
+    required:
+    - id
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Bans.UserBan:
+    properties:
+      ban_reason:
         type: string
-    type: object
-  domain.ChangeUserAccess:
-    properties:
-      id:
-        type: integer
-      new_access:
-        type: integer
-    required:
-    - id
-    - new_access
-    type: object
-  domain.ComplaintID:
-    properties:
+      ban_time:
+        type: string
       id:
         type: integer
     required:
+    - ban_reason
+    - ban_time
     - id
     type: object
-  domain.FetchLevelStruct:
+  github_com_Gadzet005_GoType_backend_internal_domain_Bans.UserUnban:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Complaints.ComplaintID:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaint:
+    properties:
+      author_id:
+        type: integer
+      level_id:
+        type: integer
+      message:
+        type: string
+      reason:
+        type: string
+    required:
+    - author_id
+    - level_id
+    - message
+    - reason
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaints:
+    properties:
+      level_complaints:
+        items:
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaint'
+        type: array
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaint:
+    properties:
+      author_id:
+        type: integer
+      message:
+        type: string
+      reason:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - author_id
+    - message
+    - reason
+    - user_id
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaints:
+    properties:
+      user_complaints:
+        items:
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaint'
+        type: array
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.FetchLevelStruct:
     properties:
       filter_params:
-        $ref: '#/definitions/domain.LevelFilterParams'
+        $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelFilterParams'
       page_info:
         $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo'
       sort_params:
-        $ref: '#/definitions/domain.LevelSortParams'
+        $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelSortParams'
       tags:
         items:
           type: string
@@ -41,39 +97,14 @@ definitions:
     - sort_params
     - tags
     type: object
-  domain.GetLevelInfoStruct:
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.GetLevelInfoStruct:
     properties:
       id:
         type: integer
     required:
     - id
     type: object
-  domain.GetUserInfoStruct:
-    properties:
-      access:
-        type: integer
-      ban_reason:
-        type: string
-      ban_time:
-        type: string
-      id:
-        type: integer
-      username:
-        type: string
-    type: object
-  domain.GetUserStatsRes:
-    properties:
-      user_stats:
-        $ref: '#/definitions/domain.PlayerStats'
-    type: object
-  domain.GetUsersTop:
-    properties:
-      users:
-        items:
-          $ref: '#/definitions/domain.PlayerStats'
-        type: array
-    type: object
-  domain.Level:
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.Level:
     properties:
       author:
         type: integer
@@ -113,37 +144,64 @@ definitions:
     - tags
     - type
     type: object
-  domain.LevelBan:
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelFilterParams:
     properties:
-      id:
+      difficulty:
         type: integer
-    required:
-    - id
-    type: object
-  domain.LevelComplaint:
-    properties:
-      author_id:
-        type: integer
-      level_id:
-        type: integer
-      message:
+      language:
         type: string
-      reason:
+      level_name:
         type: string
-    required:
-    - author_id
-    - level_id
-    - message
-    - reason
     type: object
-  domain.LevelComplaints:
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelInfo:
     properties:
-      level_complaints:
+      level_info:
+        $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.Level'
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelSortParams:
+    properties:
+      date:
+        type: string
+      popularity:
+        type: string
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelsList:
+    properties:
+      levels:
         items:
-          $ref: '#/definitions/domain.LevelComplaint'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.Level'
         type: array
     type: object
-  domain.LevelComplete:
+  github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo:
+    properties:
+      offset:
+        type: integer
+      page_size:
+        type: integer
+    required:
+    - offset
+    - page_size
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.CategoryParams:
+    properties:
+      category:
+        type: integer
+      pattern:
+        type: string
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.GetUserStatsRes:
+    properties:
+      user_stats:
+        $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PlayerStats'
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.GetUsersTop:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PlayerStats'
+        type: array
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.LevelComplete:
     properties:
       average_velocity:
         type: number
@@ -174,35 +232,17 @@ definitions:
     - player_id
     - points
     type: object
-  domain.LevelFilterParams:
+  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo:
     properties:
-      difficulty:
+      offset:
+        minimum: 0
         type: integer
-      language:
-        type: string
-      level_name:
-        type: string
+      page_size:
+        type: integer
+    required:
+    - page_size
     type: object
-  domain.LevelInfo:
-    properties:
-      level_info:
-        $ref: '#/definitions/domain.Level'
-    type: object
-  domain.LevelSortParams:
-    properties:
-      date:
-        type: string
-      popularity:
-        type: string
-    type: object
-  domain.LevelsList:
-    properties:
-      levels:
-        items:
-          $ref: '#/definitions/domain.Level'
-        type: array
-    type: object
-  domain.PlayerStats:
+  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PlayerStats:
     properties:
       average_accuracy_classic:
         type: number
@@ -243,17 +283,10 @@ definitions:
     required:
     - num_press_err_by_char_by_lang
     type: object
-  domain.RefreshStruct:
-    properties:
-      access_token:
-        type: string
-      refresh_token:
-        type: string
-    type: object
-  domain.StatSortFilterParams:
+  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.StatSortFilterParams:
     properties:
       category_params:
-        $ref: '#/definitions/domain.CategoryParams'
+        $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.CategoryParams'
       page_info:
         $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo'
       points:
@@ -261,7 +294,27 @@ definitions:
     required:
     - page_info
     type: object
-  domain.User:
+  github_com_Gadzet005_GoType_backend_internal_domain_User.GetUserInfoStruct:
+    properties:
+      access:
+        type: integer
+      ban_reason:
+        type: string
+      ban_time:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  github_com_Gadzet005_GoType_backend_internal_domain_User.User:
     properties:
       name:
         type: string
@@ -272,87 +325,34 @@ definitions:
     - name
     - password
     type: object
-  domain.UserBan:
-    properties:
-      ban_reason:
-        type: string
-      ban_time:
-        type: string
-      id:
-        type: integer
-    required:
-    - ban_reason
-    - ban_time
-    - id
-    type: object
-  domain.UserComplaint:
-    properties:
-      author_id:
-        type: integer
-      message:
-        type: string
-      reason:
-        type: string
-      user_id:
-        type: integer
-    required:
-    - author_id
-    - message
-    - reason
-    - user_id
-    type: object
-  domain.UserComplaints:
-    properties:
-      user_complaints:
-        items:
-          $ref: '#/definitions/domain.UserComplaint'
-        type: array
-    type: object
-  domain.UserUnban:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
-  domain.Users:
+  github_com_Gadzet005_GoType_backend_internal_domain_User.Users:
     properties:
       users:
         items:
-          $ref: '#/definitions/domain.User'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.User'
         type: array
     type: object
-  github_com_Gadzet005_GoType_backend_internal_domain_Level.PageInfo:
+  github_com_Gadzet005_GoType_backend_internal_domain_UserAccess.ChangeUserAccess:
     properties:
-      offset:
+      id:
         type: integer
-      page_size:
+      new_access:
         type: integer
     required:
-    - offset
-    - page_size
+    - id
+    - new_access
     type: object
-  github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo:
-    properties:
-      offset:
-        type: integer
-      page_size:
-        type: integer
-    required:
-    - offset
-    - page_size
-    type: object
-  handler.errorResponse:
+  internal_handler.errorResponse:
     properties:
       message:
         type: string
     type: object
-host: localhost:8000
+host: localhost:8080
 info:
   contact: {}
   description: API Server for GoType game and website
   title: GoType App API
-  version: 0.0.1
+  version: 1.0.0
 paths:
   /admin/ban-level:
     post:
@@ -366,7 +366,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.LevelBan'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Bans.LevelBan'
       produces:
       - application/json
       responses:
@@ -377,20 +377,22 @@ paths:
             of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - Level with such
             id does not exist; ERR_INVALID_INPUT - Wrong structure of input json;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Ban level
       tags:
       - admin
@@ -407,7 +409,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.UserBan'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Bans.UserBan'
       produces:
       - application/json
       responses:
@@ -419,20 +421,22 @@ paths:
             does not exist; ERR_INVALID_INPUT - Wrong structure of input json/Wrong
             format of ban duration;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Ban user
       tags:
       - admin
@@ -450,7 +454,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.ChangeUserAccess'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_UserAccess.ChangeUserAccess'
       produces:
       - application/json
       responses:
@@ -461,20 +465,22 @@ paths:
             of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id
             does not exist; ERR_INVALID_INPUT - Wrong structure of input json;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Change access level
       tags:
       - admin
@@ -491,25 +497,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.LevelComplaints'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaints'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Get Level Complaints for moderator to process
       tags:
       - admin
@@ -526,25 +534,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.UserComplaints'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaints'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Get User Complaints for moderator to process
       tags:
       - admin
@@ -578,25 +588,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Users'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.Users'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Get Users with given params
       tags:
       - admin
@@ -613,7 +625,7 @@ paths:
         name: complaint_id
         required: true
         schema:
-          $ref: '#/definitions/domain.ComplaintID'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.ComplaintID'
       produces:
       - application/json
       responses:
@@ -624,20 +636,22 @@ paths:
             of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint
             with such id among the ones assigned to you'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete level complaint with given id
       tags:
       - admin
@@ -654,7 +668,7 @@ paths:
         name: complaint_id
         required: true
         schema:
-          $ref: '#/definitions/domain.ComplaintID'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.ComplaintID'
       produces:
       - application/json
       responses:
@@ -665,20 +679,22 @@ paths:
             of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint
             with such id among the ones assigned to you'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete user complaint with given id
       tags:
       - admin
@@ -694,7 +710,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.LevelBan'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Bans.LevelBan'
       produces:
       - application/json
       responses:
@@ -705,20 +721,22 @@ paths:
             of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - Level with such
             id does not exist; ERR_INVALID_INPUT - Wrong structure of input json;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Unban level
       tags:
       - admin
@@ -735,7 +753,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.UserUnban'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Bans.UserUnban'
       produces:
       - application/json
       responses:
@@ -746,20 +764,22 @@ paths:
             of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id
             does not exist; ERR_INVALID_INPUT - Wrong structure of input json;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Unban user
       tags:
       - admin
@@ -775,28 +795,28 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.User'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.User'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.RefreshStruct'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct'
         "400":
           description: 'Possible messages: ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_NO_SUCH_USER - User with such name and password does not
             exist;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server; '
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
       summary: Login
       tags:
       - auth
@@ -813,33 +833,33 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.RefreshStruct'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.RefreshStruct'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct'
         "400":
           description: 'Possible messages: ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_NO_SUCH_USER - User with id as in access token does not
             exist; ERR_ACCESS_TOKEN_WRONG - Wrong access token; ERR_REFRESH_TOKEN_WRONG
             - Wrong refresh token;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Refresh token expired;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server; '
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
       summary: Refresh
       tags:
       - auth
@@ -855,27 +875,27 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.User'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.User'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.RefreshStruct'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.RefreshStruct'
         "400":
           description: 'Possible messages: ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_USER_EXISTS - User with such name already exists;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server; '
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
       summary: Register
       tags:
       - auth
@@ -907,26 +927,28 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.GetLevelInfoStruct'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.GetLevelInfoStruct'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
             input json;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Create level
       tags:
       - level
@@ -954,19 +976,21 @@ paths:
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
             input json; ERR_ENTITY_NOT_FOUND - no such level on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Download level
       tags:
       - level
@@ -988,25 +1012,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.LevelInfo'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelInfo'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
             input json;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Get level info
       tags:
       - level
@@ -1022,32 +1048,32 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.FetchLevelStruct'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.FetchLevelStruct'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.LevelsList'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.LevelsList'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
             input json;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
       summary: Get level list
       tags:
       - level
@@ -1079,26 +1105,28 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.GetLevelInfoStruct'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Level.GetLevelInfoStruct'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
             input json;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Update level
       tags:
       - level
@@ -1114,7 +1142,7 @@ paths:
         name: complaint_id
         required: true
         schema:
-          $ref: '#/definitions/domain.LevelComplete'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.LevelComplete'
       produces:
       - application/json
       responses:
@@ -1125,20 +1153,22 @@ paths:
             of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with
             such id'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Send results of single player game
       tags:
       - single-game
@@ -1160,25 +1190,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.GetUserStatsRes'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.GetUserStatsRes'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with
             such id'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Get User Statistics
       tags:
       - stats
@@ -1194,32 +1226,32 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.StatSortFilterParams'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.StatSortFilterParams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.GetUsersTop'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Statistics.GetUsersTop'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure
             of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with
             such id'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
       summary: Get Users Top
       tags:
       - stats
@@ -1245,20 +1277,22 @@ paths:
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
             input files (e.g. wrong name, not "avatar");'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired;
             ERR_PERMISSION_DENIED - Not enough rights to perform the action'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Change Avatar
       tags:
       - user-actions
@@ -1274,25 +1308,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.GetUserInfoStruct'
+            $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_User.GetUserInfoStruct'
         "400":
           description: 'Possible messages: ERR_ACCESS_TOKEN_WRONG - There is no id
             in token payload/Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER
             - User with such id not found;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Get User Info
       tags:
       - user-actions
@@ -1312,19 +1348,21 @@ paths:
             in token payload/Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER
             - User with such id not found;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Logout
       tags:
       - user-actions
@@ -1341,7 +1379,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.LevelComplaint'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.LevelComplaint'
       produces:
       - application/json
       responses:
@@ -1352,19 +1390,21 @@ paths:
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
             input json/Invalid Reason;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Write Level Complaint
       tags:
       - user-actions
@@ -1381,7 +1421,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/domain.UserComplaint'
+          $ref: '#/definitions/github_com_Gadzet005_GoType_backend_internal_domain_Complaints.UserComplaint'
       produces:
       - application/json
       responses:
@@ -1392,24 +1432,26 @@ paths:
             of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of
             input json/Invalid Reason;'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "401":
           description: 'Possible messages: ERR_UNAUTHORIZED - Access Token expired'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         "500":
           description: 'Possible messages: ERR_INTERNAL - Error on server'
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
       summary: Write User Complaint
       tags:
       - user-actions
 securityDefinitions:
-  ApiKeyAuth:
+  BearerAuth:
     in: header
     name: Authorization
     type: apiKey

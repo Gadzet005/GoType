@@ -31,6 +31,7 @@ func NewStat(service service.Stats) *Stat {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /stats/get-user-stats [get]
+// @Security BearerAuth
 func (h *Stat) GetUserStats(c *gin.Context) {
 	var levId int
 	levId, err := strconv.Atoi(c.Param("id"))

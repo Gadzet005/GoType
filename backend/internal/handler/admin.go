@@ -26,13 +26,14 @@ func NewAdmin(service service.Admin) *Admin {
 // @ID ban-user
 // @Accept json
 // @Produce json
-// @Param input body bans.UserBan true "id of user you want to ban, duration of ban (format 10h), ban_reason"
+// @Param input body bans.UserBan true "id of user you want to ban, duration of ban (format 10h), ban_reason)"
 // @Success 200
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id does not exist; ERR_INVALID_INPUT - Wrong structure of input json/Wrong format of ban duration;"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action"
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/ban-user [post]
+// @Security BearerAuth
 func (h *Admin) BanUser(c *gin.Context) {
 	var input bans.UserBan
 	curAccess, exists := c.Get(userAccessCtx)
@@ -69,6 +70,7 @@ func (h *Admin) BanUser(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/unban-user [post]
+// @Security BearerAuth
 func (h *Admin) UnbanUser(c *gin.Context) {
 	var input bans.UserUnban
 	curAccess, exists := c.Get(userAccessCtx)
@@ -105,6 +107,7 @@ func (h *Admin) UnbanUser(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/ban-level [post]
+// @Security BearerAuth
 func (h *Admin) BanLevel(c *gin.Context) {
 	var input bans.LevelBan
 	curAccess, exists := c.Get(userAccessCtx)
@@ -141,6 +144,7 @@ func (h *Admin) BanLevel(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/unban-level [post]
+// @Security BearerAuth
 func (h *Admin) UnbanLevel(c *gin.Context) {
 	var input bans.LevelBan
 	curAccess, exists := c.Get(userAccessCtx)
@@ -177,6 +181,7 @@ func (h *Admin) UnbanLevel(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/change-user-access [post]
+// @Security BearerAuth
 func (h *Admin) ChangeUserAccess(c *gin.Context) {
 	var input useraccess.ChangeUserAccess
 	curAccess, exists := c.Get(userAccessCtx)
@@ -212,6 +217,7 @@ func (h *Admin) ChangeUserAccess(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/get-user-complaints [get]
+// @Security BearerAuth
 func (h *Admin) GetUserComplaints(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
@@ -251,6 +257,7 @@ func (h *Admin) GetUserComplaints(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/get-level-complaints [get]
+// @Security BearerAuth
 func (h *Admin) GetLevelComplaints(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
@@ -291,6 +298,7 @@ func (h *Admin) GetLevelComplaints(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/process-user-complaint [POST]
+// @Security BearerAuth
 func (h *Admin) ProcessUserComplaint(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
@@ -337,6 +345,7 @@ func (h *Admin) ProcessUserComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/process-level-complaint [POST]
+// @Security BearerAuth
 func (h *Admin) ProcessLevelComplaint(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 
@@ -386,9 +395,9 @@ func (h *Admin) ProcessLevelComplaint(c *gin.Context) {
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
 // @Router /admin/get-users [get]
+// @Security BearerAuth
 func (h *Admin) GetUsers(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
-	logrus.Errorf("LOLq")
 	if !exists {
 		logrus.Errorf("LOL")
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrAccessToken)

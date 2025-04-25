@@ -95,7 +95,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		level.PUT("/update-level", h.MaxRequestSize(maxRequestBodySize), h.UserIdentity, h.Level.UpdateLevel)
 		level.POST("/get-level-list", h.Level.GetLevelList)
 	}
-
+	
 	singleGame := router.Group("/single-game", h.UserIdentity)
 	{
 		singleGame.POST("/send-results", h.SinglePlayerGame.SendResults)

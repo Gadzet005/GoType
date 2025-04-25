@@ -71,18 +71,37 @@ func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistic
 
 	var query = ""
 
-	query += fmt.Sprintf("%s", statsTable)
+	indexInQ := ""
+	if params["sort_param"] != "sum_points" {
+		indexInQ = fmt.Sprintf("[%s]", params["sort_index"])
+	} else {
+		indexInQ = "[1]"
+	}
+
+	query += fmt.Sprintf("(SELECT *, num_classes_classic%s as nc FROM %s ", indexInQ, statsTable)
+
+	if params["sort_param"] == "sum_points" {
+		query += fmt.Sprintf(" ORDER BY sum_points %s) ", params["sort_order"])
+	} else {
+		query += " ORDER BY nc "
+		query += fmt.Sprintf(" %s) ", params["sort_order"])
+	}
+
+	//if params["sort_param"] != "sum_points" {
+	//	query += fmt.Sprintf(" ORDER BY num_classes_classic[%s] %s", params["sort_index"], params["sort_order"])
+	//}
 
 	var limit = cast.ToString(params["page_size"])
 	var offset = cast.ToString(params["page_size"].(int) * (params["page_num"].(int) - 1))
 	query += fmt.Sprintf(" LIMIT %s OFFSET %s", limit, offset)
 
-	var wholeQuery = fmt.Sprintf("SELECT s.user_id, u.avatar_path, s.num_press_err_by_char_by_lang, s.num_level_relax, s.num_level_classic, s.num_games_mult, s.num_chars_classic, s.num_chars_relax, s.average_accuracy_classic, s.average_accuracy_relax, s.win_percentage, s.average_delay, s.num_classes_classic, s.sum_points, u.name as user_name FROM (SELECT user_id,num_press_err_by_char_by_lang,num_level_relax,num_level_classic,num_games_mult,num_chars_classic,num_chars_relax,average_accuracy_classic,average_accuracy_relax,win_percentage,average_delay,num_classes_classic,sum_points FROM %s) AS s JOIN %s AS u ON s.user_id = u.id", query, usersTable)
+	var wholeQuery = fmt.Sprintf("SELECT s.user_id, u.avatar_path, s.num_press_err_by_char_by_lang, s.num_level_relax, s.num_level_classic, s.num_games_mult, s.num_chars_classic, s.num_chars_relax, s.average_accuracy_classic, s.average_accuracy_relax, s.win_percentage, s.average_delay, s.nc, s.num_classes_classic, s.sum_points, u.name as user_name FROM (SELECT user_id,num_press_err_by_char_by_lang,num_level_relax,num_level_classic,num_games_mult,num_chars_classic,num_chars_relax,average_accuracy_classic,average_accuracy_relax,win_percentage,average_delay,num_classes_classic,sum_points,nc FROM %s) AS s JOIN %s AS u ON s.user_id = u.id", query, usersTable)
 
 	if params["sort_param"] == "sum_points" {
-		wholeQuery += fmt.Sprintf(" ORDER BY sum_points %s", params["sort_order"])
+		wholeQuery += fmt.Sprintf(" ORDER BY s.sum_points %s ", params["sort_order"])
 	} else {
-		wholeQuery += fmt.Sprintf(" ORDER BY num_classes_classic[%s]", params["sort_index"])
+		wholeQuery += " ORDER BY nc "
+		wholeQuery += fmt.Sprintf(" %s ", params["sort_order"])
 	}
 
 	logrus.Errorf("%v", wholeQuery)
