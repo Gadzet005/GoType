@@ -29,7 +29,7 @@ export async function downloadLevel(
 
         const result = await importLevel(levelId, base64);
         if (!result.ok) {
-            return failure("Failed to import level");
+            return failure("INVALID");
         }
 
         return success();

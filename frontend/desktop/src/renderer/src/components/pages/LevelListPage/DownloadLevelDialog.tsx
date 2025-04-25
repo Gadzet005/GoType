@@ -49,6 +49,11 @@ export const DownloadLevelDialog: React.FC<DownloadLevelDialogProps> = ({
           if (result.ok) {
             snackbar.show("Уровень успешно загружен", "success");
             onSuccess();
+          } else if (result.error === "INVALID") {
+            snackbar.show(
+              "Уровень невалиден. Попробуйте загрузить другой уровень.",
+              "warning"
+            );
           } else {
             console.error(result.error);
             snackbar.show(
