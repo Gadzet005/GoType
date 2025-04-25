@@ -227,51 +227,43 @@ export const Admin = () => {
     }
   };
 
-  const confirmAction = async () => {
-    if (!selectedComplaint || !processingAction) {
-      setError('Не выбрана жалоба для обработки');
+  const confirmAction = async (action: "process" | "ban" | "delete") => {
+    if (!selectedComplaint) {
+      setError("Не выбрана жалоба для обработки");
       return;
     }
-    console.log(selectedComplaint);
-    try {
-      let response;
-      switch (processingAction) {
-        case 'process':
-          if (complaintType === 'level') {
 
-            response = await AdminApi.processLevelComplaint(
-              selectedComplaint.id  // Явно передаем объект ComplaintID
-            );
+    try {
+      switch (action) {
+        case "process":
+          if (complaintType === "level") {
+            await AdminApi.processLevelComplaint({ id: selectedComplaint.id });
           } else {
-            response = await AdminApi.processUserComplaint(
-              selectedComplaint.id // Явно передаем объект ComplaintID
-            );
+            await AdminApi.processUserComplaint({ id: selectedComplaint.id });
           }
           break;
-  
-        case 'ban':
+
+        case "ban":
           await AdminApi.banUser({
             id: (selectedComplaint as UserComplaint).user_id,
             ban_reason: "Жалоба пользователя",
-            ban_time: "24h"
+            ban_time: "24h",
           });
+          await AdminApi.processUserComplaint({ id: selectedComplaint.id });
           break;
-  
-        case 'delete':
-          await AdminApi.banLevel(
-            { id: (selectedComplaint as LevelComplaint).level_id } // Явно передаем LevelBan
-          );
+
+        case "delete":
+          await AdminApi.banLevel({
+            id: (selectedComplaint as LevelComplaint).level_id,
+          });
+          await AdminApi.processLevelComplaint({ id: selectedComplaint.id });
           break;
       }
-  
-      console.log('Action completed:', response?.data);
+
       setProcessModalOpen(false);
       await loadData();
-      
     } catch (err: any) {
-      console.error('Action failed:', err);
-      setError(err.response?.data?.message || 'Ошибка выполнения действия');
-      setProcessingAction(null);
+      setError(err.response?.data?.message || "Ошибка выполнения действия");
     }
   };
 
@@ -518,7 +510,7 @@ export const Admin = () => {
             <TableBody>
               {userComplaints.map((complaint) => (
                 <TableRow key={`user-${complaint.id}`}>
-                    <TableCell>{complaint.complaint_id}</TableCell>
+                  <TableCell>{complaint.id}</TableCell>
                   <TableCell>{complaint.author_id}</TableCell>
                   <TableCell>{complaint.user_id}</TableCell>
                   <TableCell>{complaint.reason}</TableCell>
@@ -580,7 +572,7 @@ export const Admin = () => {
                   <Button
                     variant="contained"
                     color="error"
-                    onClick={() => setProcessingAction("ban")}
+                    onClick={() => confirmAction("ban")}
                   >
                     Забанить пользователя
                   </Button>
@@ -590,7 +582,7 @@ export const Admin = () => {
                   <Button
                     variant="contained"
                     color="error"
-                    onClick={() => setProcessingAction("delete")}
+                    onClick={() => confirmAction("delete")}
                   >
                     Удалить уровень
                   </Button>
@@ -598,25 +590,13 @@ export const Admin = () => {
 
                 <Button
                   variant="contained"
-                  onClick={() => setProcessingAction("process")}
+                  onClick={() => confirmAction("process")}
                 >
                   Подтвердить обработку
                 </Button>
               </Box>
 
-              {processingAction && (
-                <Box sx={{ mt: 2, borderTop: 1, pt: 2 }}>
-                  <Typography>
-                    Вы уверены, что хотите выполнить это действие?
-                  </Typography>
-                  <Button onClick={confirmAction} color="primary">
-                    Да
-                  </Button>
-                  <Button onClick={() => setProcessingAction(null)}>
-                    Отмена
-                  </Button>
-                </Box>
-              )}
+              
             </>
           )}
         </Box>

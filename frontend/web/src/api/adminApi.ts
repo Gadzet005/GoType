@@ -41,12 +41,12 @@ export const AdminApi = {
     return data.user_complaints || [];
   },
 
-  processLevelComplaint: async (id:number): Promise<void> => {
-    await $authHost.post('/admin/process-level-complaint', id);
+  processLevelComplaint: async (data: ComplaintID): Promise<void> => {
+    await $authHost.post('/admin/process-level-complaint', data);
   },
 
-  processUserComplaint: async (id:number): Promise<void> => {
-    await $authHost.post('/admin/process-user-complaint', id);
+  processUserComplaint: async (data: ComplaintID): Promise<void> => {
+    await $authHost.post('/admin/process-user-complaint', data);
   },
   
 
