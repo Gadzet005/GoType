@@ -53,12 +53,15 @@ export const Level: React.FC = () => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
+        try{
+            const userInfo = await UserApi.getUserInfo();
+            setUserAccess(userInfo.access);
+        }
+        catch(err){
+            navigate(RoutePath.login);
+            setUserAccess(1);
+        }
         try {
-          // Загрузка информации о пользователе
-          const userInfo = await UserApi.getUserInfo();
-          setUserAccess(userInfo.access);
-  
-          // Загрузка информации об уровне
           if (!levelId) return;
           const response = await LevelApi.getLevelInfo(Number(levelId));
           setLevelInfo(response);
