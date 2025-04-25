@@ -30,7 +30,6 @@ export const Level: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    
     const fetchLevel = async () => {
       try {
         if (!levelId) return;
@@ -208,39 +207,41 @@ export const Level: React.FC = () => {
             </Grid>
           </Grid>
 
-          <Typography variant="h6">Лучшие прохождения уровня</Typography>
-          <TableContainer component={Paper}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Игрок</TableCell>
-                  <TableCell>Id игрока</TableCell>
-                  <TableCell align="right">Очки</TableCell>
-
-                  <TableCell align="right">Точность</TableCell>
-                  <TableCell align="right">Скорость</TableCell>
-                  <TableCell align="right">Комбо</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {levelInfo.levelUserTop.map((user, index) => (
-                  <TableRow key={`${user.player_id}-${index}`}>
-                    <TableCell>{user.player_name}</TableCell>
-                    <TableCell align="right">{user.player_id}</TableCell>
-                    <TableCell align="right">{user.points}</TableCell>
-
-                    <TableCell align="right">
-                      {(user.accuracy * 100).toFixed(1)}%
-                    </TableCell>
-                    <TableCell align="right">
-                      {user.average_velocity} зн./мин
-                    </TableCell>
-                    <TableCell align="right">{user.max_combo}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          {levelInfo.levelUserTop && levelInfo.levelUserTop.length > 0 && (
+            <>
+              <Typography variant="h6">Лучшие прохождения уровня</Typography>
+              <TableContainer component={Paper}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Игрок</TableCell>
+                      <TableCell>Id игрока</TableCell>
+                      <TableCell align="right">Очки</TableCell>
+                      <TableCell align="right">Точность</TableCell>
+                      <TableCell align="right">Скорость</TableCell>
+                      <TableCell align="right">Комбо</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {levelInfo.levelUserTop.map((user, index) => (
+                      <TableRow key={`${user.player_id}-${index}`}>
+                        <TableCell>{user.player_name}</TableCell>
+                        <TableCell align="right">{user.player_id}</TableCell>
+                        <TableCell align="right">{user.points}</TableCell>
+                        <TableCell align="right">
+                          {(user.accuracy * 100).toFixed(1)}%
+                        </TableCell>
+                        <TableCell align="right">
+                          {user.average_velocity} зн./мин
+                        </TableCell>
+                        <TableCell align="right">{user.max_combo}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </>
+          )}
         </Stack>
       </Grid>
     </Grid>
