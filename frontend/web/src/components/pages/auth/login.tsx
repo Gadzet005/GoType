@@ -10,12 +10,46 @@ import {
   Alert,
   Container,
   InputAdornment,
-  Grid
+  IconButton,
 } from '@mui/material';
-import { EmailOutlined, LockOutlined } from '@mui/icons-material';
+import { EmailOutlined, LockOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthApi } from '@/api/authApi';
 import { RoutePath } from '@/config/routes/path';
-import { PasswordField } from '@common/components/form/PasswordField';
+
+const PasswordField = ({ name, label }: { name: string; label: string }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword((show) => !show);
+  };
+
+  return (
+    <TextField
+      fullWidth
+      name={name}
+      label={label}
+      type={showPassword ? 'text' : 'password'}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <LockOutlined sx={{ color: 'action.active' }} />
+          </InputAdornment>
+        ),
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              onClick={handleClickShowPassword}
+              edge="end"
+              aria-label="toggle password visibility"
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
+  );
+};
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -78,6 +112,7 @@ export const Login = () => {
               name="name" 
               variant="outlined" 
               label="Имя" 
+              fullWidth
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -87,25 +122,17 @@ export const Login = () => {
               }}
             />
             
-            <Grid container alignItems="flex-end" sx={{ width: '100%' }}>
-  <Grid item sx={{ mr: 1, my: 0.5 }}>
-    <LockOutlined sx={{ color: 'action.active' }} />
-  </Grid>
-  <Grid item xs sx={{ width: '100%' }}>
-    <Box sx={{ width: '100%' }}>
-      <PasswordField
-        name="password"
-        label="Пароль"
-      />
-    </Box>
-  </Grid>
-</Grid>
+            <PasswordField
+              name="password"
+              label="Пароль"
+            />
 
             <Button
               variant="contained"
               type="submit"
               size="large"
               disabled={isPending}
+              fullWidth
             >
               {isPending ? <CircularProgress size={24} /> : 'Вход'}
             </Button>

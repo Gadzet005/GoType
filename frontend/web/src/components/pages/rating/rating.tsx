@@ -11,17 +11,17 @@ import {
   CircularProgress,
   Alert,
   Container,
-  Pagination,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
-  TextField,
   Box,
-  Button
+  Button,
+  Avatar
 } from '@mui/material';
 import { UserApi } from '@/api/userApi';
 import { PlayerStats } from '@/api/models';
+import PersonIcon from '@mui/icons-material/Person';
 
 export const Rating = () => {
   const [loading, setLoading] = useState(true);
@@ -86,6 +86,8 @@ export const Rating = () => {
     }));
   };
 
+  const backend_url = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography variant="h3" gutterBottom>
@@ -101,6 +103,7 @@ export const Rating = () => {
             onChange={(e) => handleCategoryChange(e.target.value as string)}
             label="Категория"
           >
+            <MenuItem value=''> Не выбирать категорию</MenuItem>
             <MenuItem value='S'>S</MenuItem>
             <MenuItem value='A'>A</MenuItem>
             <MenuItem value='B'>B</MenuItem>
@@ -109,14 +112,28 @@ export const Rating = () => {
           </Select>
         </FormControl>
 
+        <FormControl sx={{ minWidth: 200 }}>
+          <InputLabel>Сортировка категории</InputLabel>
+          <Select
+            value={filters.pattern}
+            onChange={(e) => setFilters(prev => ({...prev, pattern: e.target.value}))}
+            label="Паттерн категории"
+            disabled={!filters.category} // Отключаем если категория не выбрана
+          >
+            <MenuItem value="desc">По убыванию</MenuItem>
+            <MenuItem value="asc">По возрастанию</MenuItem>
+          </Select>
+        </FormControl>
+
         <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel>Сортировать по</InputLabel>
+          <InputLabel>Сортировка по</InputLabel>
           <Select
             value={filters.points}
             onChange={(e) => setFilters(prev => ({...prev, points: e.target.value}))}
             label="Сортировать по"
           >
-
+            
+            <MenuItem value=""> Не сортировать</MenuItem>
             <MenuItem value="desc">Убыванию очков</MenuItem>
             <MenuItem value="asc">Возрастанию очков</MenuItem>
             
@@ -135,6 +152,7 @@ export const Rating = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>Ранг</TableCell>
+                  <TableCell>Аватар</TableCell>
                   <TableCell>Пользователь</TableCell>
                   <TableCell align="right">Всего очков</TableCell>
                   <TableCell align="right">S</TableCell>
@@ -148,6 +166,20 @@ export const Rating = () => {
                 {users.map((user, index) => (
                   <TableRow key={user.user_id}>
                     <TableCell>#{index + (page - 1) * PAGE_SIZE + 1}</TableCell>
+                    <TableCell>
+                  <Avatar
+                    src={
+                      user.avatar_path.Valid 
+                        ? `${backend_url}/${user.avatar_path.String}`
+                        : undefined
+                    }
+                    sx={{ width: 40, height: 40 }}
+                  >
+                    {!user.avatar_path.Valid && (
+                      <PersonIcon sx={{ fontSize: 24 }} />
+                    )}
+                  </Avatar>
+                </TableCell>
                     <TableCell>{user.user_name}</TableCell>
                     <TableCell align="right">{user.sum_points}</TableCell>
                     <TableCell align="right">{user.num_classes_classic[0]}</TableCell>

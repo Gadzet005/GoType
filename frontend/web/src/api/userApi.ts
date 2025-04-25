@@ -60,12 +60,14 @@ getUsersTop: async (params: {
   }): Promise<PlayerStats[]> => {
     
     const { data } = await $authHost.post('/stats/get-users-top', {
-      category_params: {
-        category: params.category_params.category, 
-        pattern: params.category_params.pattern
-      },
+      ...(params.category_params.category && {
+        category_params: {
+          category: params.category_params.category,
+          pattern: params.category_params.pattern
+        }
+      }),
       page_info: params.page_info,
-      points: params.points
+      ...(params.points && { points: params.points })
     });
     
     return data.users;

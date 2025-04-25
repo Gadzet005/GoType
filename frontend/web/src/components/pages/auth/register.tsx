@@ -11,11 +11,49 @@ import {
   CircularProgress,
   FormGroup,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  InputAdornment,
+  IconButton
+  
 } from '@mui/material';
+import { LockOutlined, Visibility, VisibilityOff } from '@mui/icons-material'
 import { AuthApi } from '@/api/authApi';
 import { RoutePath } from '@/config/routes/path';
-import { PasswordField } from "@common/components/form/PasswordField";
+
+const PasswordField = ({ name, label }: { name: string; label: string }) => {
+    const [showPassword, setShowPassword] = useState(false);
+  
+    const handleClickShowPassword = () => {
+      setShowPassword((show) => !show);
+    };
+  
+    return (
+      <TextField
+        fullWidth
+        name={name}
+        label={label}
+        type={showPassword ? 'text' : 'password'}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <LockOutlined sx={{ color: 'action.active' }} />
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={handleClickShowPassword}
+                edge="end"
+                aria-label="toggle password visibility"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    );
+  };
 
 export const Register = () => {
   const navigate = useNavigate();

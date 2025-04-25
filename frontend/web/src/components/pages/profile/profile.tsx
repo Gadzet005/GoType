@@ -10,7 +10,7 @@ import {
   CircularProgress,
   Alert,
   IconButton,
-  Button
+  Button,
 } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SecurityIcon from "@mui/icons-material/Security";
@@ -207,11 +207,19 @@ export const Profile = () => {
                     width: 100,
                     height: 100,
                     fontSize: "2.5rem",
-                    bgcolor: avatar_path ? "transparent" : "primary.main",
+                    bgcolor: avatar_path.Valid ? "transparent" : "primary.main",
                   }}
                 >
-                  {!avatar_path && username?.[0]?.toUpperCase()}
-                  console.log(avatar_path);
+                  {!avatar_path.Valid && (
+                    <PersonIcon
+                      sx={{
+                        fontSize: 48,
+                        color: "white",
+                        width: "60%",
+                        height: "60%",
+                      }}
+                    />
+                  )}
                 </Avatar>
                 {uploading && (
                   <CircularProgress
