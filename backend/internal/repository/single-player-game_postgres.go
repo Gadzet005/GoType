@@ -65,7 +65,11 @@ func (s *SinglePlayerGamePostgres) SendResults(lc statistics.LevelComplete, tota
 		return errors.New(gotype.ErrInternal)
 	}
 
+	logrus.Printf("%v", statsDB)
+
 	stats, err := s.castToJSON1(statsDB)
+
+	logrus.Printf("%v", stats)
 
 	if err != nil {
 		return errors.New(gotype.ErrInternal)
@@ -80,12 +84,14 @@ func (s *SinglePlayerGamePostgres) SendResults(lc statistics.LevelComplete, tota
 
 	if levelInfo.Type == "classic" {
 		stats.SumPoints += lc.Points
-		var curTotalDelay = cast.ToFloat64(stats.AverageDelay)*cast.ToFloat64(stats.NumCharsClassic) + cast.ToFloat64(lc.Time)
+		var curTotalDelay = cast.ToFloat64(stats.AverageDelay)*cast.ToFloat64(stats.NumCharsClassic) + (cast.ToFloat64(levelInfo.Duration) / 60)
+		logrus.Printf("CurTotalDelay: %f, %f, %f, %f, %f, %f", curTotalDelay, stats.AverageDelay, cast.ToFloat64(stats.AverageDelay), stats.NumCharsClassic, cast.ToFloat64(stats.NumCharsClassic), (cast.ToFloat64(levelInfo.Duration) / 60))
 		var curErr = cast.ToInt(math.Floor(stats.AverageAccuracyClassic*cast.ToFloat64(stats.NumCharsClassic))) + totalErr
 		stats.NumCharsClassic += totalPush
 		stats.AverageAccuracyClassic = 1.0 - (cast.ToFloat64(curErr) / cast.ToFloat64(stats.NumCharsClassic))
 		stats.NumLevelClassic += 1
 		stats.AverageDelay = cast.ToFloat64(curTotalDelay) / cast.ToFloat64(stats.NumCharsClassic)
+		logrus.Printf("New Average Delay: %f", curTotalDelay)
 		stats.NumClassesClassic[statistics.GetClassIndexByAccuracy(lc.Accuracy)] += 1
 	} else if levelInfo.Type == "relax" {
 		var curErr = cast.ToInt(math.Floor(stats.AverageAccuracyRelax*cast.ToFloat64(stats.NumCharsRelax))) + totalErr
@@ -145,7 +151,7 @@ func (s *SinglePlayerGamePostgres) getLevel(levelID int) (level.Level, error) {
 	if err := s.db.Get(&result, query, levelID); err != nil {
 		return level.Level{}, errors.New(gotype.ErrInternal)
 	}
-
+	logrus.Printf("AAAAAAAAAAAAA: %v", result)
 	return result, nil
 }
 

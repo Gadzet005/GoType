@@ -5,7 +5,7 @@ import "time"
 var UserComplaintReasons = [...]string{"Cheating", "Offencive nickname", "Unsportsmanlike conduct"}
 
 type UserComplaint struct {
-	Id           int       `json:"-" db:"id"`
+	Id           int       `json:"id" db:"id" binding:"omitempty"`
 	UserId       int       `json:"user_id" binding:"required" db:"user_id" example:"1"`
 	AuthorId     int       `json:"author_id" binding:"required"  db:"author" example:"2"`
 	CreationTime time.Time `json:"-" db:"time"`
