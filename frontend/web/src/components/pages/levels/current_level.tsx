@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { 
-  Typography, 
-  Grid, 
-  Card, 
-  CardMedia, 
-  CardContent, 
-  CircularProgress, 
-  Alert, 
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import {
+  Typography,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  CircularProgress,
+  Alert,
   Chip,
   Stack,
   Divider,
@@ -18,10 +18,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
-} from '@mui/material';
-import { LevelApi } from '@/api/levelApi';
-import { LevelInfo, ErrorResponse } from '@/api/models';
+  Paper,
+} from "@mui/material";
+import { LevelApi } from "@/api/levelApi";
+import { LevelInfo, ErrorResponse } from "@/api/models";
 
 export const Level: React.FC = () => {
   const { levelId } = useParams<{ levelId: string }>();
@@ -30,15 +30,16 @@ export const Level: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    
     const fetchLevel = async () => {
       try {
         if (!levelId) return;
-        
+
         const response = await LevelApi.getLevelInfo(Number(levelId));
         setLevelInfo(response);
         setError(null);
       } catch (err) {
-        setError((err as ErrorResponse).message || 'Failed to load level info');
+        setError((err as ErrorResponse).message || "Failed to load level info");
       } finally {
         setLoading(false);
       }
@@ -49,20 +50,19 @@ export const Level: React.FC = () => {
 
   const handleDownload = async () => {
     if (!levelId) return;
-    
+
     try {
       const response = await LevelApi.downloadLevel(Number(levelId));
-      
-      // Создаем ссылку для скачивания
+
       const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', `level_${levelId}.zip`);
+      link.setAttribute("download", `level_${levelId}.zip`);
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
     } catch (err) {
-      setError((err as ErrorResponse).message || 'Failed to download level');
+      setError((err as ErrorResponse).message || "Failed to download level");
     }
   };
 
@@ -77,7 +77,7 @@ export const Level: React.FC = () => {
   if (error) {
     return (
       <Grid container justifyContent="center" mt={4}>
-        <Alert severity="error" sx={{ width: '100%', maxWidth: 600 }}>
+        <Alert severity="error" sx={{ width: "100%", maxWidth: 600 }}>
           {error}
         </Alert>
       </Grid>
@@ -95,7 +95,9 @@ export const Level: React.FC = () => {
           <CardMedia
             component="img"
             height="300"
-            image={`${import.meta.env.VITE_BACKEND_URL}/${levelInfo.levelInfo.preview_path}`}
+            image={`${import.meta.env.VITE_BACKEND_URL}/${
+              levelInfo.levelInfo.preview_path
+            }`}
             alt={levelInfo.levelInfo.name}
           />
           <CardContent>
@@ -105,8 +107,8 @@ export const Level: React.FC = () => {
             <Typography variant="body2" color="text.secondary">
               От: {levelInfo.levelInfo.author_name}
             </Typography>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               sx={{ mt: 2 }}
               onClick={handleDownload}
               fullWidth
@@ -121,11 +123,11 @@ export const Level: React.FC = () => {
         <Stack spacing={2}>
           <Typography variant="h4">Информация об уровне</Typography>
           <Divider />
-          
+
           <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-            <Chip 
-              label={`Сложность: ${levelInfo.levelInfo.difficulty}/10`} 
-              color="primary" 
+            <Chip
+              label={`Сложность: ${levelInfo.levelInfo.difficulty}/10`}
+              color="primary"
               variant="outlined"
             />
             <Chip
@@ -138,12 +140,11 @@ export const Level: React.FC = () => {
               color="info"
               variant="outlined"
             />
-            
           </Stack>
 
           <Typography variant="h6">Описание</Typography>
           <Typography paragraph>
-            {levelInfo.levelInfo.description || 'Описание отсутствует'}
+            {levelInfo.levelInfo.description || "Описание отсутствует"}
           </Typography>
 
           <Typography variant="h6">Теги:</Typography>
@@ -167,7 +168,8 @@ export const Level: React.FC = () => {
             </Grid>
             <Grid item xs={6} md={3}>
               <Typography variant="body2">
-                Средняя точность: {(levelInfo.levelStats.average_acc * 100).toFixed(1)}%
+                Средняя точность:{" "}
+                {(levelInfo.levelStats.average_acc * 100).toFixed(1)}%
               </Typography>
             </Grid>
             <Grid item xs={6} md={3}>
@@ -187,17 +189,21 @@ export const Level: React.FC = () => {
             </Grid>
             <Grid item xs={6} md={3}>
               <Typography variant="body2">
-                Средняя скорость: {levelInfo.levelStats.average_average_velocity} зн./мин
+                Средняя скорость:{" "}
+                {levelInfo.levelStats.average_average_velocity} зн./мин
               </Typography>
             </Grid>
             <Grid item xs={6} md={3}>
               <Typography variant="body2">
-                Макс. скорость: {levelInfo.levelStats.max_average_velocity} зн./мин
+                Макс. скорость: {levelInfo.levelStats.max_average_velocity}{" "}
+                зн./мин
               </Typography>
             </Grid>
             <Grid item xs={6} md={3}>
               <Typography variant="body2">
-                Продолжительность: {Math.floor(levelInfo.levelInfo.duration / 60)}m {levelInfo.levelInfo.duration % 60}s
+                Продолжительность:{" "}
+                {Math.floor(levelInfo.levelInfo.duration / 60)}m{" "}
+                {levelInfo.levelInfo.duration % 60}s
               </Typography>
             </Grid>
           </Grid>
@@ -207,30 +213,29 @@ export const Level: React.FC = () => {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  
                   <TableCell>Игрок</TableCell>
                   <TableCell>Id игрока</TableCell>
                   <TableCell align="right">Очки</TableCell>
-                  
+
                   <TableCell align="right">Точность</TableCell>
                   <TableCell align="right">Скорость</TableCell>
                   <TableCell align="right">Комбо</TableCell>
-                  
                 </TableRow>
               </TableHead>
               <TableBody>
                 {levelInfo.levelUserTop.map((user, index) => (
                   <TableRow key={`${user.player_id}-${index}`}>
-                    
-                    
                     <TableCell>{user.player_name}</TableCell>
                     <TableCell align="right">{user.player_id}</TableCell>
                     <TableCell align="right">{user.points}</TableCell>
-                   
-                    <TableCell align="right">{(user.accuracy * 100).toFixed(1)}%</TableCell>
-                    <TableCell align="right">{user.average_velocity} зн./мин</TableCell>
+
+                    <TableCell align="right">
+                      {(user.accuracy * 100).toFixed(1)}%
+                    </TableCell>
+                    <TableCell align="right">
+                      {user.average_velocity} зн./мин
+                    </TableCell>
                     <TableCell align="right">{user.max_combo}</TableCell>
-                    
                   </TableRow>
                 ))}
               </TableBody>
