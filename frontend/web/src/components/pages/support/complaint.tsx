@@ -26,6 +26,16 @@ const reasonsMap = {
   level: ['Offencive name', 'Offencive video', 'Offencive audio', 'Offencive text']
 };
 
+const reasonsMapTranslate: Record<string, string> = {
+    'Cheating': 'Читерство',
+    'Offencive nickname': 'Оскорбительное имя пользователя',
+    'Unsportsmanlike conduct': 'Неспортивное поведение',
+    'Offencive name': 'Оскорбительное название уровня',
+    'Offencive video': 'Оскорбительная картинка уровня',
+    'Offencive audio': 'Оскорбительная музыка',
+    'Offencive text': 'Оскорбительный текст уровня'
+};
+
 export const Complaint = () => {
   const navigate = useNavigate();
   const [complaintType, setComplaintType] = useState<ComplaintType>('user');
@@ -156,7 +166,7 @@ export const Complaint = () => {
             >
               {reasonsMap[complaintType].map((reason) => (
                 <MenuItem key={reason} value={reason}>
-                  {reason}
+                  {reasonsMapTranslate[reason]}
                 </MenuItem>
               ))}
             </Select>

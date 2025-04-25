@@ -44,19 +44,40 @@ export interface LevelBan {
   }
   
   export interface LevelInfo {
-    level_info: {
+    levelInfo: {
       id: number;
+      author_name: string;
       name: string;
       author: number;
-      author_name: string;
       description: string;
-      difficulty: number;
       duration: number;
+      tags: string[] | null;
       language: string;
-      tags: string[];
       type: string;
+      difficulty: number;
       preview_path: string;
+      image_type: string;
     };
+    levelStats: {
+      num_played: number;
+      average_acc: number;
+      max_combo: number;
+      max_points: number;
+      average_points: number;
+      average_average_velocity: number;
+      max_average_velocity: number;
+    };
+    levelUserTop: Array<{
+      level_id: number;
+      player_id: number;
+      player_name: string;
+      num_press_err_by_char: null | number[];
+      accuracy: number;
+      average_velocity: number;
+      max_combo: number;
+      placement: number;
+      points: number;
+    }>;
   }
   
   export interface PlayerStats {
@@ -82,7 +103,7 @@ export interface LevelBan {
     num_classes_classic: number[];
 }
   
-  export interface ErrorResponse {
+  export interface ErrorResponse{
     message: string;
   }
   

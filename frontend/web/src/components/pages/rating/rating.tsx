@@ -147,7 +147,7 @@ export const Rating = () => {
               <TableBody>
                 {users.map((user, index) => (
                   <TableRow key={user.user_id}>
-                    <TableCell>#{index + 1}</TableCell>
+                    <TableCell>#{index + (page - 1) * PAGE_SIZE + 1}</TableCell>
                     <TableCell>{user.user_name}</TableCell>
                     <TableCell align="right">{user.sum_points}</TableCell>
                     <TableCell align="right">{user.num_classes_classic[0]}</TableCell>

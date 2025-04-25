@@ -247,16 +247,16 @@ export const Admin = () => {
                         setBanModalOpen(true);
                       }}
                     >
-                      {user.ban_reasons ? 'Разбанить' : 'Забанить'}
+                      {user.ban_reason ? 'Разбанить' : 'Забанить'}
                     </Button>
                     <Select
                       value={user.access}
                       size="small"
                       onChange={(e) => handleChangeAccess(user, e.target.value as number)}
                     >
-                      <MenuItem value={0}>Пользователь</MenuItem>
-                      <MenuItem value={1}>Модератор</MenuItem>
-                      <MenuItem value={2}>Администратор</MenuItem>
+                      <MenuItem value={1}>Пользователь</MenuItem>
+                      <MenuItem value={2}>Модератор</MenuItem>
+                      <MenuItem value={3}>Администратор</MenuItem>
                     </Select>
                   </TableCell>
                 </TableRow>
