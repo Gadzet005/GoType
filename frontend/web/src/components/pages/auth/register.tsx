@@ -9,7 +9,6 @@ import {
   Container,
   Alert,
   CircularProgress,
-<<<<<<< HEAD
   FormGroup,
   FormControlLabel,
   Checkbox,
@@ -55,12 +54,6 @@ const PasswordField = ({ name, label }: { name: string; label: string }) => {
       />
     );
   };
-=======
-} from "@mui/material";
-import { AuthApi } from "@/api/authApi";
-import { RoutePath } from "@/config/routes/path";
-import { PasswordField } from "@/components/form/PasswordField";
->>>>>>> 09cbe46b77f0f7430c479f63fc3017b94cc55ed6
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -137,7 +130,6 @@ export const Register = () => {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             onSubmit={handleSubmit}
           >
-<<<<<<< HEAD
             <TextField 
               name="name" 
               variant="outlined" 
@@ -174,11 +166,6 @@ export const Register = () => {
               
             </FormGroup>
 
-=======
-            <TextField name="name" variant="outlined" label="Имя" fullWidth />
-            <PasswordField name="password" label="Пароль" />
-            <PasswordField name="passwordRepeat" label="Повторите пароль" />
->>>>>>> 09cbe46b77f0f7430c479f63fc3017b94cc55ed6
             <Button
               variant="contained"
               type="submit"

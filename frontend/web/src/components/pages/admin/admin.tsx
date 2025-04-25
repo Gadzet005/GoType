@@ -470,6 +470,7 @@ export const Admin = () => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>ID жалобы</TableCell>
                 <TableCell>ID автора</TableCell>
                 <TableCell>ID уровня</TableCell>
                 <TableCell>Причина</TableCell>
@@ -480,6 +481,7 @@ export const Admin = () => {
             <TableBody>
               {levelComplaints.map((complaint) => (
                 <TableRow key={`level-${complaint.id}`}>
+                  <TableCell>{complaint.level_id}</TableCell>
                   <TableCell>{complaint.author_id}</TableCell>
                   <TableCell>{complaint.level_id}</TableCell>
                   <TableCell>{complaint.reason}</TableCell>
@@ -505,6 +507,7 @@ export const Admin = () => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>ID жалобы</TableCell>
                 <TableCell>ID автора</TableCell>
                 <TableCell>ID пользователя</TableCell>
                 <TableCell>Причина</TableCell>
@@ -515,6 +518,7 @@ export const Admin = () => {
             <TableBody>
               {userComplaints.map((complaint) => (
                 <TableRow key={`user-${complaint.id}`}>
+                    <TableCell>{complaint.complaint_id}</TableCell>
                   <TableCell>{complaint.author_id}</TableCell>
                   <TableCell>{complaint.user_id}</TableCell>
                   <TableCell>{complaint.reason}</TableCell>
