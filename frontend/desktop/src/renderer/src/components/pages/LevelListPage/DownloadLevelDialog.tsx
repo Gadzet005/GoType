@@ -4,6 +4,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Link,
+  Typography,
 } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import React from "react";
@@ -28,6 +30,18 @@ export const DownloadLevelDialog: React.FC<DownloadLevelDialogProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle variant="h4">Загрузка уровня</DialogTitle>
+      <DialogContent>
+        <Typography>
+          Уровни можно поискать на нашем{" "}
+          <Link
+            onClick={() =>
+              window.appAPI.openExternalLink(ctx.config.frontendURL + "/levels")
+            }
+          >
+            веб-сайте
+          </Link>
+        </Typography>
+      </DialogContent>
       <Formik
         initialValues={{ id: 1 }}
         onSubmit={async ({ id }, { setSubmitting }) => {

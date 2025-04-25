@@ -42,7 +42,7 @@ export class GameStatistics {
         this.language = language;
         this.alphabetTotal_ = Array(language.alphabet.length).fill(0);
         this.alphabetMistakes_ = Array(language.alphabet.length).fill(0);
-        this.levelDuration = levelDuration;
+        this.levelDuration = levelDuration / 60000; // convert to minutes
     }
 
     reset() {
@@ -115,7 +115,7 @@ export class GameStatistics {
         if (this.totalLetters === 0) {
             return 0;
         }
-        return this.levelDuration / this.totalLetters;
+        return this.totalLetters / this.levelDuration;
     }
 
     get missedTotal() {

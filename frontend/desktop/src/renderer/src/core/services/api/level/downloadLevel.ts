@@ -15,13 +15,16 @@ export async function downloadLevel(
 ): PromiseResult<void, string> {
     try {
         const response = await ctx.authApi.get(
-            ApiRoutes.Level.DOWNLOAD_LEVEL(levelId),
+            ApiRoutes.Level.DOWNLOAD_LEVEL(levelId) + `?t=${Date.now()}`,
             {
                 responseType: "blob",
+                headers: {
+                    Accept: "application/octet-stream",
+                },
             }
         );
 
-        const blob = await response.data;
+        const blob: Blob = response.data;
         const base64 = await blobToBase64(blob);
 
         const result = await importLevel(levelId, base64);

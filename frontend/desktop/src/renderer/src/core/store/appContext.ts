@@ -50,6 +50,7 @@ export class GlobalAppContext implements AppContext {
             return Promise.reject(error);
         }
 
+        console.log("refreshing...");
         const result = await refresh(this);
         if (result.ok) {
             return this.authApi.request(error.config!);

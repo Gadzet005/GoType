@@ -1,4 +1,4 @@
-import { app, dialog, ipcMain } from "electron";
+import { app, dialog, ipcMain, shell } from "electron";
 import { FileMeta } from "@common/file";
 import jetpack from "fs-jetpack";
 import path from "path";
@@ -49,6 +49,11 @@ export function initAppAPIHandlers() {
         return {
             isDev: appConfig.isDev,
             backendURL: appConfig.backendURL,
+            frontendURL: appConfig.frontendURL,
         };
+    });
+
+    ipcMain.handle("open-external-link", async (_: any, url: string) => {
+        shell.openExternal(url);
     });
 }
