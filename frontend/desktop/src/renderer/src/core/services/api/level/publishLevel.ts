@@ -27,7 +27,7 @@ export async function publishLevel(
 
         const creationData: LevelAPI.CreationData = {
             id: data.draft.publication.levelId ?? undefined,
-            name: data.draft.name,
+            name: data.draft.publication.levelName,
             description: data.draft.publication.description,
             tags: [],
             author: ctx.user.profile?.id!,

@@ -84,7 +84,9 @@ export class GameStatistics {
         if (this.totalLetters === 0) {
             return 100;
         }
-        return (1 - this.totalMistakes / this.totalLetters) * 100;
+        const ratio =
+            (this.totalMistakes + this.missedTotal) / this.totalLetters;
+        return (1 - ratio) * 100;
     }
 
     get accuracyLevel() {
@@ -115,7 +117,7 @@ export class GameStatistics {
         if (this.totalLetters === 0) {
             return 0;
         }
-        return this.totalLetters / this.levelDuration;
+        return (this.totalLetters - this.missedTotal) / this.levelDuration;
     }
 
     get missedTotal() {
@@ -128,6 +130,11 @@ export class GameStatistics {
             return;
         }
 
+        const letterIdx = this.language.alphabet.indexOf(
+            result.letter.toLowerCase()
+        );
+        this.alphabetTotal_[letterIdx]++;
+
         switch (result.type) {
             case StatInputResultType.correct:
                 this.comboCounter_++;
@@ -135,20 +142,13 @@ export class GameStatistics {
                 this.score_ += this.comboCounter * Score.letter;
                 break;
             case StatInputResultType.incorrect:
+                this.alphabetMistakes_[letterIdx]++;
                 this.comboCounter_ = 1;
                 break;
             case StatInputResultType.missed:
                 this.comboCounter_ = 1;
                 this.missedTotal_++;
                 break;
-        }
-
-        const isRight = result.type === StatInputResultType.correct;
-        const letterIdx = this.language.alphabet.indexOf(result.letter);
-
-        this.alphabetTotal_[letterIdx]++;
-        if (!isRight) {
-            this.alphabetMistakes_[letterIdx]++;
         }
     }
 }
