@@ -347,14 +347,14 @@ export const Profile = () => {
                       stats.average_delay !== 1000 && (
                         <StatChip
                           label="Средняя задержка"
-                          value={`${(stats.average_delay  ).toFixed(3)} сек`}
+                          value={`${(stats.average_delay * 60  ).toFixed(3)} сек`}
                         />
                       )}
                     {stats.average_delay !== undefined &&
                       stats.average_delay !== 1000 && (
                         <StatChip
                           label="Средняя скорость"
-                          value={`${(60/stats.average_delay  ).toFixed(1)} зн/мин`}
+                          value={`${(60/(stats.average_delay * 60)  ).toFixed(1)} зн/мин`}
                         />
                       )}
                   </Stack>
