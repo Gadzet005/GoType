@@ -257,12 +257,12 @@ export const Level: React.FC = () => {
             <Grid item xs={6} md={3}>
               <Typography variant="body2">
                 Средняя скорость:{" "}
-                {levelInfo.levelStats.average_average_velocity} зн./мин
+                {levelInfo.levelStats.average_average_velocity.toFixed(1)} зн./мин
               </Typography>
             </Grid>
             <Grid item xs={6} md={3}>
               <Typography variant="body2">
-                Макс. скорость: {levelInfo.levelStats.max_average_velocity}{" "}
+                Макс. скорость: {levelInfo.levelStats.max_average_velocity.toFixed(1)}{" "}
                 зн./мин
               </Typography>
             </Grid>
@@ -300,7 +300,7 @@ export const Level: React.FC = () => {
                           {(user.accuracy * 100).toFixed(1)}%
                         </TableCell>
                         <TableCell align="right">
-                          {user.average_velocity} зн./мин
+                          {user.average_velocity.toFixed(1)} зн./мин
                         </TableCell>
                         <TableCell align="right">{user.max_combo}</TableCell>
                       </TableRow>
