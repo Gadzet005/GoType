@@ -45,7 +45,7 @@ const transformErrorData = (
       if (error > 0) {
         result.push({
           char: `${String.fromCharCode(parseInt(char))}`,
-          errors: (error / all) * 100,
+          errors: Math.round((error / all)*10000)/100,
           language: langCode,
         });
       }
@@ -348,6 +348,13 @@ export const Profile = () => {
                         <StatChip
                           label="Средняя задержка"
                           value={`${(stats.average_delay  ).toFixed(3)} сек`}
+                        />
+                      )}
+                    {stats.average_delay !== undefined &&
+                      stats.average_delay !== 1000 && (
+                        <StatChip
+                          label="Средняя скорость"
+                          value={`${(60/stats.average_delay  ).toFixed(1)} зн/мин`}
                         />
                       )}
                   </Stack>

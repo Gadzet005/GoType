@@ -76,6 +76,7 @@ export const Admin = () => {
     offset: 1,
     pageSize: 10,
   });
+  const [tempSearchName, setTempSearchName] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [banModalOpen, setBanModalOpen] = useState(false);
@@ -161,6 +162,15 @@ export const Admin = () => {
   useEffect(() => {
     loadData();
   }, [activeTab, searchParams]);
+
+  const applyFilters = () => {
+    setSearchParams(prev => ({
+      ...prev,
+      name: tempSearchName,
+      offset: 1 // Сбрасываем пагинацию при применении нового фильтра
+    }));
+    setPage(1);
+  };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -359,10 +369,8 @@ export const Admin = () => {
             placeholder="Поиск по имени"
             variant="outlined"
             size="small"
-            value={searchParams.name}
-            onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, name: e.target.value }))
-            }
+            value={tempSearchName}
+            onChange={(e) => setTempSearchName(e.target.value)}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -385,9 +393,13 @@ export const Admin = () => {
             }
             label="Показать забаненных"
           />
-          <IconButton onClick={() => loadData()} disabled={loading}>
-            <RefreshIcon />
-          </IconButton>
+          <Button
+            variant="contained"
+            onClick={applyFilters}
+            sx={{ height: 56 }}
+          >
+            Применить
+          </Button>
         </Box>
 
         <TableContainer component={Paper}>
@@ -595,8 +607,6 @@ export const Admin = () => {
                   Подтвердить обработку
                 </Button>
               </Box>
-
-              
             </>
           )}
         </Box>

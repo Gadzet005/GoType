@@ -146,14 +146,6 @@ export const Level: React.FC = () => {
             <Typography variant="body2" color="text.secondary">
               От: {levelInfo.levelInfo.author_name}
             </Typography>
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={handleDownload}
-              fullWidth
-            >
-              Скачать уровень
-            </Button>
 
             {userAccess >= 2 && (
               <Button
