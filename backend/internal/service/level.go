@@ -13,18 +13,26 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"time"
 )
 
 type LevelService struct {
 	repo        repository.Level
 	fileStorage repository.Files
+	userRepo    repository.UserActions
 }
 
-func NewLevelService(repo repository.Level, fileStorage repository.Files) *LevelService {
-	return &LevelService{repo: repo, fileStorage: fileStorage}
+func NewLevelService(repo repository.Level, fileStorage repository.Files, authRepo repository.UserActions) *LevelService {
+	return &LevelService{repo: repo, fileStorage: fileStorage, userRepo: authRepo}
 }
 
 func (s *LevelService) CreateLevel(userId int, levelFile, infoFile, previewFile *multipart.FileHeader) (int, error) {
+	_, _, banTime, _, _, err := s.userRepo.GetUserById(userId)
+
+	if err != nil || banTime.After(time.Now()) {
+		return -1, errors.New(pkg.ErrPermissionDenied)
+	}
+
 	jsonFile, _ := infoFile.Open()
 	defer jsonFile.Close()
 	fileBytes, err := io.ReadAll(jsonFile)
@@ -68,6 +76,16 @@ func (s *LevelService) CreateLevel(userId int, levelFile, infoFile, previewFile 
 }
 
 func (s *LevelService) UpdateLevel(userId int, levelFile, infoFile, previewFile *multipart.FileHeader) (int, error) {
+	_, _, banTime, _, _, err := s.userRepo.GetUserById(userId)
+
+	if err != nil || banTime.After(time.Now()) {
+		return -1, errors.New(pkg.ErrPermissionDenied)
+	}
+
+	if err != nil || banTime.After(time.Now()) {
+		return -1, errors.New(pkg.ErrPermissionDenied)
+	}
+
 	jsonFile, _ := infoFile.Open()
 	defer jsonFile.Close()
 

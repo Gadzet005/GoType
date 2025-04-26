@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"database/sql"
 	"errors"
 	level "github.com/Gadzet005/GoType/backend/internal/domain/Level"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
@@ -16,12 +17,14 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestDeleteLevel(t *testing.T) {
 	mockRepo := new(mocks.Level)
 	fileStorage := new(mocks.MockFileStorage)
-	service := service2.NewLevelService(mockRepo, fileStorage)
+	authService := new(mocks.UserActions)
+	service := service2.NewLevelService(mockRepo, fileStorage, authService)
 
 	tests := map[string]struct {
 		levelID       int
@@ -59,7 +62,8 @@ func TestDeleteLevel(t *testing.T) {
 func TestGetLevelById(t *testing.T) {
 	mockRepo := new(mocks.Level)
 	fileStorage := new(mocks.MockFileStorage)
-	service := service2.NewLevelService(mockRepo, fileStorage)
+	authService := new(mocks.UserActions)
+	service := service2.NewLevelService(mockRepo, fileStorage, authService)
 
 	tests := map[string]struct {
 		levelID       int
@@ -106,7 +110,8 @@ func TestGetLevelById(t *testing.T) {
 func TestGetLevelUserTop(t *testing.T) {
 	mockRepo := new(mocks.Level)
 	fileStorage := new(mocks.MockFileStorage)
-	service := service2.NewLevelService(mockRepo, fileStorage)
+	authService := new(mocks.UserActions)
+	service := service2.NewLevelService(mockRepo, fileStorage, authService)
 
 	tests := map[string]struct {
 		levelID     int
@@ -153,7 +158,8 @@ func TestGetLevelUserTop(t *testing.T) {
 func TestGetLevelStats(t *testing.T) {
 	mockRepo := new(mocks.Level)
 	fileStorage := new(mocks.MockFileStorage)
-	service := service2.NewLevelService(mockRepo, fileStorage)
+	authService := new(mocks.UserActions)
+	service := service2.NewLevelService(mockRepo, fileStorage, authService)
 
 	tests := map[string]struct {
 		levelID      int
@@ -200,7 +206,8 @@ func TestGetLevelStats(t *testing.T) {
 func TestCheckLevelExists(t *testing.T) {
 	mockRepo := new(mocks.Level)
 	fileStorage := new(mocks.MockFileStorage)
-	service := service2.NewLevelService(mockRepo, fileStorage)
+	authService := new(mocks.UserActions)
+	service := service2.NewLevelService(mockRepo, fileStorage, authService)
 
 	tempFile, err := os.CreateTemp("", "test_level_file")
 	require.NoError(t, err)
@@ -262,7 +269,8 @@ func TestCheckLevelExists(t *testing.T) {
 func TestGetLevelList(t *testing.T) {
 	mockRepo := new(mocks.Level)
 	fileStorage := new(mocks.MockFileStorage)
-	service := service2.NewLevelService(mockRepo, fileStorage)
+	authService := new(mocks.UserActions)
+	service := service2.NewLevelService(mockRepo, fileStorage, authService)
 
 	tests := map[string]struct {
 		fetchStruct  level.FetchLevelStruct
@@ -395,7 +403,8 @@ func createMultipartFile(t *testing.T, filename string, content []byte) *multipa
 func TestCreateLevel(t *testing.T) {
 	mockRepo := new(mocks.Level)
 	mockFileStorage := new(mocks.MockFileStorage)
-	service := service2.NewLevelService(mockRepo, mockFileStorage)
+	authService := new(mocks.UserActions)
+	service := service2.NewLevelService(mockRepo, mockFileStorage, authService)
 
 	infoJSON := `{
     "name": "cool level",
@@ -627,6 +636,7 @@ func TestCreateLevel(t *testing.T) {
 
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
+			authService.On("GetUserById", tt.userId).Return("", -1, time.Now(), "", sql.NullString{String: "", Valid: false}, nil).Once()
 			if tt.doCallCreateLevel {
 				mockRepo.On("CreateLevel", tt.levelInfo).Return(tt.previewFile.Filename, tt.levelFile.Filename, tt.mockLevel.Id, tt.mockCreateErr).Once()
 			}
@@ -668,7 +678,8 @@ func TestCreateLevel(t *testing.T) {
 func TestUpdateLevel(t *testing.T) {
 	mockRepo := new(mocks.Level)
 	mockFileStorage := new(mocks.MockFileStorage)
-	service := service2.NewLevelService(mockRepo, mockFileStorage)
+	authService := new(mocks.UserActions)
+	service := service2.NewLevelService(mockRepo, mockFileStorage, authService)
 
 	infoJSON := `{
 		"id": 42,
@@ -837,6 +848,7 @@ func TestUpdateLevel(t *testing.T) {
 
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
+			authService.On("GetUserById", tt.userId).Return("", -1, time.Now(), "", sql.NullString{String: "", Valid: false}, nil).Once()
 			if tt.setupMocks != nil {
 				tt.setupMocks()
 			}
