@@ -290,7 +290,8 @@ export const Profile = () => {
             )}
           </Box>
 
-          {ban_reason && ban_reason !== "no ban" && (
+          {ban_reason && ban_reason !== "no ban" && ban_time && 
+           new Date(ban_time) > new Date() && (
             <Box sx={{ backgroundColor: "#ffeeee", p: 2, borderRadius: 1 }}>
               <Typography variant="subtitle1" color="error">
                 <BlockIcon sx={{ verticalAlign: "middle", mr: 1 }} />
