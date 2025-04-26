@@ -24,10 +24,7 @@ func NewSinglePlayerGamePostgres(db *sqlx.DB) *SinglePlayerGamePostgres {
 	return &SinglePlayerGamePostgres{db: db}
 }
 
-// TODO: Тут возможно стоит разбить на две функции (get, set) и перенести бизнес-логику в сервисы.Но это будет громоздко
 func (s *SinglePlayerGamePostgres) SendResults(lc statistics.LevelComplete, totalPush int, totalErr int) error {
-	//TODO: ADD transaction
-
 	query := "INSERT INTO LevelComplete (level_id, player_id, time, num_press_err_by_char, accuracy, average_velocity, max_combo, placement, points) VALUES (:level_id, :player_id, to_timestamp(:time), :num_press_err_by_char, :accuracy, :average_velocity, :max_combo, :placement, :points)"
 
 	numPressErrJson, err := json.Marshal(lc.NumPressErrByChar)
@@ -85,13 +82,11 @@ func (s *SinglePlayerGamePostgres) SendResults(lc statistics.LevelComplete, tota
 	if levelInfo.Type == "classic" {
 		stats.SumPoints += lc.Points
 		var curTotalDelay = cast.ToFloat64(stats.AverageDelay)*cast.ToFloat64(stats.NumCharsClassic) + (cast.ToFloat64(levelInfo.Duration) / 60)
-		logrus.Printf("CurTotalDelay: %f, %f, %f, %f, %f, %f", curTotalDelay, stats.AverageDelay, cast.ToFloat64(stats.AverageDelay), stats.NumCharsClassic, cast.ToFloat64(stats.NumCharsClassic), (cast.ToFloat64(levelInfo.Duration) / 60))
 		var curErr = cast.ToInt(math.Floor(stats.AverageAccuracyClassic*cast.ToFloat64(stats.NumCharsClassic))) + totalErr
 		stats.NumCharsClassic += totalPush
 		stats.AverageAccuracyClassic = 1.0 - (cast.ToFloat64(curErr) / cast.ToFloat64(stats.NumCharsClassic))
 		stats.NumLevelClassic += 1
 		stats.AverageDelay = cast.ToFloat64(curTotalDelay) / cast.ToFloat64(stats.NumCharsClassic)
-		logrus.Printf("New Average Delay: %f", curTotalDelay)
 		stats.NumClassesClassic[statistics.GetClassIndexByAccuracy(lc.Accuracy)] += 1
 	} else if levelInfo.Type == "relax" {
 		var curErr = cast.ToInt(math.Floor(stats.AverageAccuracyRelax*cast.ToFloat64(stats.NumCharsRelax))) + totalErr
