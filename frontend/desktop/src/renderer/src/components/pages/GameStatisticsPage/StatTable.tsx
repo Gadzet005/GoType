@@ -28,13 +28,18 @@ export const StatTable: React.FC<StatTableProps> = ({ statistics }) => {
         value={statistics.avgVelocity.toFixed(2)}
       />
       <StatRow
+        label="Правильно"
+        value={statistics.totalCorrect}
+        valueColor="success"
+      />
+      <StatRow
         label="Ошибки"
         value={statistics.totalMistakes}
         valueColor="error"
       />
       <StatRow
         label="Пропущено"
-        value={statistics.missedTotal}
+        value={statistics.totalMissed}
         valueColor="secondary"
       />
       <StatRow

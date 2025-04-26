@@ -111,4 +111,29 @@ describe("GameStatistics tests", () => {
         expect(statistics.comboCounter).toEqual(3);
         expect(statistics.maxCombo).toEqual(4);
     });
+
+    it("metrics", () => {
+        const statistics = new GameStatistics(englishLang, 10);
+        const input: [string, StatInputResultType][] = [
+            ["A", StatInputResultType.correct],
+            ["B", StatInputResultType.incorrect],
+            ["a", StatInputResultType.correct],
+            ["b", StatInputResultType.correct],
+            ["C", StatInputResultType.missed],
+        ];
+
+        input.forEach(([letter, type]) =>
+            statistics.addInputResult({
+                letter: letter,
+                type,
+                time: 0,
+            })
+        );
+
+        expect(statistics.accuracy).toEqual(60);
+        expect(statistics.totalLetters).toEqual(5);
+        expect(statistics.totalMistakes).toEqual(1);
+        expect(statistics.totalCorrect).toEqual(3);
+        expect(statistics.totalMissed).toEqual(1);
+    });
 });

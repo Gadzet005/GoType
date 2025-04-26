@@ -14,14 +14,24 @@ export interface StatInputResult {
     letter: string;
 }
 
+interface LetterStat {
+    correct: number;
+    incorrect: number;
+    missed: number;
+}
+
+const initialStat: LetterStat = {
+    correct: 0,
+    incorrect: 0,
+    missed: 0,
+};
+
 export class GameStatistics {
     readonly levelDuration: number;
     readonly language: Language;
 
     private score_: number = 0;
-    private missedTotal_: number = 0;
-    private alphabetTotal_: number[];
-    private alphabetMistakes_: number[];
+    private alphabetStat_!: LetterStat[];
     private comboCounter_ = 1;
     private maxCombo_ = 1;
 
@@ -40,17 +50,22 @@ export class GameStatistics {
         });
 
         this.language = language;
-        this.alphabetTotal_ = Array(language.alphabet.length).fill(0);
-        this.alphabetMistakes_ = Array(language.alphabet.length).fill(0);
+        this.initAlphabetStat();
         this.levelDuration = levelDuration / 60000; // convert to minutes
     }
 
     reset() {
         this.score_ = 0;
-        this.alphabetTotal_ = Array(this.language.alphabet.length).fill(0);
-        this.alphabetMistakes_ = Array(this.language.alphabet.length).fill(0);
         this.comboCounter_ = 1;
         this.maxCombo_ = 1;
+        this.initAlphabetStat();
+    }
+
+    private initAlphabetStat() {
+        this.alphabetStat_ = Array(this.language.alphabet.length);
+        for (let i = 0; i < this.language.alphabet.length; i++) {
+            this.alphabetStat_[i] = { ...initialStat };
+        }
     }
 
     get failed() {
@@ -62,21 +77,41 @@ export class GameStatistics {
     }
 
     get alphabetStat() {
-        return this.alphabetTotal_.map((value: number, index: number) => {
-            return {
-                letter: this.language.alphabet[index],
-                total: value,
-                mistakes: this.alphabetMistakes_[index],
-            };
-        });
+        return this.alphabetStat_.map(
+            ({ correct, incorrect, missed }, index) => {
+                return {
+                    letter: this.language.alphabet[index],
+                    total: correct + incorrect + missed,
+                    mistakes: incorrect + missed,
+                };
+            }
+        );
     }
 
     get totalLetters() {
-        return this.alphabetTotal_.reduce((a, b) => a + b, 0);
+        return this.alphabetStat_.reduce(
+            (acc, { correct, incorrect, missed }) =>
+                acc + correct + incorrect + missed,
+            0
+        );
     }
 
     get totalMistakes() {
-        return this.alphabetMistakes_.reduce((a, b) => a + b, 0);
+        return this.alphabetStat_.reduce(
+            (acc, { incorrect }) => acc + incorrect,
+            0
+        );
+    }
+
+    get totalCorrect() {
+        return this.alphabetStat_.reduce(
+            (acc, { correct }) => acc + correct,
+            0
+        );
+    }
+
+    get totalMissed() {
+        return this.alphabetStat_.reduce((acc, { missed }) => acc + missed, 0);
     }
 
     // right / total in %
@@ -84,9 +119,7 @@ export class GameStatistics {
         if (this.totalLetters === 0) {
             return 100;
         }
-        const ratio =
-            (this.totalMistakes + this.missedTotal) / this.totalLetters;
-        return (1 - ratio) * 100;
+        return (this.totalCorrect / this.totalLetters) * 100;
     }
 
     get accuracyLevel() {
@@ -117,11 +150,7 @@ export class GameStatistics {
         if (this.totalLetters === 0) {
             return 0;
         }
-        return (this.totalLetters - this.missedTotal) / this.levelDuration;
-    }
-
-    get missedTotal() {
-        return this.missedTotal_;
+        return (this.totalCorrect + this.totalMistakes) / this.levelDuration;
     }
 
     /** Add to statistics that letter was typed */
@@ -133,21 +162,21 @@ export class GameStatistics {
         const letterIdx = this.language.alphabet.indexOf(
             result.letter.toLowerCase()
         );
-        this.alphabetTotal_[letterIdx]++;
 
         switch (result.type) {
             case StatInputResultType.correct:
+                this.alphabetStat_[letterIdx].correct++;
                 this.comboCounter_++;
                 this.maxCombo_ = Math.max(this.comboCounter_, this.maxCombo_);
                 this.score_ += this.comboCounter * Score.letter;
                 break;
             case StatInputResultType.incorrect:
-                this.alphabetMistakes_[letterIdx]++;
+                this.alphabetStat_[letterIdx].incorrect++;
                 this.comboCounter_ = 1;
                 break;
             case StatInputResultType.missed:
+                this.alphabetStat_[letterIdx].missed++;
                 this.comboCounter_ = 1;
-                this.missedTotal_++;
                 break;
         }
     }
