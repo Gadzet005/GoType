@@ -19,8 +19,8 @@ func NewService(repos *repository.Repository, refreshTokenTTL, accessTokenTTL in
 		Authorization:    NewAuthService(repos.Authorization, refreshTokenTTL, accessTokenTTL, signingKey, salt),
 		UserActions:      NewUserActionsService(repos.UserActions, repos.Files),
 		Admin:            NewAdminService(repos.AdminActions),
-		Level:            NewLevelService(repos.Level, repos.Files),
+		Level:            NewLevelService(repos.Level, repos.Files, repos.UserActions),
 		Stats:            NewStatsService(repos.Stats),
-		SinglePlayerGame: NewSinglePlayerGame(repos.SinglePlayerGame),
+		SinglePlayerGame: NewSinglePlayerGame(repos.SinglePlayerGame, repos.UserActions),
 	}
 }

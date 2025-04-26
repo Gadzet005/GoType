@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"errors"
 	statistics "github.com/Gadzet005/GoType/backend/internal/domain/Statistics"
 	service2 "github.com/Gadzet005/GoType/backend/internal/service"
@@ -8,11 +9,13 @@ import (
 	mocks "github.com/Gadzet005/GoType/backend/tests/mocks/repository_mocks"
 	"github.com/stretchr/testify/mock"
 	"testing"
+	"time"
 )
 
 func TestSendResults(t *testing.T) {
 	repo := mocks.NewMockSinglePlayerGame(t)
-	game := service2.NewSinglePlayerGame(repo)
+	authRepo := mocks.NewMockUserActions(t)
+	game := service2.NewSinglePlayerGame(repo, authRepo)
 
 	tests := map[string]struct {
 		senderID      int
@@ -72,6 +75,8 @@ func TestSendResults(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+			authRepo.On("GetUserById", tc.senderID).Return("", -1, time.Now(), "", sql.NullString{String: "", Valid: false}, nil).Once()
+
 			if tc.expectedError == nil || tc.mockError != nil {
 				totalCount := 0
 				totalErr := 0
