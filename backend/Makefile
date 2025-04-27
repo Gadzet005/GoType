@@ -6,11 +6,6 @@ run:
 run-background:
 	docker compose up --build -d
 
-.PHONY: rundb
-rundb:
-	docker compose up --build db
-
-.PHONY: rundb-background
-rundb-background:
-	docker compose up --build -d db
-	
+.PHONY: docs
+docs:
+	swag init -g cmd/main.go

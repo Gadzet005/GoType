@@ -191,7 +191,6 @@ func (s *AdminPostgres) DeleteLevelComplaint(moderatorId int, complaintId int) e
 		if errors.Is(err, sql.ErrNoRows) {
 			return errors.New(gotype.ErrEntityNotFound)
 		}
-
 		return errors.New(gotype.ErrInternal)
 	}
 

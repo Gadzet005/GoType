@@ -20,8 +20,6 @@ cache:
 security:
   refreshTokenTTL: "720" #hours
   accessTokenTTL: "15" #minutes
-  signingKey: "wiu8s7]df9s&di9230s#s894w90g2092v[d" #for jwt
-  salt: "pqlpwisd5786vhdf27675da" #to improve hashes quality
 
 logs:
   mode: "file" #console/file

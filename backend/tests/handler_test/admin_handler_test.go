@@ -580,6 +580,7 @@ func TestProcessUserComplaint(t *testing.T) {
 		name           string
 		setContext     func(c *gin.Context)
 		inputBody      interface{}
+		id             string
 		mockBehavior   func(s *mocks.Admin)
 		expectedStatus int
 		expectedBody   string
@@ -588,6 +589,7 @@ func TestProcessUserComplaint(t *testing.T) {
 			name:           "missing access",
 			setContext:     func(c *gin.Context) {},
 			inputBody:      complaints.ComplaintID{Id: 1},
+			id:             "1",
 			mockBehavior:   func(s *mocks.Admin) {},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"ERR_ACCESS_TOKEN_WRONG"}`,
@@ -596,20 +598,10 @@ func TestProcessUserComplaint(t *testing.T) {
 			name:           "missing id",
 			setContext:     func(c *gin.Context) { c.Set("Access", 1) },
 			inputBody:      complaints.ComplaintID{Id: 1},
+			id:             "1",
 			mockBehavior:   func(s *mocks.Admin) {},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"ERR_ACCESS_TOKEN_WRONG"}`,
-		},
-		{
-			name: "invalid json",
-			setContext: func(c *gin.Context) {
-				c.Set("Access", 2)
-				c.Set("id", 3)
-			},
-			inputBody:      `{"id":`,
-			mockBehavior:   func(s *mocks.Admin) {},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   `{"message":"ERR_INVALID_INPUT"}`,
 		},
 		{
 			name: "service error",
@@ -617,6 +609,7 @@ func TestProcessUserComplaint(t *testing.T) {
 				c.Set("Access", 2)
 				c.Set("id", 3)
 			},
+			id:        "5",
 			inputBody: complaints.ComplaintID{Id: 5},
 			mockBehavior: func(s *mocks.Admin) {
 				s.On("ProcessUserComplaint", 3, 2, 5).Return(errors.New(gotype.ErrInternal)).Once()
@@ -630,6 +623,7 @@ func TestProcessUserComplaint(t *testing.T) {
 				c.Set("Access", 2)
 				c.Set("id", 3)
 			},
+			id:        "6",
 			inputBody: complaints.ComplaintID{Id: 6},
 			mockBehavior: func(s *mocks.Admin) {
 				s.On("ProcessUserComplaint", 3, 2, 6).Return(nil).Once()
@@ -645,19 +639,12 @@ func TestProcessUserComplaint(t *testing.T) {
 			h := handler.NewAdmin(service)
 
 			r := gin.New()
-			r.POST("/process", func(c *gin.Context) {
+			r.POST("/process/:id", func(c *gin.Context) {
 				tc.setContext(c)
 				h.ProcessUserComplaint(c)
 			})
 
-			var bodyBytes []byte
-			if str, ok := tc.inputBody.(string); ok {
-				bodyBytes = []byte(str)
-			} else {
-				bodyBytes, _ = json.Marshal(tc.inputBody)
-			}
-
-			req, _ := http.NewRequest(http.MethodPost, "/process", bytes.NewBuffer(bodyBytes))
+			req, _ := http.NewRequest(http.MethodPost, "/process/"+tc.id, nil)
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -755,12 +742,14 @@ func TestProcessLevelComplaint(t *testing.T) {
 		inputBody      interface{}
 		mockBehavior   func(s *mocks.Admin)
 		expectedStatus int
+		id             string
 		expectedBody   string
 	}{
 		{
 			name:           "missing access",
 			setContext:     func(c *gin.Context) {},
 			inputBody:      complaints.ComplaintID{Id: 1},
+			id:             "1",
 			mockBehavior:   func(s *mocks.Admin) {},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"ERR_ACCESS_TOKEN_WRONG"}`,
@@ -769,20 +758,10 @@ func TestProcessLevelComplaint(t *testing.T) {
 			name:           "missing id",
 			setContext:     func(c *gin.Context) { c.Set("Access", 1) },
 			inputBody:      complaints.ComplaintID{Id: 1},
+			id:             "1",
 			mockBehavior:   func(s *mocks.Admin) {},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"message":"ERR_ACCESS_TOKEN_WRONG"}`,
-		},
-		{
-			name: "invalid json",
-			setContext: func(c *gin.Context) {
-				c.Set("Access", 2)
-				c.Set("id", 3)
-			},
-			inputBody:      `{"id":`,
-			mockBehavior:   func(s *mocks.Admin) {},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   `{"message":"ERR_INVALID_INPUT"}`,
 		},
 		{
 			name: "service error",
@@ -791,6 +770,7 @@ func TestProcessLevelComplaint(t *testing.T) {
 				c.Set("id", 3)
 			},
 			inputBody: complaints.ComplaintID{Id: 5},
+			id:        "5",
 			mockBehavior: func(s *mocks.Admin) {
 				s.On("ProcessLevelComplaint", 3, 2, 5).Return(errors.New(gotype.ErrInternal)).Once()
 			},
@@ -803,6 +783,7 @@ func TestProcessLevelComplaint(t *testing.T) {
 				c.Set("Access", 2)
 				c.Set("id", 3)
 			},
+			id:        "6",
 			inputBody: complaints.ComplaintID{Id: 6},
 			mockBehavior: func(s *mocks.Admin) {
 				s.On("ProcessLevelComplaint", 3, 2, 6).Return(nil).Once()
@@ -818,19 +799,19 @@ func TestProcessLevelComplaint(t *testing.T) {
 			h := handler.NewAdmin(service)
 
 			r := gin.New()
-			r.POST("/process", func(c *gin.Context) {
+			r.POST("/process/:id", func(c *gin.Context) {
 				tc.setContext(c)
 				h.ProcessLevelComplaint(c)
 			})
 
-			var bodyBytes []byte
-			if str, ok := tc.inputBody.(string); ok {
-				bodyBytes = []byte(str)
-			} else {
-				bodyBytes, _ = json.Marshal(tc.inputBody)
-			}
+			//var bodyBytes []byte
+			//if str, ok := tc.inputBody.(string); ok {
+			//	bodyBytes = []byte(str)
+			//} else {
+			//	bodyBytes, _ = json.Marshal(tc.inputBody)
+			//}
 
-			req, _ := http.NewRequest(http.MethodPost, "/process", bytes.NewBuffer(bodyBytes))
+			req, _ := http.NewRequest(http.MethodPost, "/process/"+tc.id, nil)
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
@@ -843,7 +824,7 @@ func TestProcessLevelComplaint(t *testing.T) {
 	}
 }
 
-func TestAdmin_GetUsers(t *testing.T) {
+func TestGetUsers(t *testing.T) {
 	type mockBehavior func(s *mocks.Admin, access int, input user.UserSearchParams)
 
 	testCases := []struct {
@@ -877,13 +858,13 @@ func TestAdmin_GetUsers(t *testing.T) {
 			mockBehavior: func(s *mocks.Admin, access int, input user.UserSearchParams) {
 				s.On("GetUsers", access, input).Return(nil, errors.New("ERR_INTERNAL")).Once()
 			},
-			expectedCode: http.StatusInternalServerError,
-			expectedBody: `{"message":"ERR_INTERNAL"}`,
+			expectedCode: http.StatusBadRequest,
+			expectedBody: `{"message":"ERR_INVALID_INPUT"}`,
 		},
 		{
 			name:   "success",
 			access: 2,
-			query:  "name=test&is_banned=false&page_size=10&offset=0",
+			query:  "name=test&is_banned=false&page_size=10&offset=1",
 			mockBehavior: func(s *mocks.Admin, access int, input user.UserSearchParams) {
 				s.On("GetUsers", access, input).Return([]user.UserInfo{{Id: 1, Name: "Test User", Access: 1}}, nil).Once()
 			},

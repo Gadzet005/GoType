@@ -1,11 +1,11 @@
 package main
 
 import (
+	_ "github.com/Gadzet005/GoType/backend/docs"
 	"github.com/Gadzet005/GoType/backend/internal/handler"
 	"github.com/Gadzet005/GoType/backend/internal/repository"
 	"github.com/Gadzet005/GoType/backend/internal/service"
 	pkg "github.com/Gadzet005/GoType/backend/pkg"
-
 	//"github.com/Gadzet005/GoType/backend/pkg"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -72,7 +72,7 @@ func main() {
 	}
 
 	repos := repository.NewRepository(db, redisClient, viper.GetInt("cache.level_user_top_ttl"), viper.GetInt("cache.level_stats_ttl"), viper.GetInt("cache.rating_ttl"))
-	services := service.NewService(repos, viper.GetInt("security.refreshTokenTTL"), viper.GetInt("security.accessTokenTTL"), viper.GetString("security.signingKey"), viper.GetString("security.salt"))
+	services := service.NewService(repos, viper.GetInt("security.refreshTokenTTL"), viper.GetInt("security.accessTokenTTL"), os.Getenv("wiu8s7]df9s&di9230ss894w90g2092v[d"), os.Getenv("pqlpwisd5786vhdf27675da"))
 	handlers := handler.NewHandler(services)
 
 	admName := os.Getenv("SENIOR_ADMIN_NAME")

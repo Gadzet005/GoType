@@ -84,13 +84,13 @@ func (h *Level) CreateLevel(c *gin.Context) {
 // @ID download-level
 // @Accept json
 // @Produce      application/octet-stream
-// @Param id query int true "id of user you want to find"
+// @Param id path int true "id of user you want to find"
 // @Success 200 {file}  file "Archive with level."
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json; ERR_ENTITY_NOT_FOUND - no such level on server"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired"
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
-// @Router /level/download-level [get]
+// @Router /level/download-level/{id} [get]
 // @Security BearerAuth
 func (h *Level) GetLevel(c *gin.Context) {
 	var levelId int
@@ -120,13 +120,13 @@ func (h *Level) GetLevel(c *gin.Context) {
 // @ID get-level-info
 // @Accept json
 // @Produce json
-// @Param id query int true "id of user you want to find"
+// @Param id path int true "id of level you want to find"
 // @Success 200 {object} level.LevelInfo
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_INVALID_INPUT - Wrong structure of input json;"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired"
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
-// @Router /level/get-level-info [get]
+// @Router /level/get-level-info/{id} [get]
 // @Security BearerAuth
 func (h *Level) GetLevelInfoById(c *gin.Context) {
 	var levId int

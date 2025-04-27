@@ -29,12 +29,12 @@ func TestGetUsersTop(t *testing.T) {
 	}{
 		"successful fetch": {
 			inputBody: `{
-				"page_info": {"page_size":10, "offset":0},
+				"page_info": {"page_size":10, "offset":1},
 				"points": "100",
 				"category_params": {"category":"C", "pattern":"test"}
 			}`,
 			mockParam: statistics.StatSortFilterParams{
-				PageInfo: statistics.PageInfo{PageSize: 10, Offset: 0},
+				PageInfo: statistics.PageInfo{PageSize: 10, Offset: 1},
 				Points:   "100",
 				CategoryParams: statistics.CategoryParams{
 					Category: 'C',

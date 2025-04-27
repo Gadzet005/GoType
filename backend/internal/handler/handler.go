@@ -82,8 +82,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		admin.POST("/change-user-access", h.Admin.ChangeUserAccess)
 		admin.GET("/get-user-complaints", h.Admin.GetUserComplaints)
 		admin.GET("/get-level-complaints", h.Admin.GetLevelComplaints)
-		admin.POST("/process-user-complaint", h.Admin.ProcessUserComplaint)
-		admin.POST("/process-level-complaint", h.Admin.ProcessLevelComplaint)
+		admin.DELETE("/process-user-complaint", h.Admin.ProcessUserComplaint)
+		admin.DELETE("/process-level-complaint", h.Admin.ProcessLevelComplaint)
 		admin.GET("/get-users", h.Admin.GetUsers)
 	}
 
@@ -95,7 +95,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		level.PUT("/update-level", h.MaxRequestSize(maxRequestBodySize), h.UserIdentity, h.Level.UpdateLevel)
 		level.POST("/get-level-list", h.Level.GetLevelList)
 	}
-	
+
 	singleGame := router.Group("/single-game", h.UserIdentity)
 	{
 		singleGame.POST("/send-results", h.SinglePlayerGame.SendResults)

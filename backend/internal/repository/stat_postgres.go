@@ -87,10 +87,6 @@ func (sp *StatsPostgres) GetUsersTop(params map[string]interface{}) ([]statistic
 		query += fmt.Sprintf(" %s) ", params["sort_order"])
 	}
 
-	//if params["sort_param"] != "sum_points" {
-	//	query += fmt.Sprintf(" ORDER BY num_classes_classic[%s] %s", params["sort_index"], params["sort_order"])
-	//}
-
 	var limit = cast.ToString(params["page_size"])
 	var offset = cast.ToString(params["page_size"].(int) * (params["page_num"].(int) - 1))
 	query += fmt.Sprintf(" LIMIT %s OFFSET %s", limit, offset)
