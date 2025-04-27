@@ -13,47 +13,52 @@ import {
   FormControlLabel,
   Checkbox,
   InputAdornment,
-  IconButton
-  
-} from '@mui/material';
-import { LockOutlined, Visibility, VisibilityOff } from '@mui/icons-material'
-import { AuthApi } from '@/api/authApi';
-import { RoutePath } from '@/config/routes/path';
+  IconButton,
+} from "@mui/material";
+import { LockOutlined, Visibility, VisibilityOff } from "@mui/icons-material";
+import { AuthApi } from "@/api/authApi";
+import { RoutePath } from "@/config/routes/path";
+
+const errorsMapTranslate: Record<string, string> = {
+  ERR_NO_SUCH_USER: "ОШИБКА: НЕТ ТАКОГО ПОЛЬЗОВАТЕЛЯ",
+  ERR_INVALID_INPUT: "ОШИБКА: ВЫ ВВЕЛИ НЕПРАВИЛЬНО ЛОГИН ИЛИ ПАРОЛЬ",
+  ERR_INTERNAL: "ОШИБКА СЕРВЕРА",
+};
 
 const PasswordField = ({ name, label }: { name: string; label: string }) => {
-    const [showPassword, setShowPassword] = useState(false);
-  
-    const handleClickShowPassword = () => {
-      setShowPassword((show) => !show);
-    };
-  
-    return (
-      <TextField
-        fullWidth
-        name={name}
-        label={label}
-        type={showPassword ? 'text' : 'password'}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <LockOutlined sx={{ color: 'action.active' }} />
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={handleClickShowPassword}
-                edge="end"
-                aria-label="toggle password visibility"
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
-    );
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword((show) => !show);
   };
+
+  return (
+    <TextField
+      fullWidth
+      name={name}
+      label={label}
+      type={showPassword ? "text" : "password"}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <LockOutlined sx={{ color: "action.active" }} />
+          </InputAdornment>
+        ),
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              onClick={handleClickShowPassword}
+              edge="end"
+              aria-label="toggle password visibility"
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
+  );
+};
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -64,9 +69,9 @@ export const Register = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     if (!agreedToTerms) {
-      setFormError('Необходимо принять пользовательское соглашение');
+      setFormError("Необходимо принять пользовательское соглашение");
       return;
     }
 
@@ -90,10 +95,14 @@ export const Register = () => {
       navigate(RoutePath.profile);
     } catch (error: any) {
       console.error("Registration error:", error);
-      setFormError(
-        error.response?.data?.message ||
-          "Ошибка регистрации. Пользователь с таким именем уже существует."
-      );
+      if (errorsMapTranslate[error.response?.data?.message] !== undefined) {
+        setFormError(errorsMapTranslate[error.response?.data?.message]);
+      } else {
+        setFormError(
+          error.response?.data?.message ||
+            "Ошибка регистрации. Пользователь с таким именем уже существует."
+        );
+      }
     } finally {
       setIsPending(false);
     }
@@ -130,20 +139,9 @@ export const Register = () => {
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
             onSubmit={handleSubmit}
           >
-            <TextField 
-              name="name" 
-              variant="outlined" 
-              label="Имя" 
-              fullWidth
-            />
-            <PasswordField 
-              name="password" 
-              label="Пароль" 
-            />
-            <PasswordField 
-              name="passwordRepeat" 
-              label="Повторите пароль" 
-            />
+            <TextField name="name" variant="outlined" label="Имя" fullWidth />
+            <PasswordField name="password" label="Пароль" />
+            <PasswordField name="passwordRepeat" label="Повторите пароль" />
 
             <FormGroup>
               <FormControlLabel
@@ -156,14 +154,17 @@ export const Register = () => {
                 }
                 label={
                   <Typography variant="body2">
-                    Согласен с{' '}
-                    <Link href={RoutePath.agreement} target="_blank" rel="noopener">
+                    Согласен с{" "}
+                    <Link
+                      href={RoutePath.agreement}
+                      target="_blank"
+                      rel="noopener"
+                    >
                       пользовательским соглашением
                     </Link>
                   </Typography>
                 }
               />
-              
             </FormGroup>
 
             <Button

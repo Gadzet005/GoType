@@ -47,6 +47,13 @@ interface TabPanelProps {
   index: string;
   value: string;
 }
+const errorsMapTranslate: Record<string, string> = {
+  ERR_ENTITY_NOT_FOUND: "ОШИБКА: СУЩНОСТЬ НЕ НАЙДЕНА",
+  ERR_ACCESS_TOKEN_WRONG: "ОШИБКА: ИСТЕК СРОК АВТОРИЗАЦИИ",
+  ERR_UNAUTHORIZED: "ОШИБКА: ИСТЕК СРОК АВТОРИЗАЦИИ",
+  ERR_INTERNAL: "ОШИБКА СЕРВЕРА",
+  ERR_PERMISSION_DENIED: "ОШИБКА: НЕДОСТАТОЧНО ПРАВ",
+};
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -153,7 +160,11 @@ export const Admin = () => {
           break;
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Ошибка загрузки данных");
+      if (errorsMapTranslate[err.response?.data?.message] !== undefined) {
+        setError(errorsMapTranslate[err.response?.data?.message]);
+      } else {
+        setError(err.response?.data?.message || "Ошибка загрузки данных");
+      }
     } finally {
       setLoading(false);
     }
@@ -164,10 +175,10 @@ export const Admin = () => {
   }, [activeTab, searchParams]);
 
   const applyFilters = () => {
-    setSearchParams(prev => ({
+    setSearchParams((prev) => ({
       ...prev,
       name: tempSearchName,
-      offset: 1 // Сбрасываем пагинацию при применении нового фильтра
+      offset: 1, // Сбрасываем пагинацию при применении нового фильтра
     }));
     setPage(1);
   };
@@ -195,7 +206,11 @@ export const Admin = () => {
       setBanModalOpen(false);
       await loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || "Ошибка выполнения операции");
+      if (errorsMapTranslate[err.response?.data?.message] !== undefined) {
+        setError(errorsMapTranslate[err.response?.data?.message]);
+      } else {
+        setError(err.response?.data?.message || "Ошибка выполнения операции");
+      }
     }
   };
 
@@ -207,7 +222,13 @@ export const Admin = () => {
       await AdminApi.changeUserAccess({ id: user.id, new_access: newAccess });
       await loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || "Ошибка изменения прав доступа");
+      if (errorsMapTranslate[err.response?.data?.message] !== undefined) {
+        setError(errorsMapTranslate[err.response?.data?.message]);
+      } else {
+        setError(
+          err.response?.data?.message || "Ошибка изменения прав доступа"
+        );
+      }
     }
   };
 
@@ -230,8 +251,13 @@ export const Admin = () => {
         const levelInfo = await LevelApi.getLevelInfo(levelComplaint.level_id);
         setComplaintInfo(levelInfo);
       }
-    } catch (err) {
-      setError("Ошибка загрузки дополнительной информации");
+    } catch (err: any) {
+      if (errorsMapTranslate[err.response?.data?.message] !== undefined) {
+        setError(errorsMapTranslate[err.response?.data?.message]);
+      }
+      {
+        setError("Ошибка загрузки дополнительной информации");
+      }
     } finally {
       setLoading(false);
     }
@@ -273,7 +299,11 @@ export const Admin = () => {
       setProcessModalOpen(false);
       await loadData();
     } catch (err: any) {
-      setError(err.response?.data?.message || "Ошибка выполнения действия");
+      if (errorsMapTranslate[err.response?.data?.message] !== undefined) {
+        setError(errorsMapTranslate[err.response?.data?.message]);
+      } else {
+        setError(err.response?.data?.message || "Ошибка выполнения действия");
+      }
     }
   };
 

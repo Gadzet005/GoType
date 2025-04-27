@@ -16,6 +16,12 @@ import { EmailOutlined, LockOutlined, Visibility, VisibilityOff } from '@mui/ico
 import { AuthApi } from '@/api/authApi';
 import { RoutePath } from '@/config/routes/path';
 
+const errorsMapTranslate: Record<string, string> = {
+    'ERR_NO_SUCH_USER': 'ОШИБКА: НЕТ ТАКОГО ПОЛЬЗОВАТЕЛЯ',
+    'ERR_INVALID_INPUT': 'ОШИБКА: ВЫ ВВЕЛИ НЕПРАВИЛЬНО ЛОГИН ИЛИ ПАРОЛЬ',
+    'ERR_INTERNAL': 'ОШИБКА СЕРВЕРА'
+};
+
 const PasswordField = ({ name, label }: { name: string; label: string }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -71,7 +77,12 @@ export const Login = () => {
       navigate(RoutePath.profile);
     } catch (error: any) {
       console.error("Login error:", error);
-      setFormError(error.response?.data?.message || "Ошибка авторизации");
+      if(errorsMapTranslate[error.response?.data?.message]!==undefined){
+        setFormError(errorsMapTranslate[error.response?.data?.message]);
+      }
+      else{
+        setFormError(error.response?.data?.message || "Ошибка авторизации");
+      }
     } finally {
       setIsPending(false);
     }
