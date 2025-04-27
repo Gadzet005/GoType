@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 )
 
 type Admin struct {
@@ -174,7 +175,7 @@ func (h *Admin) UnbanLevel(c *gin.Context) {
 // @ID change-user-access
 // @Accept json
 // @Produce json
-// @Param input body useraccess.ChangeUserAccess true "id of user you want to ban, new value of access"
+// @Param input body useraccess.ChangeUserAccess true "id of user you want to promote, new value of access"
 // @Success 200
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - User with such id does not exist; ERR_INVALID_INPUT - Wrong structure of input json;"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action"
@@ -240,9 +241,7 @@ func (h *Admin) GetUserComplaints(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"user_complaints": complaint,
-	})
+	c.JSON(http.StatusOK, complaints.UserComplaints{complaint})
 }
 
 // @Summary Get Level Complaints for moderator to process
@@ -291,13 +290,13 @@ func (h *Admin) GetLevelComplaints(c *gin.Context) {
 // @ID process-user-complaint
 // @Accept json
 // @Produce json
-// @Param complaint_id body complaints.ComplaintID true "Complaint ID"
+// @Param id path int true "Complaint ID"
 // @Success 200
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint with such id among the ones assigned to you"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action"
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
-// @Router /admin/process-user-complaint [POST]
+// @Router /admin/process-user-complaint/{id} [DELETE]
 // @Security BearerAuth
 func (h *Admin) ProcessUserComplaint(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
@@ -314,15 +313,19 @@ func (h *Admin) ProcessUserComplaint(c *gin.Context) {
 		return
 	}
 
-	var input complaints.ComplaintID
-	err := c.BindJSON(&input)
+	levId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
-	err = h.service.ProcessUserComplaint(curID.(int), curAccess.(int), input.Id)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
+		return
+	}
+
+	err = h.service.ProcessUserComplaint(curID.(int), curAccess.(int), levId)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -338,13 +341,13 @@ func (h *Admin) ProcessUserComplaint(c *gin.Context) {
 // @ID process-level-complaint
 // @Accept json
 // @Produce json
-// @Param complaint_id body complaints.ComplaintID true "Complaint ID"
+// @Param id path int true "Complaint ID"
 // @Success 200
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_ENTITY_NOT_FOUND - There is no complaint with such id among the ones assigned to you"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired; ERR_PERMISSION_DENIED - Not enough rights to perform the action"
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
-// @Router /admin/process-level-complaint [POST]
+// @Router /admin/process-level-complaint/{id} [DELETE]
 // @Security BearerAuth
 func (h *Admin) ProcessLevelComplaint(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
@@ -361,15 +364,19 @@ func (h *Admin) ProcessLevelComplaint(c *gin.Context) {
 		return
 	}
 
-	var input complaints.ComplaintID
-	err := c.BindJSON(&input)
+	levId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
 		return
 	}
 
-	err = h.service.ProcessLevelComplaint(curID.(int), curAccess.(int), input.Id)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrInvalidInput)
+		return
+	}
+
+	err = h.service.ProcessLevelComplaint(curID.(int), curAccess.(int), levId)
 
 	if err != nil {
 		NewErrorResponse(c, gotype.CodeErrors[err.Error()], err.Error())
@@ -399,7 +406,6 @@ func (h *Admin) ProcessLevelComplaint(c *gin.Context) {
 func (h *Admin) GetUsers(c *gin.Context) {
 	curAccess, exists := c.Get(userAccessCtx)
 	if !exists {
-		logrus.Errorf("LOL")
 		NewErrorResponse(c, http.StatusBadRequest, gotype.ErrAccessToken)
 		return
 	}

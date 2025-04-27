@@ -24,13 +24,13 @@ func NewStat(service service.Stats) *Stat {
 // @ID get-user-stats
 // @Accept json
 // @Produce json
-// @Param id query int true "id of user you want to find"
+// @Param id path int true "id of user you want to find"
 // @Success 200 {object} statistics.GetUserStatsRes
 // @Failure 400 {object} errorResponse "Possible messages: ERR_ACCESS_TOKEN_WRONG - Wrong structure of Access Token/No Access Token; ERR_NO_SUCH_USER - There is no user with such id"
 // @Failure 401 {object} errorResponse "Possible messages: ERR_UNAUTHORIZED - Access Token expired;"
 // @Failure 500 {object} errorResponse "Possible messages: ERR_INTERNAL - Error on server"
 // @Failure default {object} errorResponse
-// @Router /stats/get-user-stats [get]
+// @Router /stats/get-user-stats/{id} [get]
 // @Security BearerAuth
 func (h *Stat) GetUserStats(c *gin.Context) {
 	var levId int

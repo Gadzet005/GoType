@@ -372,7 +372,7 @@ func (lp *LevelPostgres) GetLevelUserTop(levelId int) ([]statistics.UserLevelCom
 
 	var ret []statistics.UserLevelCompletionInfo
 
-	query := fmt.Sprintf(fmt.Sprintf("SELECT s.level_id,s.player_id,u.name as player_name,s.time,s.accuracy,s.average_velocity,s.max_combo,s.placement,s.points FROM (SELECT * FROM %s WHERE level_id = $1 ORDER BY points, time LIMIT 10) AS s JOIN %s AS u on s.player_id = u.id", levelCompleteTable, usersTable))
+	query := fmt.Sprintf(fmt.Sprintf("SELECT s.level_id,s.player_id,u.name as player_name,s.time,s.accuracy,s.average_velocity,s.max_combo,s.placement,s.points FROM (SELECT * FROM %s WHERE level_id = $1 ORDER BY points desc, time asc LIMIT 10) AS s JOIN %s AS u on s.player_id = u.id ORDER BY s.points desc, s.time asc", levelCompleteTable, usersTable))
 	if err := lp.db.Select(&ret, query, levelId); err != nil {
 		logrus.Printf("Error fetching levels: get level user top %s", err.Error())
 		return []statistics.UserLevelCompletionInfo{}, errors.New(gotype.ErrInternal)

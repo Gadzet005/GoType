@@ -2,10 +2,10 @@ package domain
 
 type CategoryParams struct {
 	Category rune   `json:"category"`
-	Pattern  string `json:"pattern"`
+	Pattern  string `json:"pattern" example:"asc"`
 }
 
 type CategoryParamsJSON struct {
-	Category string `json:"category"`
-	Pattern  string `json:"pattern"`
+	Category string `json:"category" example:"S"`
+	Pattern  string `json:"pattern" example:"asc"`
 }
