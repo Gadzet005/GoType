@@ -1,87 +1,85 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-    Typography,
-    Grid,
-    Card,
-    CardMedia,
-    CardContent,
-    CircularProgress,
-    Alert,
-    Chip,
-    Stack,
-    Divider,
-    Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Modal,
-    Box,
-    TextField,
-    Select,
-    MenuItem,
-  } from "@mui/material";
+  Typography,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  CircularProgress,
+  Alert,
+  Chip,
+  Stack,
+  Divider,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Modal,
+  Box,
+  TextField,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { LevelApi } from "@/api/levelApi";
 import { UserApi } from "@/api/userApi";
-import { AdminApi } from "@/api/adminApi"
+import { AdminApi } from "@/api/adminApi";
 import { LevelInfo, ErrorResponse } from "@/api/models";
 import { RoutePath } from "@/config/routes/path";
 
 const modalStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 600,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    borderRadius: 2,
-  };
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 2,
+};
 
 export const Level: React.FC = () => {
-    const { levelId } = useParams<{ levelId: string }>();
-    const navigate = useNavigate();
-    const [levelInfo, setLevelInfo] = useState<LevelInfo | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [userAccess, setUserAccess] = useState<number>(0);
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const { levelId } = useParams<{ levelId: string }>();
+  const navigate = useNavigate();
+  const [levelInfo, setLevelInfo] = useState<LevelInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [userAccess, setUserAccess] = useState<number>(0);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
-        try{
-            const userInfo = await UserApi.getUserInfo();
-            setUserAccess(userInfo.access);
-        }
-        catch(err){
-            navigate(RoutePath.login);
-            setUserAccess(1);
-        }
-        try {
-          if (!levelId) return;
-          const response = await LevelApi.getLevelInfo(Number(levelId));
-          setLevelInfo(response);
-          
-        } catch (err) {
-          setError((err as ErrorResponse).message || "Failed to load data");
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchData();
-    }, [levelId]);
+      try {
+        const userInfo = await UserApi.getUserInfo();
+        setUserAccess(userInfo.access);
+      } catch (err) {
+        navigate(RoutePath.login);
+        setUserAccess(1);
+      }
+      try {
+        if (!levelId) return;
+        const response = await LevelApi.getLevelInfo(Number(levelId));
+        setLevelInfo(response);
+      } catch (err) {
+        setError((err as ErrorResponse).message || "Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [levelId]);
 
   const handleDelete = async () => {
     if (!levelId) return;
 
     try {
       await AdminApi.banLevel({ id: Number(levelId) });
-      navigate(RoutePath.levelList); 
+      navigate(RoutePath.levelList);
     } catch (err) {
       setError((err as ErrorResponse).message || "Failed to delete level");
     }
@@ -161,7 +159,7 @@ export const Level: React.FC = () => {
           </CardContent>
         </Card>
       </Grid>
-        
+
       <Modal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
@@ -172,7 +170,7 @@ export const Level: React.FC = () => {
             Удаление уровня
           </Typography>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
             <Button onClick={() => setDeleteModalOpen(false)}>Отмена</Button>
             <Button
               variant="contained"
@@ -180,12 +178,16 @@ export const Level: React.FC = () => {
               onClick={handleDelete}
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : "Подтвердить удаление"}
+              {loading ? (
+                <CircularProgress size={24} />
+              ) : (
+                "Подтвердить удаление"
+              )}
             </Button>
           </Box>
         </Box>
       </Modal>
-    
+
       <Grid item xs={12} md={8}>
         <Stack spacing={2}>
           <Typography variant="h4">Информация об уровне</Typography>
@@ -257,13 +259,14 @@ export const Level: React.FC = () => {
             <Grid item xs={6} md={3}>
               <Typography variant="body2">
                 Средняя скорость:{" "}
-                {levelInfo.levelStats.average_average_velocity.toFixed(1)} зн./мин
+                {levelInfo.levelStats.average_average_velocity.toFixed(1)}{" "}
+                зн./мин
               </Typography>
             </Grid>
             <Grid item xs={6} md={3}>
               <Typography variant="body2">
-                Макс. скорость: {levelInfo.levelStats.max_average_velocity.toFixed(1)}{" "}
-                зн./мин
+                Макс. скорость:{" "}
+                {levelInfo.levelStats.max_average_velocity.toFixed(1)} зн./мин
               </Typography>
             </Grid>
             <Grid item xs={6} md={3}>
@@ -282,29 +285,34 @@ export const Level: React.FC = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Игрок</TableCell>
-                      <TableCell align="center">Id</TableCell>
-                      <TableCell align="right">Очки</TableCell>
+                    <TableCell>Игрок</TableCell>
                       <TableCell align="right">Точность</TableCell>
+                      
+                      <TableCell align="center">Id-игрока</TableCell>
+                      <TableCell align="right">Очки</TableCell>
                       <TableCell align="right">Скорость</TableCell>
                       <TableCell align="right">Комбо</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {levelInfo.levelUserTop.map((user, index) => (
-                      <TableRow key={`${user.player_id}-${index}`}>
-                        <TableCell>{user.player_name}</TableCell>
-                        <TableCell align="center">{user.player_id}</TableCell>
-                        <TableCell align="right">{user.points}</TableCell>
-                        <TableCell align="right">
-                          {(user.accuracy * 100).toFixed(1)}%
-                        </TableCell>
-                        <TableCell align="right">
-                          {user.average_velocity.toFixed(1)} зн./мин
-                        </TableCell>
-                        <TableCell align="right">{user.max_combo}</TableCell>
-                      </TableRow>
-                    ))}
+                    {levelInfo.levelUserTop
+                      .slice()
+                      .sort((a, b) => b.accuracy - a.accuracy)
+                      .map((user, index) => (
+                        <TableRow key={`${user.player_id}-${index}`}>
+                            <TableCell>{user.player_name}</TableCell>
+                          <TableCell align="right">
+                            {(user.accuracy * 100).toFixed(1)}%
+                          </TableCell>
+                          
+                          <TableCell align="center">{user.player_id}</TableCell>
+                          <TableCell align="right">{user.points}</TableCell>
+                          <TableCell align="right">
+                            {user.average_velocity.toFixed(1)} зн./мин
+                          </TableCell>
+                          <TableCell align="right">{user.max_combo}</TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>
