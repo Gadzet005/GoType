@@ -134,8 +134,7 @@ export class GameStatistics {
             }
         }
 
-        // should be unreachable
-        return "?";
+        return Accuracy.names[Accuracy.names.length - 1];
     }
 
     get comboCounter() {
