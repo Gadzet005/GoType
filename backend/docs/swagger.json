@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0.0"
     },
-    "host": "localhost:8080",
+    "host": "158.160.179.2:8080",
     "paths": {
         "/admin/ban-level": {
             "post": {
@@ -2122,6 +2122,7 @@
         "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo": {
             "type": "object",
             "required": [
+                "offset",
                 "page_size"
             ],
             "properties": {
