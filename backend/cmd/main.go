@@ -26,7 +26,7 @@ const (
 // @version 1.0.0
 // @description API Server for GoType game and website
 
-// @host localhost:8080
+// @host 158.160.179.2:8080
 // @BasePath/
 
 // @securityDefinitions.apikey BearerAuth
