@@ -286,10 +286,12 @@ export const Level: React.FC = () => {
                   <TableHead>
                     <TableRow>
                     <TableCell>Игрок</TableCell>
+                    <TableCell align="right">Очки</TableCell>
+                    <TableCell align="center">Id-игрока</TableCell>
                       <TableCell align="right">Точность</TableCell>
                       
-                      <TableCell align="center">Id-игрока</TableCell>
-                      <TableCell align="right">Очки</TableCell>
+                      
+                      
                       <TableCell align="right">Скорость</TableCell>
                       <TableCell align="right">Комбо</TableCell>
                     </TableRow>
@@ -297,16 +299,18 @@ export const Level: React.FC = () => {
                   <TableBody>
                     {levelInfo.levelUserTop
                       .slice()
-                      .sort((a, b) => b.accuracy - a.accuracy)
                       .map((user, index) => (
                         <TableRow key={`${user.player_id}-${index}`}>
                             <TableCell>{user.player_name}</TableCell>
+                          
+                          <TableCell align="right">{user.points}</TableCell>
+                          
+                          <TableCell align="center">{user.player_id}</TableCell>
+                          
                           <TableCell align="right">
                             {(user.accuracy * 100).toFixed(1)}%
                           </TableCell>
-                          
-                          <TableCell align="center">{user.player_id}</TableCell>
-                          <TableCell align="right">{user.points}</TableCell>
+
                           <TableCell align="right">
                             {user.average_velocity.toFixed(1)} зн./мин
                           </TableCell>
