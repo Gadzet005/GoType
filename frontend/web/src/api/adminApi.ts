@@ -42,11 +42,11 @@ export const AdminApi = {
   },
 
   processLevelComplaint: async (data: ComplaintID): Promise<void> => {
-    await $authHost.post('/admin/process-level-complaint', data);
+    await $authHost.delete(`/admin/process-level-complaint/${data.id}`);
   },
-
+  
   processUserComplaint: async (data: ComplaintID): Promise<void> => {
-    await $authHost.post('/admin/process-user-complaint', data);
+    await $authHost.delete(`/admin/process-user-complaint/${data.id}`);
   },
   
 

@@ -253,7 +253,7 @@ export const Level: React.FC = () => {
             </Grid>
             <Grid item xs={6} md={3}>
               <Typography variant="body2">
-                Средние очки: {levelInfo.levelStats.average_points}
+                Средние очки: {(levelInfo.levelStats.average_points).toFixed(0)}
               </Typography>
             </Grid>
             <Grid item xs={6} md={3}>
