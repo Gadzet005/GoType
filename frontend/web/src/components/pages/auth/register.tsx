@@ -20,9 +20,10 @@ import { AuthApi } from "@/api/authApi";
 import { RoutePath } from "@/config/routes/path";
 
 const errorsMapTranslate: Record<string, string> = {
-  ERR_NO_SUCH_USER: "ОШИБКА: НЕТ ТАКОГО ПОЛЬЗОВАТЕЛЯ",
-  ERR_INVALID_INPUT: "ОШИБКА: ВЫ ВВЕЛИ НЕПРАВИЛЬНО ЛОГИН ИЛИ ПАРОЛЬ",
-  ERR_INTERNAL: "ОШИБКА СЕРВЕРА",
+  'ERR_NO_SUCH_USER': "ОШИБКА: НЕТ ТАКОГО ПОЛЬЗОВАТЕЛЯ",
+  'ERR_INVALID_INPUT': "ОШИБКА: Возможно вы не ввели логин или пароль.",
+  'ERR_INTERNAL': "ОШИБКА СЕРВЕРА",
+  'ERR_USER_EXISTS': 'ОШИБКА: Пользователь с таким именем уже существует.'
 };
 
 const PasswordField = ({ name, label }: { name: string; label: string }) => {
