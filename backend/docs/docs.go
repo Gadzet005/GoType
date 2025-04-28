@@ -2129,6 +2129,7 @@ const docTemplate = `{
         "github_com_Gadzet005_GoType_backend_internal_domain_Statistics.PageInfo": {
             "type": "object",
             "required": [
+                "offset",
                 "page_size"
             ],
             "properties": {
@@ -2165,7 +2166,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.0",
-	Host:             "localhost:8080",
+	Host:             "158.160.179.2:8080",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "GoType App API",

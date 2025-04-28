@@ -383,6 +383,7 @@ definitions:
         minimum: 1
         type: integer
     required:
+    - offset
     - page_size
     type: object
   handler.errorResponse:
@@ -390,7 +391,7 @@ definitions:
       message:
         type: string
     type: object
-host: localhost:8080
+host: 158.160.179.2:8080
 info:
   contact: {}
   description: API Server for GoType game and website
